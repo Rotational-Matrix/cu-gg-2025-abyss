@@ -15,16 +15,16 @@ using UnityEngine;
 
 public class ChoiceBoxHandler : MonoBehaviour
 {
-    [SerializeField] TMPro.TMP_Text ChoiceText; // The actual displayed text in the text box
-    [SerializeField] GameObject SelectorImage; // should be a child of the Choice box panel
+    [SerializeField] private TMPro.TMP_Text choiceText; // The actual displayed text in the text box
+    [SerializeField] private GameObject selectorImage; // should be a child of the Choice box panel
     //private string internalString = ""; // maybe needed for later to parse commands
     private bool isSelected = false;
-    //private isSelectable // only to be added in case of special plot circumstance
+    private bool isLocked = false; // for special plot circumstances, locked can be viewed, not chosen
 
     public void SetSelected(bool setSelected)
     {
         this.isSelected = setSelected;
-        SelectorImage.SetActive(isSelected);
+        selectorImage.SetActive(isSelected);
     }
     public bool IsSelected()
     {
@@ -33,12 +33,21 @@ public class ChoiceBoxHandler : MonoBehaviour
 
     public void SetTextContents(string newContents)
     {
-        ChoiceText.text = newContents;
+        choiceText.text = newContents;
     }
 
-    public void CleanTextContents()
+    public void SetLocked(bool setLocked)
     {
-        ChoiceText.text = "";
+        isLocked = setLocked;
+    }
+    public bool IsLocked()
+    {
+        return isLocked;
+    }
+
+    private void CleanTextContents()
+    {
+        choiceText.text = "";
     }
 
     private void OnDisable()
