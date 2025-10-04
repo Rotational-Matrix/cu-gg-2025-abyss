@@ -31,16 +31,21 @@ public class ChoiceBoxHandler : MonoBehaviour
         return isSelected;
     }
 
-    public void setTextContents(string newContents)
+    public void SetTextContents(string newContents)
     {
         ChoiceText.text = newContents;
     }
 
-    public void cleanTextContents()
+    public void CleanTextContents()
     {
         ChoiceText.text = "";
     }
 
+    private void OnDisable()
+    {
+        this.CleanTextContents();
+        this.SetSelected(false);
+    }
 
 
 
