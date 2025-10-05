@@ -21,4 +21,8 @@ public class Dialogue_canvas_manager : MonoBehaviour
      *  - Activates/disables the choice canvas, sends the choice strings and receives the choice index
      */
 
+    [SerializeField] private GameObject choiceCanvas;
+    //[SerializeField] private inkstory
+    
+
 }
