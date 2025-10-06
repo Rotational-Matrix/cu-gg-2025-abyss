@@ -18,7 +18,7 @@ using UnityEngine;
  *  - Some choices such as the choice_boxes being placed as a list are to help altering this.
  * 
  */
-public class ChoiceCanvas : MonoBehaviour
+public class ChoiceCanvasHandler : MonoBehaviour
 {
     [SerializeField] private List<GameObject> choiceBoxes = new List<GameObject>();
     //[SerializeField] private GameObject perish;
