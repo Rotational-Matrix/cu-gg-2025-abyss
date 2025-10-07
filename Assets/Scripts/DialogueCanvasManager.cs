@@ -47,7 +47,7 @@ public class DialogueCanvasManager : MonoBehaviour
     private List<string> currTags = new List<string>();
 
 
-    private void Awake()
+    private void Start()
     {
         _inkStory = new Story(inkAsset.text);
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
