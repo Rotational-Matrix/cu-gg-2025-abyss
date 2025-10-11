@@ -179,7 +179,7 @@ public class DialogueCanvasManager : MonoBehaviour
         //should handle line commands and inline commands.
         //  - does NOT actively handle inline commands. //NotImplemented
         //string bucketString = null; //(only for inline)
-        string linePrefix = input.Substring(0, 3); //hardcoded, bc >>> is expected
+        string linePrefix = input.Substring(0, 3); //hardcoded, bc >>> is expected //FIXXXXXXXXXXXXX
         if (linePrefix.Equals(">>>"))
         {
             //note that line commands will likely return either null
