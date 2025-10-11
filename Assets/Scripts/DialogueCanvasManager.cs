@@ -119,6 +119,10 @@ public class DialogueCanvasManager : MonoBehaviour
     {
         ccHandler.DecremChoiceSelection();
     }
+    public bool IsChoiceActive()
+    {
+        return ccHandler.IsDisplaying();
+    }
 
 
     public void DivertTo(string knotName) //or knotName.stitchName

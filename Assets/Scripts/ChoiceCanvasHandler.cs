@@ -82,6 +82,11 @@ public class ChoiceCanvasHandler : MonoBehaviour
         return retIndex; //this returns the 0-indexed verion of the index
     }
 
+    public bool IsDisplaying()
+    {
+        return choicesAvailable != 0;
+    }
+
     private void RemoveChoices()
     {
         if(choicesAvailable != 0)

@@ -32,9 +32,13 @@ public class ProtoInputHandler : MonoBehaviour
         {
             if(!dcManager.AttemptContinue())
             {
-                if(!dcManager.InitiateChoices())
+                if(dcManager.IsChoiceActive())
                 {
                     dcManager.Choose();
+                }
+                else
+                {
+                    dcManager.InitiateChoices();
                 }
             }
         }
