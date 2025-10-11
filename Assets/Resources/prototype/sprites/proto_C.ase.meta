@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -78,7 +77,6 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
@@ -91,7 +89,6 @@ ScriptedImporter:
     defaultPivotSpace: 0
     defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
-    mosaicPadding: 4
     spritePadding: 0
     generateModelPrefab: 1
     generateAnimationClips: 1
@@ -133,7 +130,7 @@ ScriptedImporter:
       y: 4
       width: 32
       height: 32
-    spriteID: 8e3f07ea2838ee34b81a6b8c2eae120e
+    spriteID: 6fe5c89c74384a749916c751021a753f
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -145,12 +142,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 4013255554
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: 0
+    guid: -170411878
     name: proto_C
     layerFlags: 0
     layerType: 0
@@ -158,13 +150,12 @@ ScriptedImporter:
     cells:
     - name: proto_C
       frameIndex: 0
-      additiveSortOrder: 0
       cellRect:
         x: 0
         y: 0
         width: 32
         height: 32
-      spriteId: 8e3f07ea2838ee34b81a6b8c2eae120e
+      spriteId: 6fe5c89c74384a749916c751021a753f
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -180,8 +171,6 @@ ScriptedImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     androidETC2FallbackOverride: 0
-  generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 32, y: 32}
-  previousTextureSize: {x: 64, y: 64}
