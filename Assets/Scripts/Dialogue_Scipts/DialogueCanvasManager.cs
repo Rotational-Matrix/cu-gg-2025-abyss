@@ -33,13 +33,17 @@ public class DialogueCanvasManager : MonoBehaviour
     //this should be set to the compiled json asset (not the ink itself)
     public TextAsset inkAsset;
 
-    //The ink story we're wrapping
+    //The ink story we're wrapping,
     Story _inkStory;
 
+    //Save states of the ink story
+    private List<string> saveStateJsons = new List<string>(); //there will prolly be a constant amount of these (but rn it's ambiguous)
+
+    //Sub-hiererchy UI scripts
     private DialoguePanelHandler dpHandler;
     private ChoiceCanvasHandler ccHandler;
 
-
+    //Dialogue intermediates (stored here to be processed or applied all at once)
     private Sprite currLeftSprite = null;
     private Sprite currRightSprite = null;
     private string currHeader = "";
@@ -64,7 +68,7 @@ public class DialogueCanvasManager : MonoBehaviour
     private void SetDialogueState(bool setActive)
     {
         dialoguePanel.SetActive(setActive);
-        //THIS NEEDS TO TELL WHATEVER OVERALL ARCHITECTURE THAT THE DIALOGUE STATE HAS CHANGED //NotImplemented
+        StateManager.SetDialogueStatus(setActive);
     }
 
 
@@ -108,7 +112,6 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public void Choose()
     {
-        //currently presumes choices are 0-indexed
         _inkStory.ChooseChoiceIndex(ccHandler.Choose());
     }
     public void IncremChoiceSelection()
@@ -130,27 +133,42 @@ public class DialogueCanvasManager : MonoBehaviour
         _inkStory.ChoosePathString(knotName);
     }
 
-    /* TO BE IMPLEMENTED
-     string savedJson = _inkStory.state.ToJson();
-     _inkStory.state.LoadJson(savedJson);
-     */
-    public string CreateInkSaveState()
+    public void CreateInkSaveState(int saveStateIndex)
     {
-        throw new System.NotImplementedException("CreateInkSaveState isn't implemented yet");
+        //if the argument is invalid, chooses to append a new savefile (maybe one may use -1 for deliberate appending)
+        if (saveStateIndex < 0 || saveStateJsons.Count <= saveStateIndex) //append saveState to saved saveStates
+        {
+            saveStateJsons.Add(_inkStory.state.ToJson());
+        }
+        else
+        {
+            saveStateJsons[saveStateIndex] = _inkStory.state.ToJson();
+        }
     }
-    public void RunInkSaveState(string savedJson)
+    public void RunInkSaveState(int saveStateIndex)
     {
-        throw new System.NotImplementedException("RunInkSaveState isn't inplemented");
+        if (saveStateJsons.Count <= saveStateIndex) //The eror occurs here because this situation is always an accident
+        {
+            throw new System.ArgumentOutOfRangeException("RunInkSaveState doesn't have a savestate at index: " + saveStateIndex);
+        }
+        else if (saveStateIndex < 0) //using -1 
+        {
+            _inkStory.state.LoadJson(saveStateJsons[saveStateJsons.Count - 1]);
+        }
+        else
+        {
+            _inkStory.state.LoadJson(saveStateJsons[saveStateIndex]);
+        }
     }
     
 
-    public void SetInkVar()
+    public void SetInkVar<T>(string variableName, T newVal) //literally the name of the variable as it appears in the inkstory
     {
-        throw new System.NotImplementedException("SetInkVar isn't inplemented");
+        _inkStory.variablesState[variableName] = newVal; //it...allows this (please make the type of newVal match the variable...)
     }
-    public void GetInkVar()
+    public T GetInkVar<T>(string variableName)
     {
-        throw new System.NotImplementedException("GetInkVar isn't inplemented");
+        return (T)(_inkStory.variablesState[variableName]); //forceful cast... please match types!
     }
 
     //tags for content at path could be implemented
@@ -163,14 +181,14 @@ public class DialogueCanvasManager : MonoBehaviour
     private bool ContinueDialogue()
     {
         string parsedText = ParseCommands(intermediateBodyText);
-        if (!parsedText.Equals(null)) //null is passed by ParseCommands for line commands
+        if (!Equals(parsedText, null)) //null is passed by ParseCommands for line commands
         {
             HandleLineTags();
             dpHandler.ProgressDialogue(parsedText, currHeader, currLeftSprite, currRightSprite);
             return true;
         }
         else
-            return !dialoguePanel.activeSelf; //returns false unless the dialogue panel is also disabled
+            return !StateManager.GetDialogueStatus(); //returns false unless the dialogue has been stopped
 
     }
 
@@ -179,14 +197,11 @@ public class DialogueCanvasManager : MonoBehaviour
         //should handle line commands and inline commands.
         //  - does NOT actively handle inline commands. //NotImplemented
         //string bucketString = null; //(only for inline)
-        string linePrefix = input.Substring(0, 3); //hardcoded, bc >>> is expected //FIXXXXXXXXXXXXX
-        if (linePrefix.Equals(">>>"))
+        if (input.Length >= 3 && input.Substring(0, 3).Equals(">>>")) //hardcoded, bc >>> is expected
         {
-            //note that line commands will likely return either null
-            //  or call _inkStory.Continue() and then return that instead
             string lineCommand = input.Substring(3).Trim(); //removes >>> and then whitespace at the start and end
             HandleLineCommands(lineCommand);
-            return null;
+            return null; //all line commands will return null (even invalid line commands)
         }
         else
             return input; //no need to even set bucketString = input
@@ -194,13 +209,14 @@ public class DialogueCanvasManager : MonoBehaviour
 
     private void HandleLineCommands(string command)
     {
-        //the most common command, and the only one without a colon.
+        //the most common command, and the only one without a colon. [wait, the other commands have large intestines?]
         if (command.Equals("STOP_DIALOGUE"))
         {
             SetDialogueState(false); // This command wipes the dialogue panel
         }
         else
         {
+            Debug.Log("Unknown line command received: " + command);
             //where other commands would go.
             //they are distinct because virtually all commands will have a ':'
         }

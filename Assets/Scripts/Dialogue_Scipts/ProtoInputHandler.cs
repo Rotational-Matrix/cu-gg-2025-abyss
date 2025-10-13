@@ -18,27 +18,34 @@ public class ProtoInputHandler : MonoBehaviour
     //DELETE THIS, it is merely a dummy event handler that has been made merely for 'proto'
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        if (StateManager.GetDialogueStatus())
         {
-            dcManager.DecremChoiceSelection();
-        }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            dcManager.IncremChoiceSelection();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if(!dcManager.AttemptContinue())
+            if (dcManager.IsChoiceActive())
             {
-                if(dcManager.IsChoiceActive())
+                if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
-                    dcManager.Choose();
+                    dcManager.DecremChoiceSelection();
                 }
-                else
+
+                if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
-                    dcManager.InitiateChoices();
+                    dcManager.IncremChoiceSelection();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (!dcManager.AttemptContinue())
+                {
+                    if (dcManager.IsChoiceActive())
+                    {
+                        dcManager.Choose();
+                    }
+                    else
+                    {
+                        dcManager.InitiateChoices();
+                    }
                 }
             }
         }
