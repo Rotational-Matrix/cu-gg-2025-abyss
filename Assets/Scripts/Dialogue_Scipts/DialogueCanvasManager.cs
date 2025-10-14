@@ -61,7 +61,10 @@ public class DialogueCanvasManager : MonoBehaviour
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
     {
         SetDialogueState(true);
-        DivertTo(knotName);
+        if (!Equals(knotName, null))
+        {
+            DivertTo(knotName); //in case one wiches to intentionally not jump, but return to dialogue state
+        }
         return AttemptContinue();
     }
 

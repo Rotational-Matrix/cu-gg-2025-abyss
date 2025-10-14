@@ -49,5 +49,12 @@ public class ProtoInputHandler : MonoBehaviour
                 }
             }
         }
+        else //necessitated that dialogue state is active
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                dcManager.InitiateDialogueState(null);
+            }
+        }
     }
 }
