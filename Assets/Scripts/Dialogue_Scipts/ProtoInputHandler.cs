@@ -41,6 +41,7 @@ public class ProtoInputHandler : MonoBehaviour
                     if (dcManager.IsChoiceActive())
                     {
                         dcManager.Choose();
+                        dcManager.AttemptContinue();
                     }
                     else
                     {
@@ -49,7 +50,7 @@ public class ProtoInputHandler : MonoBehaviour
                 }
             }
         }
-        else //necessitated that dialogue state is active
+        else //when dialogue state is not active
         {
             if (Input.GetKeyDown(KeyCode.P))
             {

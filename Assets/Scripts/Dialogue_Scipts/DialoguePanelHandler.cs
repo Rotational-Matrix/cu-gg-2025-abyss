@@ -62,13 +62,13 @@ public class DialoguePanelHandler : MonoBehaviour
         {
             if (isLeft)
             {
+                leftSprite.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
                 leftSprite.SetActive(true);
-                leftSprite.GetComponent<SpriteRenderer>().sprite = sprite;
             }
             else
             {
+                rightSprite.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
                 rightSprite.SetActive(true);
-                rightSprite.GetComponent<SpriteRenderer>().sprite = sprite;
             }
         }
         else //if the sprite is null

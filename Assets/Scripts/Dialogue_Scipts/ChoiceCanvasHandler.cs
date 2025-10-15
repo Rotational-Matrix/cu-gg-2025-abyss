@@ -100,6 +100,16 @@ public class ChoiceCanvasHandler : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        foreach (GameObject cBox in choiceBoxes)
+        {
+            cBox.SetActive(false);
+        }
+        choicesAvailable = 0;
+        currentChoiceSelected = -1;
+    }
+
 
 
 

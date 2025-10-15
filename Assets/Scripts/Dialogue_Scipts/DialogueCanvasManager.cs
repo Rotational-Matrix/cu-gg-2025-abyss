@@ -51,11 +51,12 @@ public class DialogueCanvasManager : MonoBehaviour
     private List<string> currTags = new List<string>();
 
 
-    private void Start()
+    private void Awake()
     {
         _inkStory = new Story(inkAsset.text);
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
+        SetDialogueState(false); //it automatically makes sure it is turned off at start.
     }
 
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
@@ -262,7 +263,7 @@ public class DialogueCanvasManager : MonoBehaviour
         if (colonIndex != -1)
         {
             string preColon = tag.Substring(0, colonIndex); //doesn't include the colon
-            string postColon = tag.Substring(colonIndex + 1);
+            string postColon = tag.Substring(colonIndex + 1).Trim();
             switch (preColon) //this could always be ToUpper-ed to allow for case insensitivity
             {
                 case "speaker":
@@ -303,9 +304,19 @@ public class DialogueCanvasManager : MonoBehaviour
         //for errors here, note that file order must be preserved in Resources subfiles
         //  - so check there!
         if (isLeft)
-            currLeftSprite = Resources.Load<Sprite>(tag);
+        {
+            if (tag.Equals("NONE"))
+                currLeftSprite = null;
+            else
+                currLeftSprite = Resources.Load<Sprite>(tag);
+        }
         else
-            currRightSprite = Resources.Load<Sprite>(tag);
+        {
+            if (tag.Equals("NONE"))
+                currRightSprite = null;
+            else
+                currRightSprite = Resources.Load<Sprite>(tag);
+        }
     }
 
     private void HandleAudioTag(string tag)

@@ -878,7 +878,7 @@ PrefabInstance:
         type: 3}
       propertyPath: inkAsset
       value: 
-      objectReference: {fileID: 4900000, guid: 7b374fc9553fd8b479052feace5d104e, type: 3}
+      objectReference: {fileID: 4900000, guid: 201afab0275c9944284b8792002842bd, type: 3}
     - target: {fileID: 7809300921766386138, guid: 4fe812235f10e5b46aeb8b149bebb936,
         type: 3}
       propertyPath: m_Sprite
@@ -920,6 +920,16 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1647907179}
+    - target: {fileID: 8456021506786936078, guid: 4fe812235f10e5b46aeb8b149bebb936,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8636690649131397449, guid: 4fe812235f10e5b46aeb8b149bebb936,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
