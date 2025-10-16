@@ -37,7 +37,7 @@ public class DialogueCanvasManager : MonoBehaviour
     Story _inkStory;
 
     //Save states of the ink story
-    private List<string> saveStateJsons = new List<string>(); //there will prolly be a constant amount of these (but rn it's ambiguous)
+    private List<string> saveStateJsons = new List<string>(); // there are constantly 4, but I dond't want to harcode it
 
     //Sub-hiererchy UI scripts
     private DialoguePanelHandler dpHandler;
@@ -208,7 +208,7 @@ public class DialogueCanvasManager : MonoBehaviour
             return null; //all line commands will return null (even invalid line commands)
         }
         else
-            return input; //no need to even set bucketString = input
+            return HandleInlineCommands(input); //no need to even set bucketString = input
     }
 
     private void HandleLineCommands(string command)
@@ -224,6 +224,69 @@ public class DialogueCanvasManager : MonoBehaviour
             //where other commands would go.
             //they are distinct because virtually all commands will have a ':'
         }
+    }
+
+
+    /* Handle Inline Commands
+     * Upon finding an inline operator, calls the appropriate methods.
+     * In case of no inlines found, returns the same input (after all, most lines will have no inlines
+     * 
+     * This is primarily here because TMPro supports 'rich text tags' which can affect the conditions of individual words.
+     *  - rich text tags will always be misinterpreted by ink, because ink sees <~~~> as not a string
+     *  - rich text tags seem to follow the following format:
+     *      - <category=value>lorem ipsum solem dicut</category>
+     *          - note that the tag will only apply between the two parts of the tag
+     *  - our inlines will use the following format:
+     *      - $category:value$lorem ipsum solem dicut$/category$
+     *          - note that, in case a '$' is needed, the inline will turn $$ -> $
+     *          - also, odd numbers of non-$$ $ will leave the last $ as $
+     *          - inside $~~~~$, : turns to = to make sure nothing is being assigned
+     * 
+     * In general, ink seems to ignore '$,' So I intend to use this for indication of inlines (LaTeX approved)
+     */
+    private string HandleInlineCommands(string input)
+    {
+        //currently only made to handle rich text, so it is handled in the main inline function
+        int i1 = input.IndexOf('$');
+        if (i1 == -1 || i1 == input.Length - 1)
+            return input; //so Handle Inline resolves quickly when no inline is present
+        //since we have at least 1 '$', we split
+        string[] s_split = input.Split('$');
+        if (s_split.Length % 2 == 0)
+            return input; //means an invalid '$' pattern occurred, in all use cases, split should be odd
+        //s_split[0] and s_split[s_split.Length-1] will be eventually concat, but otherwise ignored
+        //if a non-edge space is the string "", that means $$ occurred, and that is replaced w/$ [just one]
+        int empty_count = 0;
+        for(int i = 1; i < s_split.Length - 1; i++)
+        {
+            if (s_split[i] == "")
+                empty_count++;
+        }
+        string[] s_bucket = new string[s_split.Length - empty_count];
+        s_bucket[0] = s_split[0];
+        bool place_left_b = true;
+        for(int sp_i = 1, bu_i = 1; bu_i < s_bucket.Length; sp_i++, bu_i++)
+        {
+            if (s_split[sp_i] == "") //this is when $$ is typed for intentional '$' printing
+            {
+                if (place_left_b)
+                    s_bucket[bu_i] = string.Concat("$", s_split[sp_i + 1]);
+                else //if still in bracket clause (so : -> = must occur)
+                    s_bucket[bu_i] = string.Concat("$", s_split[sp_i + 1].Replace(':', '='));
+                sp_i++; 
+            }
+            else if(place_left_b)
+            {
+                s_bucket[bu_i] = string.Concat("<", s_split[sp_i].Replace(':','='));
+                place_left_b = false;
+            }
+            else 
+            {
+                s_bucket[bu_i] = string.Concat(">", s_split[sp_i].Replace(':', '='));
+                place_left_b = true;
+            }
+        }
+        return string.Concat(s_bucket);
     }
     
 

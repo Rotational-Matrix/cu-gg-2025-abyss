@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     {
         grounded = false;
     }*/
-    bool isGrounded()
+    private bool IsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
@@ -46,9 +46,9 @@ public class PlayerController : MonoBehaviour
         inputActions.Land.Jump.performed -= OnJump;
         inputActions.Disable();
     }
-    void OnJump(InputAction.CallbackContext ctx)
+    private void OnJump(InputAction.CallbackContext ctx)
     {
-        if (isGrounded()) rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
+        if (IsGrounded()) rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
     }
     // Update is called once per frame
     void Update()
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
             if (inputVector.x >= 0.05) spriteRenderer.flipX = false;
             else if (inputVector.x <= -0.05) spriteRenderer.flipX = true;
         }
-        if (isGrounded() && Mathf.Abs(inputVector.x) < 0.05 && Mathf.Abs(inputVector.y) < 0.05) groundedFrameCount++;
+        if (IsGrounded() && Mathf.Abs(inputVector.x) < 0.05 && Mathf.Abs(inputVector.y) < 0.05) groundedFrameCount++;
         else groundedFrameCount = 0;
         if (groundedFrameCount >= 100 && groundedFrameCount % 59 == 0) spriteRenderer.flipX = !spriteRenderer.flipX;
     }

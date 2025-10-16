@@ -23,7 +23,7 @@ Entering Debug Knot (1st stitch)
 Entering debug test run
  + [nothing] <> //this glue makes it so there is no 'blank space'
  - <> The above should not have any key presses which show nothing (nothing!).
- This text should be <color="pink">pink</color>
+ This text should be $color:"red"$red$/color$
  Next, we'll test a few tags.
  
  #speaker: Heya! this is the speaker box
@@ -43,7 +43,7 @@ Entering debug test run
 = command_explanations
 All commands are to be preceded by ">>>"
 This will be organised into better scaling categories
-but for now, note <color="red">spooky text</color> should be red.
+but for now, note $color:"green"$spooky text$/color$ should be red.
 going back to debug stitch -> debug_stitch_1
 /* What needs to be tested:
  * - END_DIALOGUE
