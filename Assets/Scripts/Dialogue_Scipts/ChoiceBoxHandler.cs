@@ -56,6 +56,11 @@ public class ChoiceBoxHandler : MonoBehaviour
         this.SetSelected(false);
     }
 
+    private void Awake()
+    {
+        this.CleanTextContents();
+        this.SetSelected(false);
+    }
 
 
 }
