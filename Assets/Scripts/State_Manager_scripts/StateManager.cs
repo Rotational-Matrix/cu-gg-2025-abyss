@@ -22,13 +22,16 @@ public class StateManager : MonoBehaviour
     [SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
 
-    private static DialogueCanvasManager dcManager;
+    //these can be called by other fns' Start() to access pmManager & dcManager
+    public static DialogueCanvasManager DCManager { get; private set; }
+    public static PauseMenuManager PMManager { get; private set; }
+
     //there would be a player menu canvas here, if it existed!
     //same for pauseMenu canvas!
 
-    private static bool isInDialogue;
-    private static bool isInPlayerMenu;
-    private static bool isInPauseMenu;
+    private static bool isInDialogue = false;
+    private static bool isInPlayerMenu = false;
+    private static bool isInPauseMenu = false;
 
     //getters and setters could be made onto the attributes, but that is weird!
     public static void SetDialogueStatus(bool status)
@@ -45,11 +48,11 @@ public class StateManager : MonoBehaviour
     { return isInPauseMenu; }
 
 
-    private void Start()
+    private void Awake()
     {
         //note how, if there are 2 StateManagers, one will overwrite the other! (why would there be 2 of these though...)
-        dcManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
+        DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         //initialisation for the canvas of the player menu canvas (when it gets implemented)
-        //initialisation for the canvas of the pause menu canvas (when it gets iplemented)
+        PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
     }
 }

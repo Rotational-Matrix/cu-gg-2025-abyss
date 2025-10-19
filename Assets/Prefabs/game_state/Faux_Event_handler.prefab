@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueCanvas: {fileID: 0}
+  forceJumpKnotName: debug_knot.debug_stitch_1

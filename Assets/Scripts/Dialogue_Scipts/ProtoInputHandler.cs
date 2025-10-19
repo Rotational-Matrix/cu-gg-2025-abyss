@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class ProtoInputHandler : MonoBehaviour
 {
-    [SerializeField] private GameObject dialogueCanvas;
+    //[SerializeField] private GameObject dialogueCanvas; //will instead be accessed via StateManager
 
     private DialogueCanvasManager dcManager;
+    private PauseMenuManager pmManager;
 
     //--------------------- Dialogue Keys ---------------------------
 
@@ -33,6 +34,12 @@ public class ProtoInputHandler : MonoBehaviour
     private static KeyCode moveSelectorUp = KeyCode.UpArrow;
     private static KeyCode moveSelectorDown = KeyCode.DownArrow;
 
+    //------------------- Pause Menu Keys ---------------------------
+
+    
+
+    private static KeyCode togglePauseMenu = KeyCode.Tab;
+
     //--------------------- Debug Keys ------------------------------
 
     /* debug_forceStartDialogue does the following:
@@ -52,15 +59,21 @@ public class ProtoInputHandler : MonoBehaviour
     [SerializeField] public string forceJumpKnotName;
 
 
-    void Awake()
+    private void Start() //has to be start to guarantee it occurs after StateManager.Awake()
     {
-        dcManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
+        dcManager = StateManager.DCManager;
+        pmManager = StateManager.PMManager;
     }
 
     // Update is called once per frame
     //DELETE THIS, it is merely a dummy event handler that has been made merely for 'proto'
     void Update()
     {
+        if(Input.GetKeyDown(togglePauseMenu))
+        {
+            pmManager.ToggleMenu();
+        }
+        
         if (StateManager.GetDialogueStatus())
         {
 
@@ -75,21 +88,18 @@ public class ProtoInputHandler : MonoBehaviour
                 {
                     dcManager.IncremChoiceSelection();
                 }
-            }
 
-            if (Input.GetKeyDown(dialogueKey))
+                if (Input.GetKeyDown(commitChoiceKey))
+                {
+                    dcManager.Choose();
+                    dcManager.AttemptContinue();
+                }
+            }
+            else if (Input.GetKeyDown(dialogueKey))
             {
                 if (!dcManager.AttemptContinue())
                 {
-                    if (dcManager.IsChoiceActive())
-                    {
-                        dcManager.Choose();
-                        dcManager.AttemptContinue();
-                    }
-                    else
-                    {
-                        dcManager.InitiateChoices();
-                    }
+                    dcManager.InitiateChoices();
                 }
             }
         }
