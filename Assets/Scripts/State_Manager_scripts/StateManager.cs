@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,8 +17,19 @@ public class StateManager : MonoBehaviour
      * The menus are placed 'over'  'Roam' State, so 'Roam State' never dissappears (unless it wants to), it just has something over it
      * 
      */
-    
-    
+
+    public enum ConfigItem
+    {
+        Brightness,
+        LeashLength,
+        Controls,
+        LoadSaveOption,
+        ExitOption,
+    }
+
+    public static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
+
+
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     [SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
@@ -54,5 +66,12 @@ public class StateManager : MonoBehaviour
         DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         //initialisation for the canvas of the player menu canvas (when it gets implemented)
         PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
+
+        ConfigValues = new Dictionary<ConfigItem, int>();
+        ConfigValues.Add(ConfigItem.Brightness, 50); //hardCoded initBrightness
+        ConfigValues.Add(ConfigItem.LeashLength, -1); //hardCoded initLeashLength
+        ConfigValues.Add(ConfigItem.Controls, -1);
+        ConfigValues.Add(ConfigItem.LoadSaveOption, -1);
+        ConfigValues.Add(ConfigItem.ExitOption, -1);
     }
 }
