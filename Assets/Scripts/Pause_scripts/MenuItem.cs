@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuItem : MonoBehaviour
+public class MenuItem : MonoBehaviour, ISelectableElement
 {
     /* should be composed of 4 parts:
      *  - selector image
@@ -23,6 +23,14 @@ public class MenuItem : MonoBehaviour
     public void SetSelected(bool setSelected)
     {
         selectorImage.SetActive(setSelected);
+    }
+    public bool Choose()
+    {
+        throw new System.NotImplementedException("what");
+    }
+    public void SetVisible(bool visible)
+    {
+        this.gameObject.SetActive(visible); //FIXXXX DO NOT DO THIS
     }
 
     public void SetDisplayedName(string newName)
