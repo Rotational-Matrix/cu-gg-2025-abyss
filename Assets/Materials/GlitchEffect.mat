@@ -88,8 +88,8 @@ Material:
     - _BumpScale: 1
     - _ChromAberrAmountX: 0
     - _ChromAberrAmountY: 0
-    - _ChromAberrX: 0.0045
-    - _ChromAberrY: 0.0045
+    - _ChromAberrX: 0.004
+    - _ChromAberrY: 0.004
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -118,7 +118,7 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _WavyDisplFreq: 10
-    - _WavyFreq: 10
+    - _WavyFreq: 20
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:

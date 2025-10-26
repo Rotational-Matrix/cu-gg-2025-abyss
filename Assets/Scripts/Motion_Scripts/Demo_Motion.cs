@@ -1,65 +1,85 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using System.Collections.Generic;
 
-public class MoveToVectorUI : MonoBehaviour
+public class MoveAnchor : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public Transform objectToMove;     // The object you want to control
+    public Transform objectToMove;  
     public float moveSpeed = 3f;
 
-    [Header("UI References")]
-    public TMP_InputField positionInput;
-    public Button moveButton;
+    [Header("Path Points")]
+    public List<Vector3> targetPositions = new List<Vector3>
+    {
+        new Vector3(0f, 0f, 0f),
+        new Vector3(1f, 0f, -2f),
+        new Vector3(2f, 0f, 2f),
+        new Vector3(1f, 0f, 2f)
+    };
 
+    private int currentTargetIndex = -1;
     private Vector3 targetPosition;
     private bool moving = false;
 
     void Start()
     {
-        // Hook up the button listener
-        if (moveButton != null)
-            moveButton.onClick.AddListener(OnMoveButtonPressed);
-        TextMeshProUGUI buttonText = moveButton.GetComponentInChildren<TextMeshProUGUI>();
-        buttonText.text = "Move anchor";
+        if (objectToMove == null)
+        {
+            Debug.LogError("No object assigned to move!");
+            enabled = false;
+            return;
+        }
     }
 
     void Update()
     {
-        if (!moving) return;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            MoveToNextPosition();
+        }
 
-        objectToMove.position = Vector3.MoveTowards(
-            objectToMove.position,
-            targetPosition,
-            moveSpeed * Time.deltaTime
-        );
+        if (moving)
+        {
+            objectToMove.position = Vector3.MoveTowards(
+                objectToMove.position,
+                targetPosition,
+                moveSpeed * Time.deltaTime
+            );
 
-        if (Vector3.Distance(objectToMove.position, targetPosition) < 0.01f)
-            moving = false;
+            if (Vector3.Distance(objectToMove.position, targetPosition) < 0.01f)
+            {
+                moving = false; // Stop when reached
+                Debug.Log($"Reached position {currentTargetIndex}");
+            }
+        }
     }
 
-    void OnMoveButtonPressed()
+    /// <summary>
+    /// Moves to the next position in the list.
+    /// Can also be called manually from other scripts.
+    /// </summary>
+    public void MoveToNextPosition()
     {
-        if (string.IsNullOrEmpty(positionInput.text)) return;
-
-        string[] parts = positionInput.text.Split(',');
-        if (parts.Length != 3)
+        if (moving)
         {
-            Debug.LogWarning("Input must be in format: x, y, z");
+            Debug.Log("Already moving. Wait until the move finishes.");
             return;
         }
 
-        try
+        if (targetPositions.Count == 0)
         {
-            float x = float.Parse(parts[0]);
-            float y = float.Parse(parts[1]);
-            float z = float.Parse(parts[2]);
-            targetPosition = new Vector3(x, y, z);
-            moving = true;
+            Debug.LogWarning("No target positions defined!");
+            return;
         }
-        catch
+
+        if (currentTargetIndex + 1 >= targetPositions.Count)
         {
-            Debug.LogWarning("Invalid vector input! Use numeric values like: 1, 2, 3");
+            Debug.Log("Reached the final target. No more positions left.");
+            return;
         }
+
+        currentTargetIndex++;
+        targetPosition = targetPositions[currentTargetIndex];
+        moving = true;
+        Debug.Log($"Moving to position {currentTargetIndex}: {targetPosition}");
     }
 }

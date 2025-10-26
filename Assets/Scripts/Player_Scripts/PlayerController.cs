@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private int groundedFrameCount;
+    public bool canJump = false; // TESTING
     private Vector2 inputVector;
     SpriteRenderer spriteRenderer;
     private float oldX;
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnJump(InputAction.CallbackContext ctx)
     {
+        if (!canJump) return;
         if (IsGrounded()) rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
     }
     // Update is called once per frame
