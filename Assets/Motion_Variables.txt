@@ -5,6 +5,6 @@ Strength - 40
 Max Dist - 1
 PLAYER CONTROLLER:
 Can Jump - False
-Movement Speed - 5
+Movement Speed - 3
 Max Speed - 1.5
 Jump Speed - 3.5
