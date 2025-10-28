@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class MoveAnchor : MonoBehaviour
+public class DemoMotion : MonoBehaviour
 {
     [Header("Movement Settings")]
     public Transform objectToMove;  
@@ -19,7 +19,11 @@ public class MoveAnchor : MonoBehaviour
     private int currentTargetIndex = -1;
     private Vector3 targetPosition;
     private bool moving = false;
-
+    private Vector3 direction = Vector3.zero;
+    public Vector3 Direction()
+    {
+        return direction;
+    }
     void Start()
     {
         if (objectToMove == null)
@@ -44,9 +48,10 @@ public class MoveAnchor : MonoBehaviour
                 targetPosition,
                 moveSpeed * Time.deltaTime
             );
-
+            direction = (targetPosition - objectToMove.position).normalized;
             if (Vector3.Distance(objectToMove.position, targetPosition) < 0.01f)
             {
+                direction = Vector3.zero;
                 moving = false; // Stop when reached
                 Debug.Log($"Reached position {currentTargetIndex}");
             }

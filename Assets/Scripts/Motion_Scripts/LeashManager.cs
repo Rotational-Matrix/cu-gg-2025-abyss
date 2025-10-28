@@ -40,12 +40,17 @@ public class LeashManager : MonoBehaviour
         Vector3 distanceDirection = xToY.normalized;
         Vector3 springForce = (workingDistance * strength) * distanceDirection;
         //Computes small force in the direction of player motion
-        Vector2 inputVector = move.ReadValue<Vector2>();
-        Vector3 inputVelocity = transform.right * inputVector.x + transform.forward * inputVector.y;
+        Vector3 inputVelocity = InputVelocity();
         rb.AddForce(inertia * rb.velocity.magnitude * inputVelocity);
-        strain = inputVector.magnitude > 0.05 && workingDistance > 0.05 && !Similar(inputVelocity, springForce);
+        strain = inputVelocity.magnitude > 0.05 && workingDistance > 0.05 && !Similar(inputVelocity, springForce);
         //Applies force
         rb.AddForce(springForce);
+    }
+    public Vector3 InputVelocity()
+    {
+        Vector2 input2D = move.ReadValue<Vector2>();
+        Vector3 input3D = transform.right * input2D.x + transform.forward * input2D.y;
+        return input3D;
     }
     //the rest of these are math helper functions that should be in their own class probably
     public static Vector3 VectorXToY(Vector3 x, Vector3 y) {
