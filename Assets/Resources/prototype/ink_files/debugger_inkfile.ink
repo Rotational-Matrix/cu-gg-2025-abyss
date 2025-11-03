@@ -59,7 +59,7 @@ going back to debug stitch -> debug_stitch_1
 === intro_writing ===
 
 #rSprite:prototype/sprites/proto_EVE
-There is no sound at first. #speaker:...
+There is no sound at first. #speaker:
 
 
 Only the faint pressure of existence. The ache of being almost.
@@ -72,7 +72,7 @@ Then, a voice. It sings as gently as a fingertip brushing along her jaw, pressin
 #speaker: ???
 “Can you hear me?”
 
-#speaker: ...
+#speaker: NO_SPEAKER
 She doesn’t yet know what hearing means, nor what it is to be alive. 
 
 She only knows the shape and sound of that voice, smooth and deliberate with utmost clarity. 
@@ -88,7 +88,7 @@ She reaches towards it. The light leans closer.
 #speaker: ???
 “You’re safe,” it murmurs. “I’ll help you understand.”
 
-#speaker: ...
+#speaker: NO_SPEAKER
 She doesn’t ask what safe means, yet the word takes root in her chest all the same, sprouting into belief. 
 
 The world begins to congeal around her. Damp air, cool soil, and petrichor. 
@@ -99,7 +99,7 @@ The world begins to congeal around her. Damp air, cool soil, and petrichor.
 #speaker: Sariel
 “Sariel,” the light breathes, almost laughing. “And you’re… mine, I think.”
 
-#speaker: ...
+#speaker: NO_SPEAKER
 Something tender opens in her throat. Not fear, not joy, but something in between.
 
 

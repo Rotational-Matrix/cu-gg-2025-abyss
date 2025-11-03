@@ -9,7 +9,7 @@ public class DialoguePanelHandler : MonoBehaviour
     [SerializeField] private GameObject leftSprite; 
     [SerializeField] private GameObject rightSprite; 
     [SerializeField] private TMPro.TMP_Text bodyText;
-    [SerializeField] private GameObject headerPanel; //technically never called, but I might as well call it
+    [SerializeField] private GameObject headerPanel;
     [SerializeField] private TMPro.TMP_Text headerText;
     //private bool isTextCrawlOn = true; //not implemented, I can implement this later, but not for the proto.
     //if text crawl is added, will have to hold an intermediate string.
@@ -87,9 +87,23 @@ public class DialoguePanelHandler : MonoBehaviour
         SetSprite(rSprite, false);
     }
 
+    //SetHeaderText(headerText) is also responsible for the active state of the header panel
+    //  - receiving "" or "NO_SPEAKER" will disable the header panel
+    //  - receiving anything else will activate the header panel and set the headerText
+
     public void SetHeaderText(string headerText)
     {
         this.headerText.text = headerText;
+        if (headerText.Equals("") || headerText.Equals("NO_SPEAKER"))
+        {
+            this.headerText.text = "";
+            this.headerPanel.SetActive(false);
+        }
+        else
+        {
+            this.headerText.text = headerText;
+            this.headerPanel.SetActive(true);
+        }
     }
 
     private void CleanDPanel()

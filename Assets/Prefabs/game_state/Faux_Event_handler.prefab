@@ -44,5 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15d30b4b35599e147a705e3793070706, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueCanvas: {fileID: 0}
   forceJumpKnotName: debug_knot.debug_stitch_1

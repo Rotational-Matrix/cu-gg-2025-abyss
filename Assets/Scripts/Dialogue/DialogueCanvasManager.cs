@@ -332,13 +332,14 @@ public class DialogueCanvasManager : MonoBehaviour
                 case "speaker":
                     HandleSpeakerTag(postColon);
                     break;
+                case "sprite": //this intentionally doesn't break and falls to the lSprite case
                 case "lSprite":
                     HandleSpriteTag(postColon, true);
                     break;
                 case "rSprite":
                     HandleSpriteTag(postColon, false);
                     break;
-                case "audio": //no shot this is implemented
+                case "audio": //not implemented!
                     HandleAudioTag(postColon);
                     break;
                 default:
