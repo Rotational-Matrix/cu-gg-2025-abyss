@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-interface ISelectableElement
+public interface ISelectableElement
 {
     /* ISelectable is the interface for anything that can be put in a list and selected.
      *  - NOTE: this does not apply to choiceBoxes because they were made before this and I'm lazy

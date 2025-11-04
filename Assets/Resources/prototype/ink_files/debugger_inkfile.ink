@@ -1,5 +1,6 @@
 -> debug_knot
 
+VAR strlenConfigKnown = false
 
 === debug_knot ===
 

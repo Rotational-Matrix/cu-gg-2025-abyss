@@ -20,10 +20,21 @@ public class PauseMenuManager : MonoBehaviour
      *  - There should be commands to access the data this can alter, as well as calling it
      */
 
+    public enum ConfigItem
+    {
+        Brightness,
+        LeashLength,
+        Controls,
+        LoadSaveOption,
+        ExitOption,
+    }
+    public static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
+
     [SerializeField] private GameObject pauseMenuPanel; //presumes there will only be one
     [SerializeField] private TMPro.TMP_Text pauseMenuText;
 
     [SerializeField] private GameObject menuItemHandler; //presumed to be a collection of menu items w/proper handler
+
 
 
     public void ToggleMenu() //only concerns the menu panel rn
@@ -40,6 +51,14 @@ public class PauseMenuManager : MonoBehaviour
     private void Awake()
     {
         SetPauseMenuState(false);
+
+        //feel like this should be stored in PauseMenuManager...
+        ConfigValues = new Dictionary<ConfigItem, int>();
+        ConfigValues.Add(ConfigItem.Brightness, 50); //hardCoded initBrightness
+        ConfigValues.Add(ConfigItem.LeashLength, -1); //hardCoded initLeashLength
+        ConfigValues.Add(ConfigItem.Controls, -1);
+        ConfigValues.Add(ConfigItem.LoadSaveOption, -1);
+        ConfigValues.Add(ConfigItem.ExitOption, -1);
     }
     //not implemented!
 

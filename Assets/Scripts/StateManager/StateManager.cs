@@ -18,17 +18,6 @@ public class StateManager : MonoBehaviour
      * 
      */
 
-    public enum ConfigItem
-    {
-        Brightness,
-        LeashLength,
-        Controls,
-        LoadSaveOption,
-        ExitOption,
-    }
-
-    public static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
-
 
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     [SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
@@ -39,7 +28,10 @@ public class StateManager : MonoBehaviour
     public static PauseMenuManager PMManager { get; private set; }
 
     //there would be a player menu canvas here, if it existed!
-    //same for pauseMenu canvas!
+
+    //this is the current stack of menus opened
+    public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
+
 
     private static bool isInDialogue = false;
     private static bool isInPlayerMenu = false;
@@ -60,18 +52,13 @@ public class StateManager : MonoBehaviour
     { return isInPauseMenu; }
 
 
+
     private void Awake()
     {
         //note how, if there are 2 StateManagers, one will overwrite the other! (why would there be 2 of these though...)
         DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         //initialisation for the canvas of the player menu canvas (when it gets implemented)
         PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
-
-        ConfigValues = new Dictionary<ConfigItem, int>();
-        ConfigValues.Add(ConfigItem.Brightness, 50); //hardCoded initBrightness
-        ConfigValues.Add(ConfigItem.LeashLength, -1); //hardCoded initLeashLength
-        ConfigValues.Add(ConfigItem.Controls, -1);
-        ConfigValues.Add(ConfigItem.LoadSaveOption, -1);
-        ConfigValues.Add(ConfigItem.ExitOption, -1);
+        
     }
 }
