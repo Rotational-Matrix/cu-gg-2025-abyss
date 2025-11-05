@@ -57,6 +57,9 @@ public class DialogueCanvasManager : MonoBehaviour
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
         SetDialogueState(false); //it automatically makes sure it is turned off at start.
+        
+        for(int i = 0; i < 3; i++)
+            saveStateJsons.Add(""); //it is just easier to create a fake buffer.
     }
 
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
@@ -151,20 +154,20 @@ public class DialogueCanvasManager : MonoBehaviour
     }
     public void RunInkSaveState(int saveStateIndex)
     {
-        if (saveStateJsons.Count <= saveStateIndex) //The eror occurs here because this situation is always an accident
+        if (saveStateJsons.Count <= saveStateIndex || saveStateIndex < 0 || string.Equals(saveStateJsons[saveStateIndex], ""))
         {
             throw new System.ArgumentOutOfRangeException("RunInkSaveState doesn't have a savestate at index: " + saveStateIndex);
-        }
-        else if (saveStateIndex < 0) //using -1 
-        {
-            _inkStory.state.LoadJson(saveStateJsons[saveStateJsons.Count - 1]);
         }
         else
         {
             _inkStory.state.LoadJson(saveStateJsons[saveStateIndex]);
         }
     }
-    
+    public bool IsInkSaveStateEmpty(int index)
+    {
+        //all considered 'empty' for all intents and purposes
+        return saveStateJsons.Count <= index || index < 0 || string.Equals(saveStateJsons[index], "");
+    }
 
     public void SetInkVar<T>(string variableName, T newVal) //literally the name of the variable as it appears in the inkstory
     {

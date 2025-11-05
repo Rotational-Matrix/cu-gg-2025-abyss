@@ -31,6 +31,7 @@ public class StateManager : MonoBehaviour
 
     //this is the current stack of menus opened
     public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
+    
 
 
     private static bool isInDialogue = false;

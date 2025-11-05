@@ -7,9 +7,10 @@ using UnityEngine;
 public class DefaultGrid : MonoBehaviour, IGridSelectable
 {
     //normally I deliberately serialize GameObjects and not components.
-    //  In this instance,the components are being serialized
-    [SerializeField] private List<ISelectableElement> selectableList = new List<ISelectableElement>();
-    private int selectedIndex = -1;
+    //  In this instance,the components are being serialized (also note for inheritance it is protected)
+    [SerializeField] protected List<ISelectableElement> selectableList = new List<ISelectableElement>();
+    [SerializeField] protected GameObject menuPanel; //which in turn serializes the grid back.
+    protected int selectedIndex = -1;
 
     /* ISelectableElement has the following methods:
      *  - void SetSelected(bool)
@@ -25,6 +26,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
             element.SetVisible(true);
         selectedIndex = 0;
         selectableList[selectedIndex].SetSelected(true);
+        menuPanel.SetActive(true);
         StateManager.MenuStack.Push(this); //notably calls to push itself to MenuStack on init
     }
 
@@ -79,11 +81,15 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         selectedIndex = -1;
         foreach (ISelectableElement element in selectableList)
             element.SetVisible(false);
+        menuPanel.SetActive(false); //only place where menuPanel is called
         StateManager.MenuStack.Pop(); //notably calls to pop the MenuStack itself on exit
     }
 
 
-
+    protected void Awake()
+    {
+        menuPanel.SetActive(false); //all menu Panels should start off unless otherwise specified
+    }
 
 
 

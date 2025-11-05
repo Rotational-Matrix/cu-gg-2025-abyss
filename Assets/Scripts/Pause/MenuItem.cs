@@ -55,6 +55,9 @@ public class MenuItem : MonoBehaviour, ISelectableElement
         string itemText;
         switch (configItem)
         {
+            case PauseMenuManager.ConfigItem.Resume:
+                itemText = "Resume";
+                break;
             case PauseMenuManager.ConfigItem.Brightness:
                 itemText = "Brightness";
                 break;
@@ -123,6 +126,9 @@ public class MenuItem : MonoBehaviour, ISelectableElement
         bool success = true;
         switch (configItem)
         {
+            case PauseMenuManager.ConfigItem.Resume:
+                ExitCurrentMenu();
+                break;
             case PauseMenuManager.ConfigItem.Brightness:
                 // (enter number popup) FIXXXXXXXX
                 break;
@@ -141,7 +147,7 @@ public class MenuItem : MonoBehaviour, ISelectableElement
                 // (save state menu popup) FIXXXXXXXX
                 break;
             case PauseMenuManager.ConfigItem.ExitOption:
-                ExitCall();
+                // should actually lead to an "are you sure you want to exit?" popup
                 break;
             default:
                 throw new System.ArgumentException("how...?");
@@ -153,7 +159,8 @@ public class MenuItem : MonoBehaviour, ISelectableElement
     //note that most of these individual reactions will require accessing StateManager
 
     //ExitCall() is a little dangerous. MenuStack must ensure that only the top-most menu can be called
-    private void ExitCall()
+    //should prolly be altered to an "are you sure?" popup
+    private void ExitCurrentMenu()
     {
         StateManager.MenuStack.Peek().ExitMenu();
     }
