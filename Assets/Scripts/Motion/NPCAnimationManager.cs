@@ -9,6 +9,7 @@ public class NPCAnimationManager : MonoBehaviour
     //private Rigidbody rb;
     public Sprite nSprite; //back-facing
     public Sprite sSprite; //front-facing
+    public Sprite redSprite; //guess.
     private DemoMotion dm;
     public float flipEpsilon = 0.025f; //minimum inputvelocity to signal a sprite flip
     private bool frontFacing;
@@ -19,6 +20,7 @@ public class NPCAnimationManager : MonoBehaviour
         GameObject spriteContainer = playerObject.transform.GetChild(0).gameObject;
         sr = spriteContainer.GetComponent<SpriteRenderer>();
         dm = playerObject.GetComponent<DemoMotion>();
+        FlowerManager.OnFlowerPuzzleEnd += Blush;
     }
 
     // Update is called once per frame
@@ -29,11 +31,13 @@ public class NPCAnimationManager : MonoBehaviour
         float z = input.z;
         if (z * z > flipEpsilon)
         {
-            if (z > 0) {
+            if (z > 0)
+            {
                 sr.sprite = nSprite;
                 frontFacing = true;
             }
-            else {
+            else
+            {
                 sr.sprite = sSprite;
                 frontFacing = false;
             }
@@ -45,4 +49,8 @@ public class NPCAnimationManager : MonoBehaviour
             else sr.flipX = frontFacing;
         }
     }
+    private void Blush(FlowerManager flowerManager)
+    {
+        sr.sprite = redSprite;
+    } 
 }
