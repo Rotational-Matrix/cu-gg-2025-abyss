@@ -34,11 +34,13 @@ public class PauseMenuManager : MonoBehaviour
     }
     public static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
 
-    [SerializeField] private GameObject pauseMenuPanel; //presumes there will only be one
-    [SerializeField] private TMPro.TMP_Text pauseMenuText; //prolly doesn't need to actually know about this
+    [SerializeField] private CallbackGrid configMenu; //presumes there will only be one
+    //[SerializeField] private TMPro.TMP_Text pauseMenuText; //prolly doesn't need to actually know about this
 
     // popup + menu collection (generally, dynamic menus are called popups here)
     [SerializeField] private CallbackGrid assignValuePopup; //for leash and for Brightness (dynamic!)
+    [SerializeField] private CustomNumInput avInputHandler;
+
     [SerializeField] private CallbackGrid areYouSurePopup; // for exit-game and load-save esque calls (dynamic!)
     [SerializeField] private CallbackGrid loadSaveMenu;
     [SerializeField] private CallbackGrid controlsMenu;
@@ -47,14 +49,19 @@ public class PauseMenuManager : MonoBehaviour
 
     /* Doesn't create the popup, just overwrites properties on the existing one
      */
-    public void InitAVPopup(/*realistically should be passing args*/)
+    
+    public void InitConfigMenu()
     {
-        //assignValuePopup.NOTIMPLEMENTED();
+        configMenu.InitiateGrid();
+    }
+    public void InitAVPopup(Action<int> call, string valueName, string prevValue, int max, string maxText)
+    {
+        PrepareAV(call, valueName, prevValue, max, maxText);
+        assignValuePopup.InitiateGrid();
     }
     public void InitAYSPopup(/*string headerText, */string actText, Action<int> call, int val, string cancelText)
     {
-        //note e2Call and e2Val to be null and 0 respectively (hence why they are not needed
-        //areYouSurePopup.NOTIMPLEMENTED(headerText, e1Text, e1Call, e1Val, e2Text);
+        //note cancelCall and cancelVal are not dynamic and hence they are not needed as params
         PrepareAYS(actText, call, val, cancelText);
         areYouSurePopup.InitiateGrid();
     }
@@ -70,7 +77,7 @@ public class PauseMenuManager : MonoBehaviour
     }
 
 
-
+    /*
     public void ToggleMenu() //only concerns the menu panel rn
     {
         SetPauseMenuState(!StateManager.GetPauseMenuStatus());
@@ -80,16 +87,14 @@ public class PauseMenuManager : MonoBehaviour
     {
         pauseMenuPanel.SetActive(setActive); //currently only handles the panel
         StateManager.SetPauseMenuStatus(setActive);
-    }
+    }*/
 
     private void Awake()
     {
-        SetPauseMenuState(false);
-
         //feel like this should be stored in PauseMenuManager...
         ConfigValues = new Dictionary<ConfigItem, int>();
-        ConfigValues.Add(ConfigItem.Brightness, -1);
-        ConfigValues.Add(ConfigItem.Brightness, 50); //hardCoded initBrightness
+        ConfigValues.Add(ConfigItem.Resume, -1);
+        ConfigValues.Add(ConfigItem.Brightness, 35); //hardCoded initBrightness
         ConfigValues.Add(ConfigItem.LeashLength, -1); //hardCoded initLeashLength
         ConfigValues.Add(ConfigItem.Controls, -1);
         ConfigValues.Add(ConfigItem.LoadSaveOption, -1);
@@ -97,22 +102,38 @@ public class PauseMenuManager : MonoBehaviour
 
         CTRLAwake();
         LSAwake();
+        AVAwake();
+        ConfigAwake();
     }
     
 
     private void CTRLAwake()
     {
         //the lambda statement notably takes an 'int x' just to fit the cast.
-        controlsMenu.SetCallbackAt(0, "ACCEPT AND EXIT", (x) => { StateManager.MenuStack.Peek().ExitMenu(); });
+        controlsMenu.SetCallbackAt(0, "ACCEPT AND EXIT", (x) => { StateManager.ExitTopMenu(); });
     }
 
     // EXPECTED 3 SAVESTATE SPOTS (and 1 quit)
     private void LSAwake()
     {
         //elements 0,1,2 are all dynamic for the most part
-        loadSaveMenu.SetCallbackAt(3, "CANCEL", (x) => { StateManager.MenuStack.Peek().ExitMenu(); });
+        loadSaveMenu.SetCallbackAt(3, "CANCEL", (x) => { StateManager.ExitTopMenu(); });
         for (int i = 0; i < 3; i++)
             loadSaveMenu.SetInputAt(i, i);
+    }
+
+    private void AVAwake()
+    {
+        assignValuePopup.SetInputType(StateManager.MenuInputType.DirectKeyCode);
+    }
+
+    private void ConfigAwake()
+    {
+        int i = 0;
+        foreach(ConfigItem cItem in Enum.GetValues(typeof(ConfigItem)))
+        {
+            (configMenu[i++] as MenuItem).SetConfigID(cItem);
+        }
     }
 
     private void PrepareLS() //to be called on observation, not awake
@@ -139,12 +160,17 @@ public class PauseMenuManager : MonoBehaviour
     private void PrepareAYS(string text, Action<int> call, int val, string cancelText)
     {
         //note that in all circumstances, there are 2 options
-        areYouSurePopup.SetCallbackAt(0, cancelText, (x) => { StateManager.MenuStack.Peek().ExitMenu(); });
+        areYouSurePopup.SetCallbackAt(0, cancelText, (x) => { StateManager.ExitTopMenu(); });
         areYouSurePopup.SetInputAt(1, val);
-        Action<int> bucket_call = (x) => { StateManager.MenuStack.Peek().ExitMenu(); call(x); };
+        Action<int> bucket_call = (x) => { StateManager.ExitTopMenu(); call(x); };
         areYouSurePopup.SetCallbackAt(1, text, bucket_call);
     }
 
+    private void PrepareAV(Action<int> assignValCall, string valueName, string prevValue, int max, string maxText)
+    {
+        avInputHandler.InitNumInput(assignValCall, valueName, prevValue, max, maxText);
+        StateManager.SetDirectAction(avInputHandler.HandleKeyCode);
+    }
 
 
 

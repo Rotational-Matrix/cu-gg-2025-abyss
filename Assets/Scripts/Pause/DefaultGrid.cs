@@ -25,7 +25,8 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         foreach(ISelectableElement element in selectableList)
             element.SetVisible(true);
         selectedIndex = 0;
-        selectableList[selectedIndex].SetSelected(true);
+        if (selectableList.Count > 0)
+            selectableList[selectedIndex].SetSelected(true);
         menuPanel.SetActive(true);
         StateManager.MenuStack.Push(this); //notably calls to push itself to MenuStack on init
     }
@@ -77,12 +78,28 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
      */
     public void ExitMenu()
     {
-        selectableList[selectedIndex].SetSelected(false);
+        if (selectableList.Count > 0)
+            selectableList[selectedIndex].SetSelected(false);
         selectedIndex = -1;
         foreach (ISelectableElement element in selectableList)
             element.SetVisible(false);
         menuPanel.SetActive(false); //only place where menuPanel is called
         StateManager.MenuStack.Pop(); //notably calls to pop the MenuStack itself on exit
+    }
+
+    public virtual StateManager.MenuInputType InputType()
+    {
+        return StateManager.MenuInputType.SelectableGrid;
+    }
+
+    public ISelectableElement this[int index]
+    {
+        get
+        {
+            if (index >= 0 && index < selectableList.Count)
+                return selectableList[index];
+            throw new System.ArgumentOutOfRangeException();
+        }
     }
 
 

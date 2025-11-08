@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class MenuItem : MonoBehaviour, ISelectableElement
     [SerializeField] private TMPro.TMP_Text itemValueTextObject;
     //reaction will very much need to be implemented
 
-    [SerializeField] private PauseMenuManager.ConfigItem configItem; //This serves as the 'type of configmenu item
+    private PauseMenuManager.ConfigItem configItem; //This serves as the 'type of configmenu item
     
     public void SetSelected(bool setSelected)
     {
@@ -45,10 +46,10 @@ public class MenuItem : MonoBehaviour, ISelectableElement
      *  - I don't want to create a unique class for every menu item, so
      *      each menuItems give their own ID to determine their functions
      */
-    /*private void InitMenuItem(PauseMenuManager.ConfigItem configItem)
+    public void SetConfigID(PauseMenuManager.ConfigItem configItem)
     {
         this.configItem = configItem;
-    }*/
+    }
 
     private string PrepareItemName()
     {
@@ -77,7 +78,7 @@ public class MenuItem : MonoBehaviour, ISelectableElement
                 itemText = "ERROR";
                 break;
         }
-        return itemText;
+        return itemText.ToUpper(); //I touppered this...
     }
     private string PrepareItemValue()
     {
@@ -130,24 +131,24 @@ public class MenuItem : MonoBehaviour, ISelectableElement
                 ExitCurrentMenu();
                 break;
             case PauseMenuManager.ConfigItem.Brightness:
-                // (enter number popup) FIXXXXXXXX
+                AVPopupCall();
                 break;
             case PauseMenuManager.ConfigItem.LeashLength:
                 if (LeashConfigKnown())
-                {
-                    // (enter number popup) FIXXXXXXXX
-                }
+                    AVPopupCall();
                 else
                     success = false;
                 break;
             case PauseMenuManager.ConfigItem.Controls:
-                // (exit only popup) FIXXXXXXXX
+                StateManager.PMManager.InitCTRLMenu();
                 break;
             case PauseMenuManager.ConfigItem.LoadSaveOption:
-                // (save state menu popup) FIXXXXXXXX
+                StateManager.PMManager.InitLSMenu();
                 break;
             case PauseMenuManager.ConfigItem.ExitOption:
-                // should actually lead to an "are you sure you want to exit?" popup
+                // NOTE: SHOULD MAKE YOU EXIT THE GAME...ONLY USES AYS TO EXIT (FIXXXXX)
+                StateManager.PMManager.InitAYSPopup("QUIT THE GAME (just leaves the pause rn)",
+                    (x) => { ExitCurrentMenu(); }, 0, "DO NOT QUIT THE GAME");
                 break;
             default:
                 throw new System.ArgumentException("how...?");
@@ -156,13 +157,49 @@ public class MenuItem : MonoBehaviour, ISelectableElement
         return success;
     }
 
-    //note that most of these individual reactions will require accessing StateManager
+    private void AVPopupCall()
+    {
+        int max = 99;
+        string maxText = max.ToString();
+        Action<int> bucketCall = (x) => { PauseMenuManager.ConfigValues[configItem] = x; this.RefreshItemVal(); };
+        string prevValStr = PauseMenuManager.ConfigValues[configItem].ToString(); //danger
+        if (configItem == PauseMenuManager.ConfigItem.Brightness)
+        {
+            max = 36; //HARDCODED (but lie to user) (put starting value + 1 maybe??)
+            if (StateManager.DCManager.GetInkVar<bool>("triedToIncreaseBrightness")) //Inkfile VAR name
+            {
+                maxText = "<color=\"red\">" + max.ToString() + "</color>";
+            }
+            else
+            {
+                bucketCall = (x) =>
+                {
+                    PauseMenuManager.ConfigValues[configItem] = x;
+                    this.RefreshItemVal();
+                    if (x >= max) //it will get set to max anyway if it is higher...
+                    {
+                        StateManager.PMManager.InitAYSPopup("BRIGHTNESS CANNOT BE INCREASED",
+                            StateManager.PhonyAction, 0, "ERROR: INVALID ACCESS");
+                        StateManager.DCManager.SetInkVar<bool>("triedToIncreaseBrightness", true);
+                    }
+                };
+            }
+        }
+        // current mechanism dangerously allows out of range str indicators FIXXXXXXXX
+        StateManager.PMManager.InitAVPopup(bucketCall, PrepareItemName(), prevValStr, max, maxText);
+    }
 
-    //ExitCall() is a little dangerous. MenuStack must ensure that only the top-most menu can be called
-    //should prolly be altered to an "are you sure?" popup
+    private void RefreshItemVal()
+    {
+        itemValueTextObject.text = PrepareItemValue();
+    }
+
+
+
+
     private void ExitCurrentMenu()
     {
-        StateManager.MenuStack.Peek().ExitMenu();
+        StateManager.ExitTopMenu();
     }
     
     // as stupid as it is, I can actually make all the methods in this class,

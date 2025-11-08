@@ -18,6 +18,13 @@ public class StateManager : MonoBehaviour
      * 
      */
 
+    public enum MenuInputType
+    {
+        None,
+        SelectableGrid,
+        DirectKeyCode
+    }
+
 
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     [SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
@@ -31,18 +38,46 @@ public class StateManager : MonoBehaviour
 
     //this is the current stack of menus opened
     public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
-    
+    public static Action<KeyCode> DirectInputAction { get; private set; }
 
 
     private static bool isInDialogue = false;
-    private static bool isInPlayerMenu = false;
-    private static bool isInPauseMenu = false;
+    //private static bool isInPlayerMenu = false;
+    //private static bool isInPauseMenu = false;
 
     //getters and setters could be made onto the attributes, but that is weird!
     public static void SetDialogueStatus(bool status)
     { isInDialogue = status; }
     public static bool GetDialogueStatus()
     { return isInDialogue; }
+
+    public static bool IsInMenu()
+    {
+        return StateManager.MenuStack.Count > 0;
+    }
+    public static StateManager.MenuInputType CurrMenuType()
+    {
+        if (IsInMenu())
+        {
+            return MenuStack.Peek().InputType();
+        }
+        else
+            return MenuInputType.None;
+    }
+
+    //Shortcut fns
+    public static void ExitTopMenu()
+    {
+        if (IsInMenu())
+            MenuStack.Peek().ExitMenu();
+    }
+    public static void PhonyAction(int useless)
+    {
+        //This actually *should* to nothing. It is a phony Action<int>
+    }
+
+
+    /*
     public static void SetPlayerMenuStatus(bool status)
     { isInPlayerMenu = status; }
     public static bool GetPlayerMenuStatus()
@@ -51,6 +86,12 @@ public class StateManager : MonoBehaviour
     { isInPauseMenu = status; }
     public static bool GetPauseMenuStatus()
     { return isInPauseMenu; }
+    */
+
+    public static void SetDirectAction(Action<KeyCode> directInputAction)
+    {
+        StateManager.DirectInputAction = directInputAction;
+    }
 
 
 

@@ -1,6 +1,7 @@
 -> debug_knot
 
 VAR strlenConfigKnown = false
+VAR triedToIncreaseBrightness = false
 
 === debug_knot ===
 
