@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+using JetBrains.Annotations; //is this something that swapping between versions added?
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ public class PauseMenuManager : MonoBehaviour
     }
     public static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
 
-    [SerializeField] private CallbackGrid configMenu; //presumes there will only be one
+    [SerializeField] private DefaultGrid configMenu; //presumes there will only be one
     //[SerializeField] private TMPro.TMP_Text pauseMenuText; //prolly doesn't need to actually know about this
 
     // popup + menu collection (generally, dynamic menus are called popups here)
@@ -45,7 +45,6 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private CallbackGrid loadSaveMenu;
     [SerializeField] private CallbackGrid controlsMenu;
 
-    [SerializeField] private GameObject menuItemHandler; //presumed to be a collection of menu items w/proper handler
 
     /* Doesn't create the popup, just overwrites properties on the existing one
      */
@@ -124,7 +123,7 @@ public class PauseMenuManager : MonoBehaviour
 
     private void AVAwake()
     {
-        assignValuePopup.SetInputType(StateManager.MenuInputType.DirectKeyCode);
+        assignValuePopup.SetInputType(StateManager.MenuInputType.DirectKey);
     }
 
     private void ConfigAwake()
@@ -169,7 +168,7 @@ public class PauseMenuManager : MonoBehaviour
     private void PrepareAV(Action<int> assignValCall, string valueName, string prevValue, int max, string maxText)
     {
         avInputHandler.InitNumInput(assignValCall, valueName, prevValue, max, maxText);
-        StateManager.SetDirectAction(avInputHandler.HandleKeyCode);
+        StateManager.SetDirectAction(avInputHandler.HandleKey);
     }
 
 

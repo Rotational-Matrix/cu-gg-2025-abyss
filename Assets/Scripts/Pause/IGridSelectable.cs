@@ -46,7 +46,7 @@ public interface IGridSelectable
 
     public StateManager.MenuInputType InputType();
 
-    public ISelectableElement this[int index] { get; }
+    public SelectableElement this[int index] { get; }
  
 
 

@@ -8,7 +8,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
 {
     //normally I deliberately serialize GameObjects and not components.
     //  In this instance,the components are being serialized (also note for inheritance it is protected)
-    [SerializeField] protected List<ISelectableElement> selectableList = new List<ISelectableElement>();
+    [SerializeField] protected List<SelectableElement> selectableList = new List<SelectableElement>();
     [SerializeField] protected GameObject menuPanel; //which in turn serializes the grid back.
     protected int selectedIndex = -1;
 
@@ -22,7 +22,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
 
     public void InitiateGrid()
     {
-        foreach(ISelectableElement element in selectableList)
+        foreach(SelectableElement element in selectableList)
             element.SetVisible(true);
         selectedIndex = 0;
         if (selectableList.Count > 0)
@@ -81,7 +81,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         if (selectableList.Count > 0)
             selectableList[selectedIndex].SetSelected(false);
         selectedIndex = -1;
-        foreach (ISelectableElement element in selectableList)
+        foreach (SelectableElement element in selectableList)
             element.SetVisible(false);
         menuPanel.SetActive(false); //only place where menuPanel is called
         StateManager.MenuStack.Pop(); //notably calls to pop the MenuStack itself on exit
@@ -92,7 +92,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         return StateManager.MenuInputType.SelectableGrid;
     }
 
-    public ISelectableElement this[int index]
+    public SelectableElement this[int index]
     {
         get
         {

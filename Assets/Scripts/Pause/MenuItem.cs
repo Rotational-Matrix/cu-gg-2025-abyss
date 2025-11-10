@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuItem : MonoBehaviour, ISelectableElement
+public class MenuItem : SelectableElement, ISelectableElement
 {
     /* should be composed of 4 parts:
      *  - selector image
@@ -20,15 +20,15 @@ public class MenuItem : MonoBehaviour, ISelectableElement
 
     private PauseMenuManager.ConfigItem configItem; //This serves as the 'type of configmenu item
     
-    public void SetSelected(bool setSelected)
+    public override void SetSelected(bool setSelected)
     {
         selectorImage.SetActive(setSelected);
     }
-    public bool Choose()
+    public override bool Choose()
     {
         return React();
     }
-    public void SetVisible(bool visible)
+    public override void SetVisible(bool visible)
     {
         if(visible)
         {

@@ -50,6 +50,9 @@ public class DialogueCanvasManager : MonoBehaviour
     private string intermediateBodyText = "";
     private List<string> currTags = new List<string>();
 
+    //informs how to read text
+    private bool readAsStageLines = true;
+
 
     private void Awake()
     {
@@ -67,7 +70,7 @@ public class DialogueCanvasManager : MonoBehaviour
         SetDialogueState(true);
         if (!Equals(knotName, null))
         {
-            DivertTo(knotName); //in case one wiches to intentionally not jump, but return to dialogue state
+            DivertTo(knotName); //in case one wishes to intentionally not jump, but return to dialogue state
         }
         return AttemptContinue();
     }
@@ -137,6 +140,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public void DivertTo(string knotName) //or knotName.stitchName
     {
+        HandleKnotTags(knotName);
         _inkStory.ChoosePathString(knotName);
     }
 
@@ -178,8 +182,12 @@ public class DialogueCanvasManager : MonoBehaviour
         return (T)(_inkStory.variablesState[variableName]); //forceful cast... please match types!
     }
 
-    //tags for content at path could be implemented
-
+    //##### only on DCM initiated diverting are KnotTags handled #####
+    private void HandleKnotTags(string knotName) //or knotName.stitchName
+    {
+        foreach (string tag in _inkStory.TagsForContentAtPath(knotName))
+            HandleColonKeyTags(tag);
+    }
 
     // ContinueDialogue returns a bool
     //  - returns true if its parsed text is valid
@@ -190,7 +198,7 @@ public class DialogueCanvasManager : MonoBehaviour
         string parsedText = ParseCommands(intermediateBodyText);
         if (!Equals(parsedText, null)) //null is passed by ParseCommands for line commands
         {
-            HandleLineTags();
+            HandleLineTags(); //note that line tags are handled after all actions of ParseCommands
             dpHandler.ProgressDialogue(parsedText, currHeader, currLeftSprite, currRightSprite);
             return true;
         }
@@ -202,8 +210,6 @@ public class DialogueCanvasManager : MonoBehaviour
     private string ParseCommands(string input)
     {
         //should handle line commands and inline commands.
-        //  - does NOT actively handle inline commands. //NotImplemented
-        //string bucketString = null; //(only for inline)
         if (input.Length >= 3 && input.Substring(0, 3).Equals(">>>")) //hardcoded, bc >>> is expected
         {
             string lineCommand = input.Substring(3).Trim(); //removes >>> and then whitespace at the start and end
@@ -216,16 +222,16 @@ public class DialogueCanvasManager : MonoBehaviour
 
     private void HandleLineCommands(string command)
     {
-        //the most common command, and the only one without a colon. [wait, the other commands have large intestines?]
-        if (command.Equals("STOP_DIALOGUE"))
+        switch (command)
         {
-            SetDialogueState(false); // This command wipes the dialogue panel
-        }
-        else
-        {
-            Debug.Log("Unknown line command received: " + command);
-            //where other commands would go.
-            //they are distinct because virtually all commands will have a ':'
+            case "STOP_DIALOGUE": //wipes dialogue panel
+                SetDialogueState(false);
+                break;
+            case "START_DIALOGUE": //phony, done to allow knot tags to work
+                break;
+            default:
+                Debug.Log("Unknown line command received: " + command);
+                break;
         }
     }
 
@@ -248,6 +254,27 @@ public class DialogueCanvasManager : MonoBehaviour
      * In general, ink seems to ignore '$,' So I intend to use this for indication of inlines (LaTeX approved)
      */
     private string HandleInlineCommands(string input)
+    {
+        if (readAsStageLines)
+            return HandleRichText(HandleInlineSpeaker(input));
+        else
+            return HandleRichText(input);
+    }
+    private string HandleInlineSpeaker(string input)
+    {
+        int colonIndex = tag.IndexOf(':');
+        if (colonIndex == -1)
+        {
+            HandleSpeakerTag("NO_SPEAKER");
+            return input;
+        }
+        string preColon = tag.Substring(0, colonIndex).Trim(); //doesn't include the colon
+        string postColon = tag.Substring(colonIndex + 1).Trim();
+        //note that, if there exists a colon in the text, either a real speaker or NO_SPEAKER is expected
+        HandleSpeakerTag(preColon);
+        return postColon;
+    }
+    private string HandleRichText(string input)
     {
         //currently only made to handle rich text, so it is handled in the main inline function
         int i1 = input.IndexOf('$');
@@ -344,6 +371,14 @@ public class DialogueCanvasManager : MonoBehaviour
                     break;
                 case "audio": //not implemented!
                     HandleAudioTag(postColon);
+                    break;
+                case "READ_AS_STAGE_LINES":
+                    if (postColon.ToUpper().Equals("TRUE"))
+                        readAsStageLines = true;
+                    else if (postColon.ToUpper().Equals("FALSE"))
+                        readAsStageLines = false;
+                    else
+                        throw new System.ArgumentException("Screwed up READ_AS_STAGE_LINES tag");
                     break;
                 default:
                     isHandled = false;

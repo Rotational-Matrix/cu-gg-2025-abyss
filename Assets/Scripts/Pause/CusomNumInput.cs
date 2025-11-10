@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CustomNumInput : MonoBehaviour
 {
-    // This is poorly named
-    // I am crashing out because I've been helping people with AP work
-    // and the api for the unity text input isn't readable.
-    // so I have created an abomination
+    /* NOTE: [Cu] wrote this while using the very accursed legacy 'KeyCode' system
+     *  - now, with the actual InputSystem, there are better ways of doing this.
+     *      - onTextInput and KeyControlDIsplayName are far better for this.
+     */
     [SerializeField] private TMPro.TMP_Text prevValueText;
     [SerializeField] private TMPro.TMP_Text minMaxText;
     [SerializeField] private TMPro.TMP_Text displayText;
@@ -37,6 +38,7 @@ public class CustomNumInput : MonoBehaviour
         this.callback = callback;
         for (int i = 0; i < logicalCharArr.Length; i++)
             logicalCharArr[i] = '_';
+        UpdateText();
         nextNumPos = 0;
         SetPrevValText(valueName, prevValue);
         this.max = max;
@@ -52,10 +54,10 @@ public class CustomNumInput : MonoBehaviour
 
 
 
-    public void HandleKeyCode(KeyCode keyCode)
+    public void HandleKey(Key key)
     {
         //I ignore the bool I made this to return
-        GetNextChar(keyCode);
+        GetNextChar(key);
     }
 
     private void SetPrevValText(string valueName, string prevValue)
@@ -67,19 +69,17 @@ public class CustomNumInput : MonoBehaviour
     }
 
 
-    private bool GetNextChar(KeyCode keyCode)
+    private bool GetNextChar(Key key)
     {
-        string toStr = keyCode.ToString();
-        char inputChar = toStr[toStr.Length - 1];
-        // this is an evil manoeuvre to bypass the fact that
-        // the ToString of a key like 5 is "alpha5", not "5" 
-        if (keyCode == KeyCode.Backspace)
+        string keyDisplayName = ProtoInputHandler.CurrentKeyboard[key].displayName;
+        //Note that the DisplayName of the number keys is in fact just a string of the number
+        if (key == Key.Backspace)
             return AttemptBackspace();
-        else if (char.IsDigit(inputChar))
-            return AttemptNumber(inputChar);
-        else if (keyCode == KeyCode.Return)
+        else if (char.IsDigit(keyDisplayName[0]))
+            return AttemptNumber(keyDisplayName[0]);
+        else if (key == Key.Enter)
             return AttemptReturn();
-        else if (keyCode == KeyCode.Escape)
+        else if (key == Key.Escape)
             return AttemptEscape();
         else
             return false;

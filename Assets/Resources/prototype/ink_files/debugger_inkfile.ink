@@ -6,7 +6,7 @@ VAR triedToIncreaseBrightness = false
 === debug_knot ===
 
 = debug_stitch_1 
-
+#READ_AS_STAGE_LINES:FALSE
 Entering Debug Knot (1st stitch)
  + [run debug tests]
     -> debug_test_run
