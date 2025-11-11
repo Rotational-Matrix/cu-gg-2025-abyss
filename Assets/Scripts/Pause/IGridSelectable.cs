@@ -44,6 +44,11 @@ public interface IGridSelectable
      */
     public void ExitMenu();
 
+    public StateManager.MenuInputType InputType();
+
+    public SelectableElement this[int index] { get; }
+ 
+
 
 
 

@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (MenuBlocksMotion()) return;
         if (move == null) return;
         inputVector = move.ReadValue<Vector2>();
         if (spriteRenderer != null)
@@ -81,4 +82,45 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector3(clamped.x, rb.velocity.y, clamped.z);
         }
     }
+
+    /* MenuBlocksMotion is called every time motion would be updated,
+     *  - currently assumes that any non-dialogueMenu is considered an immovable state
+     */
+    private bool MenuBlocksMotion()
+    {
+        return StateManager.IsInMenu();
+    }
+
+
+    /* Heya! This is [Cu], please delete this after reading
+     * If I haven't already said:
+     *  - I chose to handle blocking player movement in the player controller itself
+     *  - I have a malleable fn (that is very basic rn) each time player movement occurs
+     *  
+     *  If you don't like this, lmk, and I can use a different way 
+     *      (there are more optimised ways of doing this, but that makes for harder to change code...)
+     *  If you are okay with this, ####### Delete the comments below (and this one) ########
+     */
+
+    
+    /* Currently accessed frequently by ProtoInputHandler
+     *  - The OnGui of ProtoInputHandler calls these on every keyboard press
+     *      - this obviously is more than these need to be called
+     *          - the best way would be to have some trigger on the MenuStack
+     *              for when it becomes/unbecomes empty to call these once
+     *      - this does allow for easy altering in the high likelihood of 
+     *          changes during development
+     */
+    /*
+    public void SetMotionActive(bool motionActive)
+    {
+        this.motionActive = motionActive;
+    }
+
+    public bool IsMotionActive()
+    {
+        return motionActive;
+    }*/
+
+
 }

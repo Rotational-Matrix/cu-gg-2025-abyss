@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CallbackElement : MonoBehaviour, ISelectableElement
+public class CallbackElement : SelectableElement, ISelectableElement
 {
     /* MenuFlowElements
      *  - Just learned that c# has innate callbacks, which makes this sooo much easier
@@ -16,11 +16,11 @@ public class CallbackElement : MonoBehaviour, ISelectableElement
     [SerializeField] private TMPro.TMP_Text itemTextObject;
     private Action<int> callback = null; //may very well ignore the int
     private int inputVal = 0;
-    public void SetSelected(bool setSelected)
+    public override void SetSelected(bool setSelected)
     {
         selectorImage.SetActive(setSelected);
     }
-    public bool Choose()
+    public override bool Choose()
     {
         //null callbacks mean no action on call
         //  -probably leads to quitting the current menu
@@ -32,7 +32,7 @@ public class CallbackElement : MonoBehaviour, ISelectableElement
     //since these callback options are basically for popups only,
     //SetVisible(false) basically wipes everything
     //
-    public void SetVisible(bool visible) 
+    public override void SetVisible(bool visible) 
     {
         if (visible)
         {

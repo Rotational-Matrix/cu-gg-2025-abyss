@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueCanvas: {fileID: 0}
-  playerMenuCanvas: {fileID: 0}
   pauseMenuCanvas: {fileID: 0}
+  playerControllerObj: {fileID: 0}

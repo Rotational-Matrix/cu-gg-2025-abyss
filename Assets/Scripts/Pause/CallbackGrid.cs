@@ -20,6 +20,7 @@ public sealed class CallbackGrid : DefaultGrid, IGridSelectable //is this redund
      *          - 'Are_you_sure'
      *          - 'inputValue'
      */
+    private StateManager.MenuInputType menuInputType = StateManager.MenuInputType.SelectableGrid;
 
     public void SetCallbackAt(int index, string displayText, Action<int> setCallback)
     {
@@ -36,5 +37,15 @@ public sealed class CallbackGrid : DefaultGrid, IGridSelectable //is this redund
         {
             (selectableList[index] as CallbackElement).SetInput(inputInt);
         }
+    }
+
+    public void SetInputType(StateManager.MenuInputType menuInputType)
+    {
+        this.menuInputType = menuInputType;
+    }
+
+    public override StateManager.MenuInputType InputType()
+    {
+        return this.menuInputType;
     }
 }
