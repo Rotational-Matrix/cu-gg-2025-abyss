@@ -38,8 +38,8 @@ public class CustomNumInput : MonoBehaviour
         this.callback = callback;
         for (int i = 0; i < logicalCharArr.Length; i++)
             logicalCharArr[i] = '_';
-        UpdateText();
         nextNumPos = 0;
+        UpdateText();
         SetPrevValText(valueName, prevValue);
         this.max = max;
         minMaxText.text = "MIN: " + min.ToString() + ", MAX: " + maxText;

@@ -91,23 +91,10 @@ public class ProtoInputHandler : MonoBehaviour
         {
             foreach (KeyControl key in Keyboard.current.allKeys)
             {
-                if (object.Equals(key,null))
-                    Debug.Log("a key is null!");
-                else if (key.wasPressedThisFrame)
-                {
-                    DistributeInput(key.keyCode);
-                }
-            }
-        }
-        if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
-        {
-            Debug.Log("Any key was pressed using New Input System!");
-            // You can iterate through Keyboard.current.allKeys to find out which specific key was pressed
-            foreach (KeyControl key in Keyboard.current.allKeys)
-            {
                 if ((!object.Equals(key, null)) && key.wasPressedThisFrame)
                 {
-                    Debug.Log($"Key pressed: {key.name}");
+                    DistributeInput(key.keyCode);
+                    //Debug.Log("Key pressed: " + key.keyCode);
                 }
             }
         }
