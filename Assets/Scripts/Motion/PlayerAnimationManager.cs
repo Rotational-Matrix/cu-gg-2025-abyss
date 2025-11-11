@@ -19,6 +19,7 @@ public class PlayerAnimationManager : MonoBehaviour
     public GameObject light;
     private bool inCave;
     public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f);
+    public Vector3 defaultAnchorPosition = new Vector3(1.6f, 0, 4.04f);
     // Start is called before the first frame update
     void Start()
     {
@@ -61,11 +62,11 @@ public class PlayerAnimationManager : MonoBehaviour
     {
         Vector3 newPos = inCave ? defaultPosition : cave.transform.position;
         Debug.Log("Moving to " + newPos.x + ", " + newPos.y + ", " + newPos.z);
-        Vector3 newAnchorPos = newPos + (playerObject.transform.position - anchor.transform.position);
-        newAnchorPos.y = 0;
+        Vector3 newAnchorPos = newPos + (defaultAnchorPosition - defaultPosition);
+        newAnchorPos.y = 0f;
         anchor.transform.position = newAnchorPos;
         Vector3 newPlayerPos = newPos;
-        newPlayerPos.y = 0f;
+        newPlayerPos.y = 0.625f;
         playerObject.transform.position = newPlayerPos;
         cameraFollow.FastMove(playerObject);
         light.transform.position = newPlayerPos;
