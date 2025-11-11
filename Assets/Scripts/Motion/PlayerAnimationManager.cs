@@ -12,13 +12,23 @@ public class PlayerAnimationManager : MonoBehaviour
     private LeashManager lm;
     public float flipEpsilon = 0.025f; //minimum inputvelocity to signal a sprite flip
     private bool frontFacing;
+    public GameObject cave;
+    public GameObject camera;
+    private CameraFollow cameraFollow;
+    public GameObject anchor;
+    public GameObject light;
+    private bool inCave;
+    public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f);
     // Start is called before the first frame update
     void Start()
     {
+        inCave = false;
         //rb = playerObject.GetComponent<Rigidbody>();
         GameObject spriteContainer = playerObject.transform.GetChild(0).gameObject;
         sr = spriteContainer.GetComponent<SpriteRenderer>();
         lm = playerObject.GetComponent<LeashManager>();
+        Cylinder.OnCylinderEntrance += Teleport;
+        cameraFollow = camera.GetComponent<CameraFollow>();
     }
 
     // Update is called once per frame
@@ -29,11 +39,13 @@ public class PlayerAnimationManager : MonoBehaviour
         float z = input.z;
         if (z * z > flipEpsilon)
         {
-            if (z > 0) {
+            if (z > 0)
+            {
                 sr.sprite = nSprite;
                 frontFacing = true;
             }
-            else {
+            else
+            {
                 sr.sprite = sSprite;
                 frontFacing = false;
             }
@@ -44,5 +56,19 @@ public class PlayerAnimationManager : MonoBehaviour
             if (x > 0) sr.flipX = !frontFacing;
             else sr.flipX = frontFacing;
         }
+    }
+    public void Teleport(Cylinder cylinder)
+    {
+        Vector3 newPos = inCave ? defaultPosition : cave.transform.position;
+        Debug.Log("Moving to " + newPos.x + ", " + newPos.y + ", " + newPos.z);
+        Vector3 newAnchorPos = newPos + (playerObject.transform.position - anchor.transform.position);
+        newAnchorPos.y = 0;
+        anchor.transform.position = newAnchorPos;
+        Vector3 newPlayerPos = newPos;
+        newPlayerPos.y = 0f;
+        playerObject.transform.position = newPlayerPos;
+        cameraFollow.FastMove(playerObject);
+        light.transform.position = newPlayerPos;
+        inCave = !inCave;
     }
 }

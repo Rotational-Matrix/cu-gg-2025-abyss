@@ -26,4 +26,8 @@ public class CameraFollow : MonoBehaviour
 
         transform.position = smoothedPosition;
     }
+    public void FastMove(GameObject player)
+    {
+        transform.position = player.transform.position + offset;
+    }
 }
