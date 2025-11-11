@@ -12,7 +12,7 @@ public class NPCAnimationManager : MonoBehaviour
     public Sprite redSprite; //guess.
     private DemoMotion dm;
     public float flipEpsilon = 0.025f; //minimum inputvelocity to signal a sprite flip
-    private bool frontFacing;
+    public bool frontFacing = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,26 +27,27 @@ public class NPCAnimationManager : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 input = dm.Direction();
-        float x = input.x;
-        float z = input.z;
+        Vector3 camRelative = Camera.main.transform.InverseTransformDirection(dm.Direction());
+        float x = camRelative.x;
+        float z = camRelative.z;
         if (z * z > flipEpsilon)
         {
             if (z > 0)
             {
                 sr.sprite = nSprite;
-                frontFacing = true;
+                frontFacing = false;
             }
             else
             {
                 sr.sprite = sSprite;
-                frontFacing = false;
+                frontFacing = true;
             }
         }
         //this uses sprite flips but can be made to use different sprites with no effort
         if (x * x > flipEpsilon)
         {
-            if (x > 0) sr.flipX = !frontFacing;
-            else sr.flipX = frontFacing;
+            Debug.Log("x: " + x + " z: " + z);
+            sr.flipX = frontFacing ? x < 0 : x > 0;
         }
     }
     private void Blush(FlowerManager flowerManager)
