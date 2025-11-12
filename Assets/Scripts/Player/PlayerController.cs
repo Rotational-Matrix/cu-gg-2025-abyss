@@ -55,7 +55,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (MenuBlocksMotion()) return;
         if (move == null) return;
         inputVector = move.ReadValue<Vector2>();
         if (spriteRenderer != null)

@@ -25,7 +25,7 @@ public class StateManager : MonoBehaviour
         DirectKey
     }
 
-    [SerializeField] public static bool disablePlayerMotionDuringDialogue = true;
+    [SerializeField] public static bool disablePlayerMotionDuringDialogue = false;
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     //[SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
@@ -53,7 +53,7 @@ public class StateManager : MonoBehaviour
     public static void SetDialogueStatus(bool status)
     {
         isInDialogue = status;
-        //disables player motion during dialogue (preferable? i'm uncertain)
+        //disables player motion during dialogue (currently horribly buggy)
         if (disablePlayerMotionDuringDialogue)
         {
             if (status) playerController.OnDisable();

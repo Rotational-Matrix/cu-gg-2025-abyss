@@ -21,7 +21,7 @@ public class NPCInteractionManager : MonoBehaviour
     {
         cyclicalFrameCount++;
         if (cyclicalFrameCount == 10) cyclicalFrameCount = 0;
-        if (cyclicalFrameCount == 0) wasInDialogue = StateManager.GetDialogueStatus();
+        if (cyclicalFrameCount == 0) wasInDialogue = StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus();
         Vector3 pPos = player.transform.position;
         Vector3 npcPos = this.gameObject.transform.position;
         npcPos.y = 0f;
@@ -32,6 +32,6 @@ public class NPCInteractionManager : MonoBehaviour
         {
             if (npcDialogue != null) npcDialogue(this);
         }
-        if (StateManager.GetDialogueStatus()) wasInDialogue = true;
+        if (StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus()) wasInDialogue = true;
     }
 }

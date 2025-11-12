@@ -42,7 +42,7 @@ public class PlayerAnimationManager : MonoBehaviour
         {
             pause(this);
         }
-        //if (StateManager.GetDialogueStatus()) return;
+        if (StateManager.disablePlayerMotionDuringDialogue && StateManager.GetDialogueStatus()) return;
         Vector3 input = lm.InputVelocity();
         float x = input.x;
         float z = input.z;
@@ -58,12 +58,21 @@ public class PlayerAnimationManager : MonoBehaviour
                 sr.sprite = sSprite;
                 frontFacing = false;
             }
+            if (x * x < flipEpsilon) sr.flipX = true;
         }
         //this uses sprite flips but can be made to use different sprites with no effort
         if (x * x > flipEpsilon)
         {
-            if (x > 0) sr.flipX = !frontFacing;
-            else sr.flipX = frontFacing;
+            /*if (z * z < flipEpsilon)
+            {
+                sr.sprite = sSprite;
+                sr.flipX = x > 0;
+            }
+            else*/
+            {
+                if (x > 0) sr.flipX = !frontFacing;
+                else sr.flipX = frontFacing;
+            }
         }
     }
     public void Teleport(Cylinder cylinder)
