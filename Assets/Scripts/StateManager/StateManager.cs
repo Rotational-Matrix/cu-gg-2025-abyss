@@ -25,7 +25,7 @@ public class StateManager : MonoBehaviour
         DirectKey
     }
 
-
+    [SerializeField] public static bool disablePlayerMotionDuringDialogue = true;
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     //[SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
@@ -47,11 +47,19 @@ public class StateManager : MonoBehaviour
 
     private static bool isInDialogue = false;
     //private static bool isInPlayerMenu = false;
-    //private static bool isInPauseMenu = false;
+    private static bool isInPauseMenu = false;
 
     //getters and setters could be made onto the attributes, but that is weird!
     public static void SetDialogueStatus(bool status)
-    { isInDialogue = status; }
+    {
+        isInDialogue = status;
+        //disables player motion during dialogue (preferable? i'm uncertain)
+        if (disablePlayerMotionDuringDialogue)
+        {
+            if (status) playerController.OnDisable();
+            else playerController.OnEnable();
+        }
+    }
     public static bool GetDialogueStatus()
     { return isInDialogue; }
 
@@ -82,16 +90,16 @@ public class StateManager : MonoBehaviour
     }
 
 
-    /*
-    public static void SetPlayerMenuStatus(bool status)
+    
+    /*public static void SetPlayerMenuStatus(bool status)
     { isInPlayerMenu = status; }
     public static bool GetPlayerMenuStatus()
-    { return isInPlayerMenu; }
+    { return isInPlayerMenu; }*/
     public static void SetPauseMenuStatus(bool status)
     { isInPauseMenu = status; }
     public static bool GetPauseMenuStatus()
     { return isInPauseMenu; }
-    */
+    
 
     public static void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction)
     {

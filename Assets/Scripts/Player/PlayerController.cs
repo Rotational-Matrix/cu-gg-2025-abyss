@@ -35,14 +35,14 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody>();
     }
-    void OnEnable()
+    public void OnEnable()
     {
         inputActions = new PlayerInputActions();
         inputActions.Land.Jump.performed += OnJump;
         move = inputActions.Land.Movement;
         inputActions.Enable();
     }
-    void OnDisable()
+    public void OnDisable()
     {
         inputActions.Land.Jump.performed -= OnJump;
         inputActions.Disable();

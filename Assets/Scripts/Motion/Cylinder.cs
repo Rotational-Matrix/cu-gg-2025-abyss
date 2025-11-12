@@ -6,9 +6,9 @@ using System;
 public class Cylinder : MonoBehaviour
 {
     //currently handles dialogue, etc. with unityevents. if preferred, we could also have dialoguecanvasmanager continually check a public variable in this class
-    public static event Action<Cylinder> OnCylinderEntrance;
+    public static event Action<Cylinder> onCylinderEntrance;
     private void OnTriggerEnter(Collider other)
     {
-        if(OnCylinderEntrance != null) OnCylinderEntrance(this);
+        if(onCylinderEntrance != null) onCylinderEntrance(this);
     }
 }

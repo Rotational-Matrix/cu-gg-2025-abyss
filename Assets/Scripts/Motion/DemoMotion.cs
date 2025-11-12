@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading;
-
+//currently the "Q" key makes Sariel move
 public class DemoMotion : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -37,7 +37,7 @@ public class DemoMotion : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             MoveToNextPosition();
         }

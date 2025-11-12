@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerAnimationManager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class PlayerAnimationManager : MonoBehaviour
     private bool inCave;
     public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f);
     public Vector3 defaultAnchorPosition = new Vector3(1.6f, 0, 4.04f);
+    public static event Action<PlayerAnimationManager> raiseCaveDialogue;
+    public static event Action<PlayerAnimationManager> pause;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,13 +31,18 @@ public class PlayerAnimationManager : MonoBehaviour
         GameObject spriteContainer = playerObject.transform.GetChild(0).gameObject;
         sr = spriteContainer.GetComponent<SpriteRenderer>();
         lm = playerObject.GetComponent<LeashManager>();
-        Cylinder.OnCylinderEntrance += Teleport;
+        Cylinder.onCylinderEntrance += Teleport;
         cameraFollow = camera.GetComponent<CameraFollow>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pause(this);
+        }
+        //if (StateManager.GetDialogueStatus()) return;
         Vector3 input = lm.InputVelocity();
         float x = input.x;
         float z = input.z;
@@ -66,10 +74,15 @@ public class PlayerAnimationManager : MonoBehaviour
         newAnchorPos.y = 0f;
         anchor.transform.position = newAnchorPos;
         Vector3 newPlayerPos = newPos;
-        newPlayerPos.y = 0.625f;
+        newPlayerPos.y = 0.625f; //hardcoded appropriate y-value for ground contact
         playerObject.transform.position = newPlayerPos;
         cameraFollow.FastMove(playerObject);
         light.transform.position = newPlayerPos;
         inCave = !inCave;
+        if (inCave)
+        {
+            Debug.Log("Cave dialogue should appear");
+            if (raiseCaveDialogue != null) raiseCaveDialogue(this);
+        }
     }
 }

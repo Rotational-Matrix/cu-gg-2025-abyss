@@ -96,7 +96,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
             //the recursion allows AttemptContinue to process each line command,
             //while ultimately skipping past all of them from the user's perspective 
-            if(!validText)
+            if (!validText)
                 canContinue = AttemptContinue();
         }
         return canContinue;
@@ -140,6 +140,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public void DivertTo(string knotName) //or knotName.stitchName
     {
+        Debug.Log("Diverting to knot: " + knotName);
         HandleKnotTags(knotName);
         _inkStory.ChoosePathString(knotName);
     }
