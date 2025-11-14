@@ -19,6 +19,8 @@ public class FlowerManager : MonoBehaviour
             {
                 OnFlowerPuzzleEnd(this);
             }
+            //[Cu] assume always talk to Sariel 
+            
         }
     }
 

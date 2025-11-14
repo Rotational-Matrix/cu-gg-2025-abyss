@@ -52,8 +52,8 @@ public class ChoiceCanvasHandler : MonoBehaviour
         return true; // to indicate success
     }
 
-    //attempts to Increment the choice selection. This likely corresponds to 'moving down'
-    public void IncremChoiceSelection()
+    //attempts to 'Increment' the choice selection. now decrements the index to 'move up'
+    public void DecremChoiceSelection()
     {
         if(currentChoiceSelected < choicesAvailable - 1)
         {
@@ -64,7 +64,7 @@ public class ChoiceCanvasHandler : MonoBehaviour
         }
     }
 
-    public void DecremChoiceSelection()
+    public void IncremChoiceSelection()
     {
         if (currentChoiceSelected > 0)
         {
