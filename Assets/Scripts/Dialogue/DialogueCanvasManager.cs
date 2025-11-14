@@ -5,6 +5,78 @@ using Ink.Runtime;
 
 public class DialogueCanvasManager : MonoBehaviour
 {
+    /// <summary>
+    /// [Cu]'s Documentation
+    /// 
+    /// For DialogueCanvasManager, nothing is static, 
+    /// so everything is always accessed via 'StateManager.DCManager'
+    /// 
+    /// There are a lot of public methods here, these are not in the order they appear in the file
+    ///     - for this file, I have specifically placed the most useful upfront
+    /// 
+    /// ------- methods useful for non-ProtoInputHandler calls --------
+    /// bool InitiateDialogueState(string knotName)
+    ///     - Diverts to a knot or knot.stitch in the inkstory, enters dialogue, and calls AttemptContinue()
+    ///     - Returns the result of the AttemptContinue()
+    ///     - Calling with knotName null is allowed but dangerous and reserved for debugging only
+    ///     - This is the only call one needs to make in order to start dialogue
+    /// 
+    /// void SetInkVar<T>(string variableName, T newVal)
+    ///     - Simply sets a variable in the inkStory (name must match VAR name exactly!)
+    ///         - [Cu] has already started placing some VARs in ink, use inky or unity's ink inspector to see them
+    ///         - it is preferred that unity call ink rather than ink call unity
+    ///
+    /// T GetInkVar<T>(string variableName)
+    ///     - Simply gets a variable from the inkstory (name must match VAR name exactly!)
+    /// 
+    /// void CreateInkSaveState(int saveStateIndex)
+    ///     - sets a saveState to a particular index
+    ///     - currently only 3 saveslots are expected (but the method itself works with a arbitrary length list
+    ///     
+    /// void RunInkSaveState(int saveStateIndex)
+    ///     - Loads save state from stored save state
+    ///     
+    /// bool IsInkSaveStateEmpty(int saveStateIndex)
+    ///     - asks if a particular save state is filled or not
+    /// 
+    /// ----------------------------------------------------------------
+    ///     
+    /// bool AttemptContinue()
+    ///     - Tries to call the next line of inkStory and populate it.
+    ///     - Returns true if it gets the next line, false otherwise
+    ///         - false indicates a choice ahead, or >>> "STOP_DIALOGUE" encountered
+    ///     - On line commands that are not ">>> STOP_DIALOGUE"
+    ///         - executes them in order of appearance until encountering a regular line, choice, or stop command
+    ///     - NOTE: don't call this directly, the ProtoInputHandler should have it covered
+    /// 
+    /// bool InitiateChoices()
+    ///     - Activates and presents the choice canvas and according choices
+    ///     - returns true on success and false on failure
+    ///         - false should not occur and indicates a genuine error
+    /// 
+    /// void Choose()
+    ///     - Chooses the currently seleted choice (same as IGridSelector)
+    /// 
+    /// void IncremChoiceSelection()
+    ///     - moves the selector 'up' to the player (was down, but changed to be same as IGridSelector)
+    ///     - actually decrements the associated index
+    /// 
+    /// void DecremChoiceSelection()
+    ///     - moves the selector 'down' to the player (was up, but changed to be same as IGridSelector)
+    ///     - actually increments the associated index
+    /// 
+    /// bool IsChoiceActive()
+    ///     - returns if the dialogue is currently undergoing a choice
+    /// 
+    /// 
+    /// void DivertTo(string knotName)
+    ///     - moves the location in the inkstory without initialising dialogue.
+    ///     - NOTE: This is public for debugger keys, please call InitiateDialogueState(string knotName) instead
+    ///     
+    /// 
+    /// </summary>
+
+
     /* The plan is to make this the top-level communicator for the whole Dialogue_Canvas
      * So observe the following lower-level files
      *  - The Choice Canvas should handle all choice boxes collectively

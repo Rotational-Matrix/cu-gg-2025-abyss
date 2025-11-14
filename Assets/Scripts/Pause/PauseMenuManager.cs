@@ -7,6 +7,64 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    /// <summary>
+    /// Part of [Cu]'s documentation for external usage of PauseMenuManager (don't worry this one isn't bad)
+    /// 
+    /// note that you can always ctrl-f these to find them in the code.
+    /// 
+    /// PauseMenuManager may be accessed via StateManager.PMManager as if it is basically static
+    /// However, note that for Fields, PauseMenuManager actually is static. 
+    /// 
+    /// All things listed here are public, as per usual, no mention of private fns will be made
+    /// 
+    /// Fields:
+    /// enum ConfigValues
+    ///     - This was made before I knew how to use 'Delegate' funcitons
+    ///     - These are the associated IDs of each of the options on the config menu
+    /// 
+    /// static Dictionary<ConfigItem, int> ConfigValues { get; private set; }
+    ///     - This is where Config data is stored! (like user settings info)
+    ///         - right now, nothing responds to it, but Brightness (as a stat) is here, and so is leach length!
+    ///         - All items without (displayable) values have '-1' here.
+    /// 
+    /// Methods:
+    /// void InitConfigMenu()
+    ///     - activates and loads up the configMenu
+    ///     
+    /// void InitAVPopup(Action<int'> call, string valueName, string prevValue, int max, string maxText)
+    ///     - activates and loads up 'Assign Value popup' (this one is very dynamic)
+    ///     - enters a 'type number' environment
+    ///     - parameters
+    ///         - Action<int'> call: what will be done (should the player choose to assign a value)
+    ///         - string valueName: e.g. "Brightness", the name the value is referred to by.
+    ///         - string prevValue: the previous value in string form.
+    ///         - int max: the max enterable value
+    ///         - string maxText: the corresponding string of the maximum enterable value
+    ///             - these are only different so as to explicitly deceive the player
+    /// 
+    /// void InitAYSPopup(string actText, Action<int'> call, int val, string cancelText)
+    ///     - As per usual, activates and loads up an AYSPopup
+    ///     - AYS is AreYouSure and is always in Y/N? form
+    ///     - parameters
+    ///         - string actText: the text on the propmt that does the action
+    ///         - Action <int'> call: the action that will occur upon choosing to act
+    ///         - int val: only useful if the 'call' requires an int (otherwise set to 0)
+    ///         - string cancelText: the text on the propmt that cancels the action
+    /// 
+    /// void InitLSMenu()
+    ///     - Activates and loads up the LoadSaveMenu
+    ///         - Unlike the popups, this is a static menu which does the same thing when called
+    ///         - The loading-from-save-state is implemented, but there is no reason to 'save' yet
+    ///             - save slots that have no saves cannot be saved from
+    /// 
+    /// void InitCTRLMenu()
+    ///     - activates and loads the controls menu
+    ///         - currently, means a snarky page that says 'you are not in control' that can only be exited
+    ///         - Note that ProtoInputHandler is abstracting key presses, so this might become genuinely functional
+    /// 
+    /// </summary>
+
+
     /* This will be the pause menu manager, similar to the dialogue canvas manager
      * The pause system chould operate as follows:
      *  - Pause menu will exist as a canvas structure
@@ -145,7 +203,7 @@ public class PauseMenuManager : MonoBehaviour
             if (StateManager.DCManager.IsInkSaveStateEmpty(i))
             {
                 bucketStr += " [EMPTY]";
-                bucketAct = null; //literally do nothing on being chosen
+                bucketAct = StateManager.PhonyAction; //literally do nothing on being chosen
             }
             else
             {

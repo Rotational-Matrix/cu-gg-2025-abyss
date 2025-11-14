@@ -5,6 +5,73 @@ using UnityEngine;
 
 public class StateManager : MonoBehaviour
 {
+    /// <summary>
+    /// Part of [Cu]'s documentation for external usage of StateManager
+    /// 
+    /// note that you can always ctrl-f these to find them in the code.
+    /// 
+    /// StateManager is effectively static (all interactions with it should be with static methods and fields) 
+    /// 
+    /// All methods and fields shown here are public static (all fields are public get; private set)
+    /// 
+    /// Fields:
+    /// DialogueCanvasManager DCManager
+    ///     - DialogueCanvasManager has its own documentation like this one
+    ///     - Calling DCManager via StateManager is the expected way of accessing it
+    ///     - DCManager contains the inkstory and all of the functions that operate on it
+    ///     - NOTE: this is probably one of the most useful ones!!! Pls go see its documentation!
+    /// 
+    /// PauseMenuManager PMManager
+    ///     - PauseMenuManager has its own documentation like this one
+    ///     - Since it isn't actually static, accessing it through StateManager is the way to access it like it is.
+    ///     - PMManager contains the functions that all menu screens (including AreYouSure? and ENTER NUMBER popups)
+    /// 
+    /// Stack<IGridSelectable> MenuStack
+    ///     - The stack that handles the MenuState
+    ///     - If this is empty, it means no menus are active.
+    ///     - The top menu is often peeked in code to make sure only the top-most menu handles input
+    /// 
+    /// Action<UnityEngine.InputSystem.Key> DirectInputAction
+    ///     - Certain menus or gamestates need to specially handle all keyboard input (e.g. for typing numbers)
+    ///     - DirectInputAction is currently only related to menus, and is called by ProtoInputHandler for certain menus
+    /// 
+    /// Methods!
+    /// void SetDialogueStatus(bool status)        {Usage Not Suggested}
+    ///     - This is called by DCManager whenever dialogue starts or stops. No need to call this.
+    ///     
+    /// bool GetDialogueStatus()
+    ///     - Tells if dialogue is active
+    ///     - NOTE: dialogue is *not* a Menu, so this method is used to tell if the game state is currently in dialogue
+    /// 
+    /// bool IsInMenu()
+    ///     - Tells if there are any menus opened.
+    ///     - NOTE: only informs if any menus are open, and does *not* say anything about dialogue
+    /// 
+    /// StateManager.MenuInputType CurrMenuType() {Usage Not Suggested}
+    ///     - ProtoInputHandler calls this to know how to send inputs for each given file
+    /// 
+    /// void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction) {Usage Not Suggested}
+    ///     - this is mostly set by menus that use it (I don't see why this would be used by others)
+    /// 
+    /// Shortcut methods!!
+    /// void ExitTopMenu()
+    ///     - properly closes the top menu (although all menus can close themselves, and some ought not be closable)
+    ///     
+    /// void PhonyAction(int useless)
+    ///     - Actually does nothing
+    ///     - A lot of menus use Action<int'>, and this is a more readable way to call a so-nothing function if needed
+    ///     
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// </summary>
+
+
+
+
+
     /* This is the beginning of the overarching state manager (hooray!)
      * For menus and dialogue (since they can all technically be simultaneously active), they are exhaustively listed as booleans
      *  - note that these menu states will likely have a canvas that handles submenus, but the StateManager will only care abt each canvas
@@ -38,7 +105,6 @@ public class StateManager : MonoBehaviour
 
     private static PlayerController playerController; //not actively being used
 
-    //there would be a player menu canvas here, if it existed!
 
     //this is the current stack of menus opened
     public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
@@ -69,12 +135,21 @@ public class StateManager : MonoBehaviour
             return MenuInputType.None;
     }
 
+    public static void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction)
+    {
+        StateManager.DirectInputAction = directInputAction;
+    }
 
     //Shortcut fns
     public static void ExitTopMenu()
     {
         if (IsInMenu())
             MenuStack.Peek().ExitMenu();
+    }
+    public static void SoftExitTopMenu()
+    {
+        if (IsInMenu())
+            MenuStack.Peek().SoftExitMenu();
     }
     public static void PhonyAction(int useless)
     {
@@ -93,10 +168,7 @@ public class StateManager : MonoBehaviour
     { return isInPauseMenu; }
     */
 
-    public static void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction)
-    {
-        StateManager.DirectInputAction = directInputAction;
-    }
+    
 
 
 
