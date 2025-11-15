@@ -1,7 +1,14 @@
 -> debug_knot
 
+
+VAR actNumber = 1 //act as in Act I, Act II, etc
+VAR currentScene = -> debug_knot //will track currentScene
+
+
 VAR strlenConfigKnown = false
 VAR triedToIncreaseBrightness = false
+
+VAR flowerCounter = 0
 
 === debug_knot ===
 
@@ -114,4 +121,26 @@ The intro has ended.
 -> debug_knot
 
 -> END //included to quiet system
+
+=== sariel_interact ===
+//the unity object mere needs to call sariel_interact
+//or sariel_interact.context_assign
+= context_assign
+{ actNumber:
+- 1: -> act_1
+- 2: -> act_2
+- 3: two
+- else: lots
+}
+= act_1
+lorem ipsum solem dicut
+
+
+= act_2
+lorem ipsum solem dicut
+/*+ [nothing] <> //this glue makes it so there is no 'blank space'
+ - <> The above should not have any key presses which show nothing (nothing!).*/
+
+
+
 

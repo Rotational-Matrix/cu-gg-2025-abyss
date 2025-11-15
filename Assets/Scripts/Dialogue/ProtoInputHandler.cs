@@ -71,10 +71,12 @@ public class ProtoInputHandler : MonoBehaviour
 
     //------------------- Pause Menu Keys ---------------------------
 
-    
-
     public static Key openConfigKey = Key.Tab;
     public static Key exitKey = Key.Escape;
+
+    //------------------- Roam State Keys ---------------------------
+
+    public static Key interactKey = Key.Space;
 
     //--------------------- Debug Keys ------------------------------
 
@@ -92,6 +94,7 @@ public class ProtoInputHandler : MonoBehaviour
      */
     private static Key debug_forceStartDialogue = Key.P;
     private static Key debug_forceJumpDialogue = Key.O;
+    public static Key debug_moveSariel = Key.Q;
     [SerializeField] public string forceJumpKnotName;
 
 
@@ -219,6 +222,8 @@ public class ProtoInputHandler : MonoBehaviour
             else if (keyPressed == d_FJDialogue)
                 dcManager.DivertTo(forceJumpKnotName);
         }
+        if (keyPressed == interactKey)
+            StateManager.ExecuteInteract();
     }
 
 
