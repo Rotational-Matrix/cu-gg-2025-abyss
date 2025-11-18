@@ -28,7 +28,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         if (selectableList.Count > 0)
             selectableList[selectedIndex].SetSelected(true);
         menuPanel.SetActive(true);
-        StateManager.MenuStack.Push(this); //notably calls to push itself to MenuStack on init
+        StateManager.PushMenu(this); //notably calls to push itself to MenuStack on init
     }
 
     /* IncremElement() 
@@ -84,7 +84,7 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         foreach (SelectableElement element in selectableList)
             element.SetVisible(false);
         menuPanel.SetActive(false); //only place where menuPanel is called
-        StateManager.MenuStack.Pop(); //notably calls to pop the MenuStack itself on exit
+        StateManager.PopMenu(); //notably calls to pop the MenuStack itself on exit
     }
 
     public virtual bool SoftExitMenu()

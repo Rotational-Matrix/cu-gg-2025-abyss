@@ -98,7 +98,6 @@ public class ProtoInputHandler : MonoBehaviour
     [SerializeField] public string forceJumpKnotName;
 
 
-
     private void Start() //has to be start to guarantee it occurs after StateManager.Awake()
     {
         dcManager = StateManager.DCManager;
