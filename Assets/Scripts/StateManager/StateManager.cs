@@ -5,6 +5,87 @@ using UnityEngine;
 
 public class StateManager : MonoBehaviour
 {
+    /// <summary>
+    /// Part of [Cu]'s documentation for external usage of StateManager
+    /// 
+    /// note that you can always ctrl-f these to find them in the code.
+    /// 
+    /// StateManager is effectively static (all interactions with it should be with static methods and fields) 
+    /// 
+    /// All methods and fields shown here are public static (all fields are public get; private set)
+    /// 
+    /// Fields:
+    /// DialogueCanvasManager DCManager
+    ///     - DialogueCanvasManager has its own documentation like this one
+    ///     - Calling DCManager via StateManager is the expected way of accessing it
+    ///     - DCManager contains the inkstory and all of the functions that operate on it
+    ///     - NOTE: this is probably one of the most useful ones!!! Pls go see its documentation!
+    /// 
+    /// PauseMenuManager PMManager
+    ///     - PauseMenuManager has its own documentation like this one
+    ///     - Since it isn't actually static, accessing it through StateManager is the way to access it like it is.
+    ///     - PMManager contains the functions that all menu screens (including AreYouSure? and ENTER NUMBER popups)
+    /// 
+    /// Stack<IGridSelectable> MenuStack
+    ///     - The stack that handles the MenuState
+    ///     - If this is empty, it means no menus are active.
+    ///     - The top menu is often peeked in code to make sure only the top-most menu handles input
+    /// 
+    /// Action<UnityEngine.InputSystem.Key> DirectInputAction
+    ///     - Certain menus or gamestates need to specially handle all keyboard input (e.g. for typing numbers)
+    ///     - DirectInputAction is currently only related to menus, and is called by ProtoInputHandler for certain menus
+    ///     
+    /// //[Cu] needs to work this out with John
+    /// bool PlayerCanMoveInDialogue
+    ///     - defaults false.
+    ///     - Right now it is unknown if player will be able to move in dialogue (it may depend on dialogue context)
+    /// 
+    /// Methods!
+    /// void SetDialogueStatus(bool status)        {Usage Not Suggested}
+    ///     - This is called by DCManager whenever dialogue starts or stops. No need to call this.
+    ///     
+    /// bool GetDialogueStatus()
+    ///     - Tells if dialogue is active
+    ///     - NOTE: dialogue is *not* a Menu, so this method is used to tell if the game state is currently in dialogue
+    /// 
+    /// bool IsInMenu()
+    ///     - Tells if there are any menus opened.
+    ///     - NOTE: only informs if any menus are open, and does *not* say anything about dialogue
+    /// 
+    /// StateManager.MenuInputType CurrMenuType() {Usage Not Suggested}
+    ///     - ProtoInputHandler calls this to know how to send inputs for each given file
+    /// 
+    /// void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction) {Usage Not Suggested}
+    ///     - this is mostly set by menus that use it (I don't see why this would be used by others)
+    /// 
+    /// void AddInteraction(InteractableElement interactElem)
+    /// void RemoveInteraction(InteractableElement interactElem)
+    /// void ClearInteraction()
+    ///     - all do the List methods they have in their name to the interactStack
+    ///     - interactStack exists because 'interact' is done on a trigger basis, and this solves for when Eve is in >1 trigger
+    ///     
+    /// void ExecuteInteract()
+    ///     - the equivalent of pop, activates the topmost interact (many InteractableElement objs remove themselves on execute)
+    /// 
+    /// Shortcut methods!!
+    /// void ExitTopMenu()
+    ///     - properly closes the top menu (although all menus can close themselves, and some ought not be closable)
+    ///     
+    /// void PhonyAction(int useless)
+    ///     - Actually does nothing
+    ///     - A lot of menus use Action<int'>, and this is a more readable way to call a so-nothing function if needed
+    ///     
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// </summary>
+
+
+
+
+
     /* This is the beginning of the overarching state manager (hooray!)
      * For menus and dialogue (since they can all technically be simultaneously active), they are exhaustively listed as booleans
      *  - note that these menu states will likely have a canvas that handles submenus, but the StateManager will only care abt each canvas
@@ -28,6 +109,11 @@ public class StateManager : MonoBehaviour
     [SerializeField] public static bool disablePlayerMotionDuringDialogue = false;
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
     //[SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
+    //honestly, I'm not sure whether we'll do this or not. Most likely, disabling player motion may depend dialogue context
+    [SerializeField] private bool playerCanMoveDuringDialogue = false;
+    public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
+
+    [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
 
     [SerializeField] private GameObject playerControllerObj;
@@ -36,9 +122,8 @@ public class StateManager : MonoBehaviour
     public static DialogueCanvasManager DCManager { get; private set; }
     public static PauseMenuManager PMManager { get; private set; }
 
-    private static PlayerController playerController; //not actively being used
+    public static PlayerController Eve; //static access to Eve's controller is helpful
 
-    //there would be a player menu canvas here, if it existed!
 
     //this is the current stack of menus opened
     public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
@@ -46,18 +131,23 @@ public class StateManager : MonoBehaviour
 
 
     private static bool isInDialogue = false;
-    //private static bool isInPlayerMenu = false;
-    private static bool isInPauseMenu = false;
+    //note that IsInMenu() serves as as the equivalent for Menus
 
-    //getters and setters could be made onto the attributes, but that is weird!
-    public static void SetDialogueStatus(bool status)
+    //here to handle 'interact' calls
+    private static List<InteractableElement> interactStack = new List<InteractableElement>();
+
+    public static void SetDialogueStatus(bool dialogueStatus)
     {
         isInDialogue = status;
         //disables player motion during dialogue (currently horribly buggy)
         if (disablePlayerMotionDuringDialogue)
+        isInDialogue = dialogueStatus;
+        //disables player motion during dialogue (preferable? i'm uncertain)
+        //[Cu]: I'm not sure, we may actually allow both conditions and make it depend on dialogue.
+        if (PlayerCanMoveDuringDialogue)
         {
-            if (status) playerController.OnDisable();
-            else playerController.OnEnable();
+            if (dialogueStatus) Eve.OnEnable();
+            else Eve.OnDisable();
         }
     }
     public static bool GetDialogueStatus()
@@ -77,12 +167,33 @@ public class StateManager : MonoBehaviour
             return MenuInputType.None;
     }
 
+    public static void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction)
+    {
+        StateManager.DirectInputAction = directInputAction;
+    }
+
+    public static void AddInteraction(InteractableElement interactElem)
+    { interactStack.Add(interactElem); }
+    public static void RemoveInteraction(InteractableElement interactElem)
+    { interactStack.Remove(interactElem); }
+    public static void ClearInteractStack()
+    { interactStack.Clear(); }
+    public static void ExecuteInteract()
+    {
+        if (interactStack.Count != 0)
+            interactStack[interactStack.Count - 1].ExecuteInteract();
+    }
 
     //Shortcut fns
     public static void ExitTopMenu()
     {
         if (IsInMenu())
             MenuStack.Peek().ExitMenu();
+    }
+    public static void SoftExitTopMenu()
+    {
+        if (IsInMenu())
+            MenuStack.Peek().SoftExitMenu();
     }
     public static void PhonyAction(int useless)
     {
@@ -91,20 +202,9 @@ public class StateManager : MonoBehaviour
 
 
     
-    /*public static void SetPlayerMenuStatus(bool status)
-    { isInPlayerMenu = status; }
-    public static bool GetPlayerMenuStatus()
-    { return isInPlayerMenu; }*/
-    public static void SetPauseMenuStatus(bool status)
-    { isInPauseMenu = status; }
-    public static bool GetPauseMenuStatus()
-    { return isInPauseMenu; }
     
 
-    public static void SetDirectAction(Action<UnityEngine.InputSystem.Key> directInputAction)
-    {
-        StateManager.DirectInputAction = directInputAction;
-    }
+    
 
 
 
@@ -114,7 +214,10 @@ public class StateManager : MonoBehaviour
         DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
 
-        playerController = playerControllerObj.GetComponent<PlayerController>();
+        Eve = playerControllerObj.GetComponent<PlayerController>();
+
+        //public static version = private non-static version
+        PlayerCanMoveDuringDialogue = playerCanMoveDuringDialogue;
 
         
     }

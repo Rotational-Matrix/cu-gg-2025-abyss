@@ -87,6 +87,12 @@ public class DefaultGrid : MonoBehaviour, IGridSelectable
         StateManager.MenuStack.Pop(); //notably calls to pop the MenuStack itself on exit
     }
 
+    public virtual bool SoftExitMenu()
+    {
+        ExitMenu();
+        return true;
+    }
+
     public virtual StateManager.MenuInputType InputType()
     {
         return StateManager.MenuInputType.SelectableGrid;

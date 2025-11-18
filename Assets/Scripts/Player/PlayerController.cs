@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed;
     public float maxSpeed;
     public float jumpSpeed;
+    public Collider pCollider; //so that collision messages can be sent based on player
     PlayerInputActions inputActions;
     InputAction move;
 
@@ -30,11 +31,18 @@ public class PlayerController : MonoBehaviour
     {
         return Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
-    void Start()
+    void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody>();
+
+        /* [Cu]: There are 3 different colliders on Eve. Right now only the first one is enabled.
+         *       As it so happens, GetComponent returns on the first match. 
+         *       If the other colliders are unneeded, I may suggest deleting them.
+         */
+        pCollider = GetComponent<Collider>();
     }
+
     public void OnEnable()
     {
         inputActions = new PlayerInputActions();

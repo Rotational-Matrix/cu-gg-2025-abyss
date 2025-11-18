@@ -44,6 +44,13 @@ public interface IGridSelectable
      */
     public void ExitMenu();
 
+    /* SoftExitMenu()
+     *  - should call ExitMenu() unless the menu should not be escaped.
+     *  - mostly called by external input (like an escape key press)
+     *  - Reports its success
+     */
+    public bool SoftExitMenu();
+
     public StateManager.MenuInputType InputType();
 
     public SelectableElement this[int index] { get; }
