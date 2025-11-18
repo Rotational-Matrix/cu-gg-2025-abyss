@@ -113,7 +113,7 @@ public class StateManager : MonoBehaviour
     [SerializeField] private bool playerCanMoveDuringDialogue = false;
     public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
 
-    [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
+    //[SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
 
     [SerializeField] private GameObject playerControllerObj;
@@ -138,7 +138,7 @@ public class StateManager : MonoBehaviour
 
     public static void SetDialogueStatus(bool dialogueStatus)
     {
-        isInDialogue = status;
+        isInDialogue = dialogueStatus;
         //disables player motion during dialogue (currently horribly buggy)
         if (disablePlayerMotionDuringDialogue)
         isInDialogue = dialogueStatus;

@@ -22,7 +22,7 @@ public class NPCInteractionManager : InteractableElement
     {
         cyclicalFrameCount++;
         if (cyclicalFrameCount == 10) cyclicalFrameCount = 0;
-        if (cyclicalFrameCount == 0) wasInDialogue = StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus();
+        //if (cyclicalFrameCount == 0) wasInDialogue = StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus();
         Vector3 pPos = player.transform.position;
         Vector3 npcPos = this.gameObject.transform.position;
         npcPos.y = 0f;
@@ -33,7 +33,7 @@ public class NPCInteractionManager : InteractableElement
         {
             if (npcDialogue != null) npcDialogue(this);
         }
-        if (StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus()) wasInDialogue = true;
+       // if (StateManager.GetDialogueStatus() || StateManager.GetPauseMenuStatus()) wasInDialogue = true;
     }
     /* not to be ultra goofy, but my plan is as follows:
      * 
