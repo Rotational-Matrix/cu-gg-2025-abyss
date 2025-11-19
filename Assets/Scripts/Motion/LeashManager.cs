@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class LeashManager : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class LeashManager : MonoBehaviour
     public float damping = 0.05f;
     public float strength = 1f;
     public float maxDist = 2f;
+
+    private bool leashPhysActive = true;
 
     PlayerInputActions inputActions;
     InputAction move;
@@ -33,18 +36,8 @@ public class LeashManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //Computes leash force
-        Vector3 xToY = VectorXToY(this.transform.position, anchor.transform.position);
-        float distance = xToY.magnitude;
-        float workingDistance = Math.Max(0f, distance - maxDist);
-        Vector3 distanceDirection = xToY.normalized;
-        Vector3 springForce = (workingDistance * strength) * distanceDirection;
-        //Computes small force in the direction of player motion
-        Vector3 inputVelocity = InputVelocity();
-        rb.AddForce(inertia * rb.velocity.magnitude * inputVelocity);
-        strain = inputVelocity.magnitude > 0.05 && workingDistance > 0.05 && !Similar(inputVelocity, springForce);
-        //Applies force
-        rb.AddForce(springForce);
+        if (leashPhysActive)
+            FixedUpdateCall();
     }
     public Vector3 InputVelocity()
     {
@@ -67,5 +60,25 @@ public class LeashManager : MonoBehaviour
     }
     public bool getStrain() {
         return strain;
+    }
+
+    public void SetLeashActive(bool value)
+    {
+        leashPhysActive = value;
+    }
+    private void FixedUpdateCall()
+    {
+        //Computes leash force
+        Vector3 xToY = VectorXToY(this.transform.position, anchor.transform.position);
+        float distance = xToY.magnitude;
+        float workingDistance = Math.Max(0f, distance - maxDist);
+        Vector3 distanceDirection = xToY.normalized;
+        Vector3 springForce = (workingDistance * strength) * distanceDirection;
+        //Computes small force in the direction of player motion
+        Vector3 inputVelocity = InputVelocity();
+        rb.AddForce(inertia* rb.velocity.magnitude* inputVelocity);
+        strain = inputVelocity.magnitude > 0.05 && workingDistance > 0.05 && !Similar(inputVelocity, springForce);
+        //Applies force
+        rb.AddForce(springForce);
     }
 }

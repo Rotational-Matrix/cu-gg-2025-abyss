@@ -1,7 +1,8 @@
+//using Ink.Parsed;
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ink.Runtime;
 
 public class DialogueCanvasManager : MonoBehaviour
 {
@@ -139,12 +140,17 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
     {
-        SetDialogueState(true);
+        bool divertBlocked = false;
         if (!Equals(knotName, null))
         {
-            DivertTo(knotName); //in case one wishes to intentionally not jump, but return to dialogue state
+            divertBlocked = DivertTo(knotName); //in case one wishes to intentionally not jump, but return to dialogue state
         }
-        return AttemptContinue();
+        if (!divertBlocked)
+        {
+            SetDialogueState(true);
+            return AttemptContinue();
+        }
+        return false;  //mimics failing, although divert blocking is acceptable
     }
 
     private void SetDialogueState(bool setActive)
@@ -210,11 +216,12 @@ public class DialogueCanvasManager : MonoBehaviour
     }
 
 
-    public void DivertTo(string knotName) //or knotName.stitchName
+    public bool DivertTo(string knotName) //or knotName.stitchName
     {
-        Debug.Log("Diverting to knot: " + knotName);
-        HandleKnotTags(knotName);
+        //Debug.Log("Diverting to knot: " + knotName);
+        bool incurBlock = HandleKnotTags(knotName);
         _inkStory.ChoosePathString(knotName);
+        return incurBlock;
     }
 
     public void CreateInkSaveState(int saveStateIndex)
@@ -256,16 +263,20 @@ public class DialogueCanvasManager : MonoBehaviour
     }
 
     //##### only on DCM initiated diverting are KnotTags handled #####
-    private void HandleKnotTags(string knotName) //or knotName.stitchName
+    // returns true if divert is blocked
+    private bool HandleKnotTags(string knotName) //or knotName.stitchName
     {
-        /*int dotIndex = knotName.IndexOf('.');
-        string justKnotName = "";
-        if (dotIndex != -1)
-        {
-            justKnotName = knotName.Substring(0, dotIndex);
-        }*/
+
         foreach (string tag in _inkStory.TagsForContentAtPath(knotName))
-            HandleColonKeyTags(tag);
+        {
+            int result = CheckDivertBlockTags(tag);
+            if (result == -1)
+                return true; //encountered
+            else if (result == 0)
+                HandleColonKeyTags(tag);
+            // skip handling the tag via colon tags in 'case: 1'
+        }
+        return false;
     }
 
     // ContinueDialogue returns a bool
@@ -507,7 +518,38 @@ public class DialogueCanvasManager : MonoBehaviour
 
 
 
-
+    /* returns 1 on finding a tag and not getting blocked 
+     * returns 0 on not finding a tag
+     * returns -1 on getting blocked
+     */
+    private int CheckDivertBlockTags(string tag)
+    {
+        int result = 0;
+        int colonIndex = tag.IndexOf(':');
+        if (colonIndex != -1)
+        {
+            string preColon = tag.Substring(0, colonIndex).ToUpper(); //doesn't include the colon
+            string postColon = tag.Substring(colonIndex + 1).Trim();
+            switch (preColon) //this could always be ToUpper-ed to allow for case insensitivity
+            {
+                case "BLOCK_IF_TRUE":
+                    if (StateManager.DCManager.GetInkVar<bool>(postColon))
+                        result = -1;//blocked by tag
+                    else
+                        result = 1; // found tag, but not blocked
+                    break;
+                case "BLOCK_IF_FALSE":
+                    if (!StateManager.DCManager.GetInkVar<bool>(postColon))
+                        result = -1; //blocked by tag
+                    else
+                        result = 1; // found tag, but not blocked
+                    break;
+                default:
+                    break; //did not encounter blocker
+            }
+        }
+        return result;
+    }
 
 
 

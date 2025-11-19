@@ -124,13 +124,18 @@ public class StateManager : MonoBehaviour
     }
 
     //honestly, I'm not sure whether we'll do this or not. Most likely, disabling player motion may depend dialogue context
-    [SerializeField] private bool playerCanMoveDuringDialogue = false;
+    [SerializeField] private bool playerCanMoveDuringDialogue = false; //FIXXXX
     public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
 
     [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
 
     [SerializeField] private GameObject playerControllerObj;
+
+    //Various objects that StateManager ought know about, but not nee make public.
+    [SerializeField] private LeashManager leashManager;
+    [SerializeField] private GameObject leash;
+
 
     //these can be called by other fns' Start() to access pmManager & dcManager
     public static DialogueCanvasManager DCManager { get; private set; }
@@ -142,6 +147,9 @@ public class StateManager : MonoBehaviour
     //this is the current stack of menus opened
     public static Stack<IGridSelectable> MenuStack { get; private set; } = new Stack<IGridSelectable>();
     public static Action<UnityEngine.InputSystem.Key> DirectInputAction { get; private set; }
+
+
+
 
 
     private static bool isInDialogue = false;
@@ -277,6 +285,8 @@ public class StateManager : MonoBehaviour
         //public static version = private non-static version
         PlayerCanMoveDuringDialogue = playerCanMoveDuringDialogue;
 
-        
+        //leashManager.SetLeashActive(false);
+        //leash.SetActive(false);
+
     }
 }
