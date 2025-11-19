@@ -6,7 +6,7 @@ using System;
 [RequireComponent(typeof(Collider))] //realistically, requires a trigger (i.e. Collider.IsTrigger = true)
 public class NPCInteractionManager : InteractableElement
 {
-    public static event Action<NPCInteractionManager> npcDialogue;
+    /*public static event Action<NPCInteractionManager> npcDialogue;
     public GameObject player;
     public float distance = 3.5f;
     public int npcCode;

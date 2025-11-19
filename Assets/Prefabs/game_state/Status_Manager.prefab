@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7765547ba76f7884496f303e1651d582, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCanMoveDuringDialogue: 0
   dialogueCanvas: {fileID: 0}
   pauseMenuCanvas: {fileID: 0}
   playerControllerObj: {fileID: 0}

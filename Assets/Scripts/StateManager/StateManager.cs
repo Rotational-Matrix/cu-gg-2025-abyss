@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class StateManager : MonoBehaviour
@@ -52,6 +53,10 @@ public class StateManager : MonoBehaviour
     ///     - Tells if there are any menus opened.
     ///     - NOTE: only informs if any menus are open, and does *not* say anything about dialogue
     /// 
+    /// boo; IsInRoam()
+    ///     - tells if not in Menu and not in Dialogue
+    ///     - literally just uses the above 2 functions
+    /// 
     /// StateManager.MenuInputType CurrMenuType() {Usage Not Suggested}
     ///     - ProtoInputHandler calls this to know how to send inputs for each given file
     /// 
@@ -67,16 +72,28 @@ public class StateManager : MonoBehaviour
     /// void ExecuteInteract()
     ///     - the equivalent of pop, activates the topmost interact (many InteractableElement objs remove themselves on execute)
     /// 
-    /// Shortcut methods!!
+    /// public static void AddMenuStateChangeResponse(IStateManagerListener listener)
+    /// public static void RemoveMenuStateChangeResponse(IStateManagerListener listener)
+    ///     - If objects implement IStateManagerListener, they can send themself as a listener to execute fns on menu state change
+    /// 
+    /// 
+    /// void PushMenu(IGridSelectable menu)
+    ///     - properly pushes the top menu
+    ///         - for broadcasting, please call this instead of StackMenu.Push(...)
+    /// 
     /// void ExitTopMenu()
     ///     - properly closes the top menu (although all menus can close themselves, and some ought not be closable)
+    /// 
+    ///
     ///     
     /// void PhonyAction(int useless)
     ///     - Actually does nothing
     ///     - A lot of menus use Action<int'>, and this is a more readable way to call a so-nothing function if needed
     ///     
     /// 
-    /// 
+    /// -- special case --
+    /// void PopMenu()
+    ///     - this has a special purpose for broadcasting reasons. Please use 'ExitTopMenu' instead.
     /// 
     /// 
     /// 
@@ -106,14 +123,11 @@ public class StateManager : MonoBehaviour
         DirectKey
     }
 
-    [SerializeField] public static bool disablePlayerMotionDuringDialogue = false;
-    [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player (obviously)
-    //[SerializeField] private GameObject playerMenuCanvas; //like an inventory in many games, something accesible at 'sorcery speed'
     //honestly, I'm not sure whether we'll do this or not. Most likely, disabling player motion may depend dialogue context
     [SerializeField] private bool playerCanMoveDuringDialogue = false;
     public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
 
-    //[SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
+    [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
     [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
 
     [SerializeField] private GameObject playerControllerObj;
@@ -136,15 +150,15 @@ public class StateManager : MonoBehaviour
     //here to handle 'interact' calls
     private static List<InteractableElement> interactStack = new List<InteractableElement>();
 
+    //for handling boradcasting
+    private static List<IStateManagerListener> stateListeners = new List<IStateManagerListener>();
     public static void SetDialogueStatus(bool dialogueStatus)
     {
         isInDialogue = dialogueStatus;
-        //disables player motion during dialogue (currently horribly buggy)
-        if (disablePlayerMotionDuringDialogue)
-        isInDialogue = dialogueStatus;
+        BroadcastStateChange(); //broadcasing state change!
         //disables player motion during dialogue (preferable? i'm uncertain)
         //[Cu]: I'm not sure, we may actually allow both conditions and make it depend on dialogue.
-        if (PlayerCanMoveDuringDialogue)
+        if (PlayerCanMoveDuringDialogue) //NOTE TO CHANGE TO BROAADCAST FIXXXX
         {
             if (dialogueStatus) Eve.OnEnable();
             else Eve.OnDisable();
@@ -156,6 +170,10 @@ public class StateManager : MonoBehaviour
     public static bool IsInMenu()
     {
         return StateManager.MenuStack.Count > 0;
+    }
+    public static bool IsInRoam()
+    {
+        return (!IsInMenu()) && (!isInDialogue);
     }
     public static StateManager.MenuInputType CurrMenuType()
     {
@@ -173,22 +191,55 @@ public class StateManager : MonoBehaviour
     }
 
     public static void AddInteraction(InteractableElement interactElem)
-    { interactStack.Add(interactElem); }
+    { interactStack.Add(interactElem); if (interactStack.Count == 1) PMManager.SetActionPromptActive(true); }
     public static void RemoveInteraction(InteractableElement interactElem)
-    { interactStack.Remove(interactElem); }
+    {
+        if (interactStack.Count != 0)
+        {
+            interactStack.Remove(interactElem);
+            if (interactStack.Count == 0) 
+                PMManager.SetActionPromptActive(false);
+        }
+    }
     public static void ClearInteractStack()
     { interactStack.Clear(); }
     public static void ExecuteInteract()
     {
         if (interactStack.Count != 0)
-            interactStack[interactStack.Count - 1].ExecuteInteract();
+            interactStack[^1].ExecuteInteract();
     }
+
+    //if a listener adds themself, please let them remove themself too...
+    public static void AddStateChangeResponse(IStateManagerListener listener)
+    {
+        stateListeners.Add(listener);
+    }
+    public static void RemoveStateChangeResponse(IStateManagerListener listener)
+    {
+        stateListeners.Remove(listener);
+    }
+
+    public static void PushMenu(IGridSelectable menu)
+    {
+        MenuStack.Push(menu);
+        if (MenuStack.Count == 1) //i.e. just entered menu state
+            BroadcastStateChange();
+    }
+    public static void PopMenu()
+    {
+        MenuStack.Pop();
+        if (!IsInMenu()) //i.e. just exited menu state
+            BroadcastStateChange();
+    }
+
 
     //Shortcut fns
     public static void ExitTopMenu()
     {
         if (IsInMenu())
+        {
             MenuStack.Peek().ExitMenu();
+        }
     }
     public static void SoftExitTopMenu()
     {
@@ -201,10 +252,17 @@ public class StateManager : MonoBehaviour
     }
 
 
-    
-    
 
-    
+    //private broadcasters
+
+    private static void BroadcastStateChange()
+    {
+        foreach (IStateManagerListener listener in stateListeners)
+        {
+            listener.OnStateChange(IsInMenu(), isInDialogue, false);
+        }
+    }
+
 
 
 

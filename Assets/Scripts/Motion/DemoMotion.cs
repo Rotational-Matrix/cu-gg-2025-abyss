@@ -37,7 +37,7 @@ public class DemoMotion : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (ProtoInputHandler.CurrentKeyboard[ProtoInputHandler.debug_moveSariel].wasPressedThisFrame)
         {
             MoveToNextPosition();
         }

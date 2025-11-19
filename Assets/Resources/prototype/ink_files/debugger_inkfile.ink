@@ -15,6 +15,7 @@ VAR flowerCounter = 0
 = debug_stitch_1 
 #READ_AS_STAGE_LINES:FALSE
 Entering Debug Knot (1st stitch)
+This is an extra buffer
  + [run debug tests]
     -> debug_test_run
  
@@ -123,8 +124,10 @@ The intro has ended.
 -> END //included to quiet system
 
 === sariel_interact ===
+#READ_AS_STAGE_LINES:TRUE
 //the unity object mere needs to call sariel_interact
 //or sariel_interact.context_assign
+<> ->context_assign
 = context_assign
 { actNumber:
 - 1: -> act_1
@@ -134,10 +137,12 @@ The intro has ended.
 }
 = act_1
 lorem ipsum solem dicut
-
+test, etc.
+-> debug_knot
 
 = act_2
 lorem ipsum solem dicut
+-> debug_knot
 /*+ [nothing] <> //this glue makes it so there is no 'blank space'
  - <> The above should not have any key presses which show nothing (nothing!).*/
 

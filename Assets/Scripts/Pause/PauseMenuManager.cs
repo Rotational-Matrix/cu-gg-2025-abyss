@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-public class PauseMenuManager : MonoBehaviour
+public class PauseMenuManager : MonoBehaviour, IStateManagerListener
 {
     /// <summary>
     /// Part of [Cu]'s documentation for external usage of PauseMenuManager (don't worry this one isn't bad)
@@ -61,6 +61,12 @@ public class PauseMenuManager : MonoBehaviour
     ///     - activates and loads the controls menu
     ///         - currently, means a snarky page that says 'you are not in control' that can only be exited
     ///         - Note that ProtoInputHandler is abstracting key presses, so this might become genuinely functional
+    ///         
+    /// void SetActionPromptActive(bool value)
+    ///     - Sets the action prompt on or off and also sets the glyph
+    ///     - currently only does interact but could be easily changed to be more general
+    ///     - the prompt is anticipated to only be on when neither in dialogue or menus
+    ///         - this expectation is mostly due to interact only being available at these times
     /// 
     /// </summary>
 
@@ -103,10 +109,13 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private CallbackGrid loadSaveMenu;
     [SerializeField] private CallbackGrid controlsMenu;
 
+    // interact prompt
+    [SerializeField] private GameObject actPromptPanel;
+    [SerializeField] private TMPro.TMP_Text actPromptText;
 
     /* Doesn't create the popup, just overwrites properties on the existing one
      */
-    
+
     public void InitConfigMenu()
     {
         configMenu.InitiateGrid();
@@ -133,6 +142,25 @@ public class PauseMenuManager : MonoBehaviour
         controlsMenu.InitiateGrid();
     }
 
+
+    public void SetActionPromptActive(bool value)
+    {
+        if (value)
+        {
+            string keyName = ProtoInputHandler.CurrentKeyboard[ProtoInputHandler.interactKey].displayName;
+            actPromptText.text = "Press " + keyName.ToUpper() + " to interact";
+            if (!(StateManager.IsInMenu() || StateManager.GetDialogueStatus()))
+                actPromptPanel.SetActive(value);
+            StateManager.AddStateChangeResponse(this); //gives the entire PMManager
+        }
+        else
+        {
+            actPromptPanel.SetActive(value);
+            StateManager.RemoveStateChangeResponse(this);
+        }
+
+        
+    }
 
     /*
     public void ToggleMenu() //only concerns the menu panel rn
@@ -161,6 +189,7 @@ public class PauseMenuManager : MonoBehaviour
         LSAwake();
         AVAwake();
         ConfigAwake();
+        SetActionPromptActive(false);
     }
     
 
@@ -230,5 +259,11 @@ public class PauseMenuManager : MonoBehaviour
     }
 
 
+    // are not actually public. I never made broadcasters, so these will appear public
+    //currently exclusively for the prompt becuase I couldn't get a better way
+    public void OnStateChange(bool inMenu, bool inDialogue, bool inExtern)
+    {
+        actPromptPanel.SetActive(!(inMenu || inDialogue || inExtern));
+    }
 
 }
