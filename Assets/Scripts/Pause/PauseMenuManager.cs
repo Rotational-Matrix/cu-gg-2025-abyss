@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-public class PauseMenuManager : MonoBehaviour, IMenuStateListener
+public class PauseMenuManager : MonoBehaviour, IStateManagerListener
 {
     /// <summary>
     /// Part of [Cu]'s documentation for external usage of PauseMenuManager (don't worry this one isn't bad)
@@ -151,12 +151,12 @@ public class PauseMenuManager : MonoBehaviour, IMenuStateListener
             actPromptText.text = "Press " + keyName.ToUpper() + " to interact";
             if (!(StateManager.IsInMenu() || StateManager.GetDialogueStatus()))
                 actPromptPanel.SetActive(value);
-            StateManager.AddMenuStateChangeResponse(this); //gives the entire PMManager
+            StateManager.AddStateChangeResponse(this); //gives the entire PMManager
         }
         else
         {
             actPromptPanel.SetActive(value);
-            StateManager.RemoveMenuStateChangeResponse(this);
+            StateManager.RemoveStateChangeResponse(this);
         }
 
         
@@ -261,14 +261,9 @@ public class PauseMenuManager : MonoBehaviour, IMenuStateListener
 
     // are not actually public. I never made broadcasters, so these will appear public
     //currently exclusively for the prompt becuase I couldn't get a better way
-    public void OnMenuStateEnter()
+    public void OnStateChange(bool inMenu, bool inDialogue, bool inExtern)
     {
-        actPromptPanel.SetActive(false);
-    }
-
-    public void OnMenuStateExit()
-    {
-        actPromptPanel.SetActive(true);
+        actPromptPanel.SetActive(!(inMenu || inDialogue || inExtern));
     }
 
 }

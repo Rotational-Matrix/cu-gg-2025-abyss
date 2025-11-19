@@ -258,6 +258,12 @@ public class DialogueCanvasManager : MonoBehaviour
     //##### only on DCM initiated diverting are KnotTags handled #####
     private void HandleKnotTags(string knotName) //or knotName.stitchName
     {
+        /*int dotIndex = knotName.IndexOf('.');
+        string justKnotName = "";
+        if (dotIndex != -1)
+        {
+            justKnotName = knotName.Substring(0, dotIndex);
+        }*/
         foreach (string tag in _inkStory.TagsForContentAtPath(knotName))
             HandleColonKeyTags(tag);
     }

@@ -92,7 +92,7 @@ public class ProtoInputHandler : MonoBehaviour
      *  - can (and will) break dialogue if used haphazardly
      *  - forced jumping will blow up if a non-real knotName is used
      */
-    private static Key debug_forceStartDialogue = Key.P;
+    private static Key debug_forceStartDialogue = Key.RightBracket;
     private static Key debug_forceJumpDialogue = Key.O;
     public static Key debug_moveSariel = Key.Q;
     [SerializeField] public string forceJumpKnotName;
@@ -140,7 +140,7 @@ public class ProtoInputHandler : MonoBehaviour
             case StateManager.MenuInputType.None: // if not in any menus
                 if (StateManager.GetDialogueStatus()) //if in dialogue
                     DialogueInputHandler(keyPressed, mvSelectUp, mvSelectDown, commitChoiceKey, dialogueKey);
-                //if not in dialogue
+                
                 NotInMenuMiscHandler(keyPressed, openConfigKey, debug_forceStartDialogue, debug_forceJumpDialogue);
                 break;
         }
@@ -221,8 +221,11 @@ public class ProtoInputHandler : MonoBehaviour
             else if (keyPressed == d_FJDialogue)
                 dcManager.DivertTo(forceJumpKnotName);
         }
-        if (keyPressed == interactKey)
-            StateManager.ExecuteInteract();
+        if (!StateManager.GetDialogueStatus())
+        {
+            if (keyPressed == interactKey)
+                StateManager.ExecuteInteract();
+        }
     }
 
 

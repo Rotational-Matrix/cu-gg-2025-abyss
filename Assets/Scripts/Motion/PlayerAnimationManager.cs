@@ -38,10 +38,6 @@ public class PlayerAnimationManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            pause(this);
-        }
         //if (StateManager.GetDialogueStatus()) return;
         Vector3 input = lm.InputVelocity();
         float x = input.x;

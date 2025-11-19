@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDialogueIntermediary : MonoBehaviour
 {
-    [SerializeField] public GameObject dialogueCanvas;
+    /*[SerializeField] public GameObject dialogueCanvas;
     [SerializeField] public GameObject pauseMenu;
     //public Gameobject playerChar;
     private DialogueCanvasManager dialogue;
@@ -34,5 +34,5 @@ public class PlayerDialogueIntermediary : MonoBehaviour
         //{"npc_test_knot":["^test","\n",{"#f":1}]}
         Debug.Log("Starting NPC dialogue.");
         dialogue.InitiateDialogueState("debug_knot.debug_stitch_1");
-    }
+    }*/
 }

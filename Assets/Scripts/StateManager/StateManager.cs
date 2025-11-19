@@ -72,9 +72,9 @@ public class StateManager : MonoBehaviour
     /// void ExecuteInteract()
     ///     - the equivalent of pop, activates the topmost interact (many InteractableElement objs remove themselves on execute)
     /// 
-    /// public static void AddMenuStateChangeResponse(IMenuStateListener listener)
-    /// public static void RemoveMenuStateChangeResponse(IMenuStateListener listener)
-    ///     - If objects implement IMenuStateListener, they can send themself as a listener to execute fns on menu state change
+    /// public static void AddMenuStateChangeResponse(IStateManagerListener listener)
+    /// public static void RemoveMenuStateChangeResponse(IStateManagerListener listener)
+    ///     - If objects implement IStateManagerListener, they can send themself as a listener to execute fns on menu state change
     /// 
     /// 
     /// void PushMenu(IGridSelectable menu)
@@ -151,13 +151,14 @@ public class StateManager : MonoBehaviour
     private static List<InteractableElement> interactStack = new List<InteractableElement>();
 
     //for handling boradcasting
-    private static List<IMenuStateListener> menuStateListeners = new List<IMenuStateListener>();
+    private static List<IStateManagerListener> stateListeners = new List<IStateManagerListener>();
     public static void SetDialogueStatus(bool dialogueStatus)
     {
         isInDialogue = dialogueStatus;
+        BroadcastStateChange(); //broadcasing state change!
         //disables player motion during dialogue (preferable? i'm uncertain)
         //[Cu]: I'm not sure, we may actually allow both conditions and make it depend on dialogue.
-        if (PlayerCanMoveDuringDialogue)
+        if (PlayerCanMoveDuringDialogue) //NOTE TO CHANGE TO BROAADCAST FIXXXX
         {
             if (dialogueStatus) Eve.OnEnable();
             else Eve.OnDisable();
@@ -209,26 +210,26 @@ public class StateManager : MonoBehaviour
     }
 
     //if a listener adds themself, please let them remove themself too...
-    public static void AddMenuStateChangeResponse(IMenuStateListener listener)
+    public static void AddStateChangeResponse(IStateManagerListener listener)
     {
-        menuStateListeners.Add(listener);
+        stateListeners.Add(listener);
     }
-    public static void RemoveMenuStateChangeResponse(IMenuStateListener listener)
+    public static void RemoveStateChangeResponse(IStateManagerListener listener)
     {
-        menuStateListeners.Remove(listener);
+        stateListeners.Remove(listener);
     }
 
     public static void PushMenu(IGridSelectable menu)
     {
         MenuStack.Push(menu);
         if (MenuStack.Count == 1) //i.e. just entered menu state
-            BroadcastMenuStateChange(true);
+            BroadcastStateChange();
     }
     public static void PopMenu()
     {
         MenuStack.Pop();
-        if (IsInMenu()) //i.e. just entered menu state
-            BroadcastMenuStateChange(false);
+        if (!IsInMenu()) //i.e. just exited menu state
+            BroadcastStateChange();
     }
 
 
@@ -254,12 +255,11 @@ public class StateManager : MonoBehaviour
 
     //private broadcasters
 
-    private static void BroadcastMenuStateChange(bool isEnter)
+    private static void BroadcastStateChange()
     {
-        foreach (IMenuStateListener listener in menuStateListeners)
+        foreach (IStateManagerListener listener in stateListeners)
         {
-            if (isEnter) listener.OnMenuStateEnter();
-            else listener.OnMenuStateExit();
+            listener.OnStateChange(IsInMenu(), isInDialogue, false);
         }
     }
 
