@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class StateManager : MonoBehaviour
@@ -123,6 +124,8 @@ public class StateManager : MonoBehaviour
         DirectKey
     }
 
+
+
     //honestly, I'm not sure whether we'll do this or not. Most likely, disabling player motion may depend dialogue context
     [SerializeField] private bool playerCanMoveDuringDialogue = false; //FIXXXX
     public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
@@ -160,6 +163,8 @@ public class StateManager : MonoBehaviour
 
     //for handling boradcasting
     private static List<IStateManagerListener> stateListeners = new List<IStateManagerListener>();
+    private static int stateFlag = 0;
+
     public static void SetDialogueStatus(bool dialogueStatus)
     {
         isInDialogue = dialogueStatus;
@@ -267,7 +272,7 @@ public class StateManager : MonoBehaviour
     {
         foreach (IStateManagerListener listener in stateListeners)
         {
-            listener.OnStateChange(IsInMenu(), isInDialogue, false);
+            listener.OnStateChange(IsInMenu(), isInDialogue, stateFlag);
         }
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IStateManagerListener
 {
     private int groundedFrameCount;
     public bool canJump = false; // TESTING
@@ -90,44 +90,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /* MenuBlocksMotion is called every time motion would be updated,
-     *  - currently assumes that any non-dialogueMenu is considered an immovable state
-     */
-    private bool MenuBlocksMotion()
+    public void OnStateChange(bool inMenu, bool inDialogue, int stateFlag)
     {
-        return StateManager.IsInMenu();
+        //FIXXXXXX
+        //need never added as listener, so not dangerous
+        if (inMenu || inDialogue) OnDisable();
+        else OnEnable();
     }
 
 
-    /* Heya! This is [Cu], please delete this after reading
-     * If I haven't already said:
-     *  - I chose to handle blocking player movement in the player controller itself
-     *  - I have a malleable fn (that is very basic rn) each time player movement occurs
-     *  
-     *  If you don't like this, lmk, and I can use a different way 
-     *      (there are more optimised ways of doing this, but that makes for harder to change code...)
-     *  If you are okay with this, ####### Delete the comments below (and this one) ########
-     */
-
-    
-    /* Currently accessed frequently by ProtoInputHandler
-     *  - The OnGui of ProtoInputHandler calls these on every keyboard press
-     *      - this obviously is more than these need to be called
-     *          - the best way would be to have some trigger on the MenuStack
-     *              for when it becomes/unbecomes empty to call these once
-     *      - this does allow for easy altering in the high likelihood of 
-     *          changes during development
-     */
-    /*
-    public void SetMotionActive(bool motionActive)
-    {
-        this.motionActive = motionActive;
-    }
-
-    public bool IsMotionActive()
-    {
-        return motionActive;
-    }*/
 
 
 }

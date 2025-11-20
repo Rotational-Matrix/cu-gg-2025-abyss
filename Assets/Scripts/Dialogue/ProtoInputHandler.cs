@@ -195,8 +195,16 @@ public class ProtoInputHandler : MonoBehaviour
                 dcManager.Choose();
                 dcManager.AttemptContinue();
             }
+            else if (keyPressed == dialogueKey) //cop - out for when they are the same key
+            {
+                if (!dcManager.IsChoiceActive())
+                {
+                    if (!dcManager.AttemptContinue())
+                        dcManager.InitiateChoices();
+                }
+            }
         }
-        if (keyPressed == dialogueKey)
+        else if (keyPressed == dialogueKey)
         {
             if (!dcManager.IsChoiceActive())
             {
