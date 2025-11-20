@@ -1,7 +1,8 @@
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ink.Runtime;
+using UnityEngine.Windows;
 
 public class DialoguePanelHandler : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class DialoguePanelHandler : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text bodyText;
     [SerializeField] private GameObject headerPanel;
     [SerializeField] private TMPro.TMP_Text headerText;
+    private Color32 defaultTextColour = new (255, 255, 255, 255);
+    private Color32 greyTextColour = new (180, 180, 180, 255);
     //private bool isTextCrawlOn = true; //not implemented, I can implement this later, but not for the proto.
     //if text crawl is added, will have to hold an intermediate string.
 
@@ -106,12 +109,23 @@ public class DialoguePanelHandler : MonoBehaviour
         }
     }
 
+    //for convenience, specifically restores default on passing false as param
+    public void GreyOutText(bool becomeGrey)
+    {
+        if (becomeGrey)
+            bodyText.color = greyTextColour;
+        else
+            bodyText.color = defaultTextColour;
+    }
+
+
     private void CleanDPanel()
     {
         //This is done so that, once DPanel is re-enabled, its sprites are not shown unless they should be.
         SetSprite(null, null); 
         SetBodyText("");
         SetHeaderText("");
+        bodyText.color = defaultTextColour;
     }
 
 

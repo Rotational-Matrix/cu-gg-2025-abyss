@@ -50,14 +50,16 @@ public class ProtoInputHandler : MonoBehaviour
      *  - Progress to the next line of dialogue
      *  - Initiate choice selection (when the dialogue hits a choice)
      */
-    public static Key dialogueKey = Key.Enter;
+    public static Key dialogueKey = Key.Space;
+    public static Key alterDialogueKey = Key.Enter;
 
     /* commitChoiceKey does the following:
      *  - Commits the currently selected/highlighted choice
      *  
      *  NOTE: this is currently the SAME key as dialogueKey
      */
-    public static Key commitChoiceKey = Key.Enter;
+    public static Key commitChoiceKey = Key.Space;
+    public static Key alterCommitChoiceKey = Key.Enter;
 
     /* mvSelectUp, mvSelectDown:
      *  - for choice selection, these commands move the selector up and down
@@ -132,16 +134,16 @@ public class ProtoInputHandler : MonoBehaviour
         {
             //note that this accounts
             case StateManager.MenuInputType.SelectableGrid:
-                GridSelectHandler(keyPressed, mvSelectUp, mvSelectDown, commitChoiceKey, exitKey);
+                GridSelectHandler(keyPressed);
                 break;
             case StateManager.MenuInputType.DirectKey:
                 DirectKeyHandler(keyPressed);
                 break;
             case StateManager.MenuInputType.None: // if not in any menus
                 if (StateManager.GetDialogueStatus()) //if in dialogue
-                    DialogueInputHandler(keyPressed, mvSelectUp, mvSelectDown, commitChoiceKey, dialogueKey);
+                    DialogueInputHandler(keyPressed);
                 
-                NotInMenuMiscHandler(keyPressed, openConfigKey, debug_forceStartDialogue, debug_forceJumpDialogue);
+                NotInMenuMiscHandler(keyPressed);
                 break;
         }
     }
@@ -150,13 +152,13 @@ public class ProtoInputHandler : MonoBehaviour
 
     //during GridSelectableInput, other types of input are not necessarily cutoff.
     //Note that the escape key is not currently an option to use
-    private void GridSelectHandler(Key keyPressed, Key upKey, Key downKey, Key chooseKey, Key exitKey)
+    private void GridSelectHandler(Key keyPressed)
     {
-        if (keyPressed == upKey)
+        if (keyPressed == mvSelectUp)
             StateManager.MenuStack.Peek().IncremElement();
-        else if (keyPressed == downKey)
+        else if (keyPressed == mvSelectDown)
             StateManager.MenuStack.Peek().DecremElement();
-        else if (keyPressed == chooseKey)
+        else if (keyPressed == commitChoiceKey ||keyPressed == alterCommitChoiceKey)
             StateManager.MenuStack.Peek().ChooseSelected();
         else if (keyPressed == exitKey)
             StateManager.SoftExitTopMenu();
@@ -168,7 +170,7 @@ public class ProtoInputHandler : MonoBehaviour
     }
 
     //all cases of non menuStack 'pseudo menus' (choice/dialogue)
-    private void DialogueInputHandler(Key keyPressed, Key upKey, Key downKey, Key chooseKey, Key dialogueKey)
+    private void DialogueInputHandler(Key keyPressed)
     {
         /* Why does this look so stupid? Observe:
          *  - OnGui gets called every time an input happens, and the code reaches here every keyboard input
@@ -178,24 +180,24 @@ public class ProtoInputHandler : MonoBehaviour
          */
         
         
-        if (keyPressed == upKey) //best to filter out by key first
+        if (keyPressed == mvSelectUp) //best to filter out by key first
         {
             if(dcManager.IsChoiceActive())
                 dcManager.IncremChoiceSelection();
         }
-        if (keyPressed == downKey)
+        if (keyPressed == mvSelectDown)
         {
             if (dcManager.IsChoiceActive())
                 dcManager.DecremChoiceSelection();
         }
-        if (keyPressed == chooseKey)
+        if (keyPressed == commitChoiceKey || keyPressed == alterCommitChoiceKey)
         {
             if (dcManager.IsChoiceActive())
             {
                 dcManager.Choose();
                 dcManager.AttemptContinue();
             }
-            else if (keyPressed == dialogueKey) //cop - out for when they are the same key
+            else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey) //copout for chookey = dialogue key
             {
                 if (!dcManager.IsChoiceActive())
                 {
@@ -204,7 +206,7 @@ public class ProtoInputHandler : MonoBehaviour
                 }
             }
         }
-        else if (keyPressed == dialogueKey)
+        else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey)
         {
             if (!dcManager.IsChoiceActive())
             {
@@ -218,15 +220,15 @@ public class ProtoInputHandler : MonoBehaviour
     // note d_ means 'debug key' here, FS: Force Start, FJ: Force Jump
     //TODO: Make it so Escape and Tab (or whatev) can actually leave the menu
     //  - prolly entails adding a 'softExitMenu' and making PMManager give access to its menus.
-    private void NotInMenuMiscHandler(Key keyPressed, Key togConfigKey, Key d_FSDialogue, Key d_FJDialogue)
+    private void NotInMenuMiscHandler(Key keyPressed)
     {
-        if (keyPressed == togConfigKey)
+        if (keyPressed == openConfigKey)
             pmManager.InitConfigMenu();
         else if (DebugKeysActive) //everything in here is debug
         {
-            if (keyPressed == d_FSDialogue)
+            if (keyPressed == debug_forceStartDialogue)
                 dcManager.InitiateDialogueState(null);
-            else if (keyPressed == d_FJDialogue)
+            else if (keyPressed == debug_forceJumpDialogue)
                 dcManager.DivertTo(forceJumpKnotName);
         }
         if (!StateManager.GetDialogueStatus())

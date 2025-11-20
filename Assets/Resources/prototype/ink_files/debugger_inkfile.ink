@@ -170,6 +170,7 @@ lorem ipsum solem dicut
 
 >>> START_DIALOGUE
 
+#sprite: NONE
 NO_SPEAKER: There is no sound at first.
 
 Only the faint pressure of existence. The ache of being almost.
@@ -198,10 +199,13 @@ I reach towards it. The light leans closer.
 #sprite: Overlays/sariel1 
 ???: “You’re safe.”
 
+#sprite: NONE
 The light’s murmurs are feminine and warm.
 
+#sprite: Overlays/sariel1 
 ???: “I’ll help you understand.”
 
+#sprite: NONE
 I don’t ask what safe means, yet the word takes root in my chest all the same, sprouting into belief. 
 
 The world begins to congeal around me. Damp air, cool soil, and petrichor. 
@@ -209,15 +213,20 @@ The world begins to congeal around me. Damp air, cool soil, and petrichor.
 #sprite: Overlays/eve1
 Me?: “Who are you?” 
 
+#sprite: NONE
 As I ask, my voice breaks as it exits my throat. 
 
 #sprite: Overlays/sariel3
 Sariel: “Sariel.” 
 
+
+#sprite: NONE
 The light breathes, almost laughing. 
 
+#sprite: Overlays/sariel3
 Sariel: “And you’re… mine, I think.”
 
+#sprite: NONE
 Something tender opens in my throat. Not fear, not joy, but something in between.
 
 The light brightens, outlining the suggestion of trees and a path that hadn’t been there mere seconds ago.
@@ -239,6 +248,7 @@ Sariel, luminous as ever, trails ahead.
 #sprite: Overlays/sariel3
 Sariel: “Stay close.” 
 
+#sprite: NONE
 Each of her words is draped in fondness.
 
 I nod. It’s easier than asking why.
@@ -258,13 +268,16 @@ Its wool is matted with blood, a red too vivid for the incipient palette of my s
 #sprite: Overlays/sariel3
 Sariel: “Oh, you poor thing.” 
 
+#sprite: NONE
 Sariel’s murmurs are gentle. 
 
+#sprite: Overlays/sariel3
 Sariel: “An injured lamb. We can help it. Don’t you want to help, Eve?”
 
 #sprite: Overlays/eve1
 Eve: “Eve?” 
 
+#sprite: NONE
 I echo the name, a lump in my throat. 
 
 I do. The want is immediate, almost desperate, because helping feels like proof of goodness. My previous confusion slips my mind.
@@ -274,12 +287,13 @@ Sariel’s hand glides along the side of my neck, guiding my gaze towards the da
 #sprite: Overlays/sariel3
 Sariel: “There’s a cave nearby. It’s dark, but you’ll be safe if you hurry. The cobwebs inside can be used to mend wounds.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I peer into the void. Unease worms its way under my skin.
 
+#sprite: Overlays/eve1
 Eve: “If you’re watching the lamb, does that mean I… have to go alone?”
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Sariel laughs. It’s gentle and uninhibited, and I find my worries melting under its warmth. 
 
 ~ assign_next_scene(-> part_II.init_cave)
@@ -292,7 +306,7 @@ Sariel laughs. It’s gentle and uninhibited, and I find my worries melting unde
 
 ~ cave_visited = true
 
-#sprite: Overlays/eve1
+#sprite: NONE
 Stepping inside feels like drowning upright. The air is far too damp and thick with must. 
 
 I hastily turn to gather the lattices of silver strands that cling to the stone interior.
@@ -307,7 +321,7 @@ I hastily turn to gather the lattices of silver strands that cling to the stone 
 
 >>> START_DIALOGUE
 
-#sprite: Overlays/eve1
+#sprite: NONE
 My heart finally calms as I finish collecting the last threads the cave has to offer.
 
 Then, static. A flicker at the edge of my sight. Something shifts ahead of me, hoofed and wrong, its silhouette splitting from the fuzzy darkness.
@@ -317,11 +331,13 @@ My breath stutters, my heart pounding violently against my ribcage. The dull noi
 #sprite: Overlays/sariel3
 Sariel: “Eve.” 
 
+#sprite: NONE
 Sariel’s voice echoes, distant, yet perfectly clear. 
 
+#sprite: Overlays/sariel3
 Sariel: “Come back to me.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.
 
 When I stumble into the light again, Sariel catches me. Her embrace is too tight, almost reverent. 
@@ -331,97 +347,108 @@ Sariel: “There, there.”
 
 Sariel: “See how dangerous it was without me?”
 
+#sprite: NONE
 Her words are soft and breathy.
 
-#sprite: Overlay/eve1
+#sprite: Overlays/eve1
 Eve: “Sariel-”
 
+#sprite: NONE
 I choke. I try to speak, but my words, a sob, snag in my throat. Sariel brushes a strand of hair away from my face and smiles.
 
-#sprite: Overlay/sariel1
+#sprite: Overlays/sariel1
 Sariel: “You found exactly what I needed. Such a good girl.”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 My hands tremble, my heart struggling to come back to a level of normalcy as I watch her tend to the wounded animal, wrapping its leg in the gathered silk. The threads cling beautifully, glowing softly in Sariel’s light.
 
-#sprite: Overlay/sariel3
+#sprite: Overlays/sariel3
 Sariel: “Cobwebs have always been excellent for stopping bleeding,” Sariel explains. “Isn’t that lovely? To be enveloped until you’re whole again.”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 I watch the lamb shiver, its leg fully cocooned. An emotion I can’t place ripples somewhere deep within me.
 
-#sprite: Overlay/sariel3
+#sprite: Overlays/sariel3
 Sariel: “I was worried for you. My heart stopped when you suggested going alone.”
 
-#sprite: Overlay/eve1
+#sprite: Overlays/eve1
 Eve: “I- I was only-”
 
-#sprite: Overlay/sariel3
+#sprite: Overlays/sariel3
 Sariel: “I know. You just wanted to help.”
 
 Sariel: “And you did. You did so well. But…” 
 
+#sprite: NONE
 There’s a pause sharp enough to draw blood. 
 
+#sprite: Overlays/sariel3
 Sariel: “You frightened me, and it seems for good reason.”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 The guilt blooms instantly, raw and uncomfortable. 
 
-#sprite: Overlay/sariel3
+#sprite: NONE
 After a beat, Sariel speaks again.
 
+#sprite: Overlays/sariel3
 Sariel: “Maybe, it’s best if we make sure you can’t drift away into danger like that again.”
 
+#sprite: NONE
 She raises her hand, and something luminescent cinches around my throat. A string of light stretches between us, vanishing into Sariel’s palm. 
 
+#sprite: Overlays/sariel3
 Sariel: “Try to move now.”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 I step back; the thread tightens, and my heart jumps, nerves alight.
 
-#sprite: Overlay/sariel3
+#sprite: Overlays/sariel3
 Sariel: “See?” 
 
+#sprite: NONE
 Sariel’s smile is a wound wrapped in sweetness.
 
+#sprite: Overlays/sariel3
 Sariel: “Isn’t that better? Don’t you feel safer?”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 Her last word echoes through my chest, hollow and obedient. 
 
-#sprite: Overlay/sariel3
+#sprite: NONE
 She hums softly, almost amused. 
 
+#sprite: Overlays/sariel3
 Sariel: “Mm, isn’t she beautiful?”
 
-#sprite: Overlay/eve1
+#sprite: NONE
 I lift my head, and our eyes meet, but it feels as though her gaze peels back every layer of my being. 
 
+#sprite: Overlays/eve1
 Eve: “What?”
 
-#sprite: Overlay/sariel3
+#sprite: NONE
 Silence. Then, she laughs. 
 
+#sprite: Overlays/sariel3
 Sariel: “I’m talking about you.”
 
+#sprite: Overlays/sariel3
 Sariel: “Now, follow.”
 
+#sprite: NONE
 Her tone shifts suddenly to strict and authoritative, making my back straighten reflexively.
 
 Sariel promptly strides ahead. The thread tugs on my neck. 
 
-#sprite: Overlay/eve1
 Heat rises to my face, a mixture of humiliation and a pleasant nervousness I can’t place.
 
 It feels like I’m her dog, following orders and being pulled along by a leash.
 
-#sprite: Overlay/sariel3
 She turns back for a moment, wordless. 
 
 Then, she slightly squints her eyes, amusedly, as if she knows what I’m thinking. 
 
-#sprite: Overlay/eve1
 My heart pounds uncomfortably against my ribcage. 
 
 Her gaze has a quality that makes me feel pried open, exposed, and collected. 
@@ -443,7 +470,7 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 #sprite: NONE
 The trees thin, giving way to an almost impossibly symmetrical glade with flowers sparsely scattered.
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I look up from the pale grass bending beneath my feet and spot a large, stone archway.
 
 //sprite: pot
@@ -456,37 +483,45 @@ Eve: “{false:UwU} What is this?”
 #sprite: Overlays/sariel3
 Sariel: “A test.” 
 
+#sprite: NONE
 As Sariel answers, her feet still for only just a moment. 
 
+#sprite: Overlays/sariel3
 Sariel: “Everything is.”
 
+#sprite: NONE
 She walks among the flowers with effortless grace, the same way light bends through glass and refracts into a breathtaking spectrum. 
 
 Sariel crouches, lifting a blossom by its stem, and brings it to my face.
 
+#sprite: Overlays/sariel3
 Sariel: “Smell.”
 
+#sprite: Overlays/NONE
 The fragrance is strange. It’s sweet at first, then metallic, then faintly sharp.
 
+#sprite: Overlays/sariel3
 Sariel: “This one.”
 
 Sariel: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I glance across the meadow. 
 
 I don’t want to question her.
 
 But curiosity tips the scale, outweighing my reluctance.
 
+#sprite: Overlays/eve1
 Eve: “How do you know which kind it wants?”
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 She smiles, soft and unbothered. 
 
+#sprite: Overlays/sariel3
 Sariel: “Don’t you trust me?”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I do. Before thinking, I nod, though a restless feeling flickers behind my ribs.
 
 Filled with the fervor to please Sariel, I stride towards the edge of the grassy opening. 
@@ -505,22 +540,24 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 = last_flower
 >>> START_DIALOGUE
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Sariel hums as she watches me, low and melodic. 
 
+#sprite: Overlays/sariel3
 Sariel: “You move so delicately, Eve. Like it’s your own garden you’re tending to.”
 
 #sprite: Overlays/eve1
 Eve: “There aren’t any left.” 
 
+#sprite: NONE
 I sigh, picking another scentless flower and tossing it aside. 
 
 #sprite: Overlays/sariel3
 Sariel: “There are always more if you know where to look.”
 
+#sprite: NONE
 Her tone is delicate, yet cruel and chastising, causing me to shrink in embarrassment.
 
-#sprite: Overlays/eve1
 I force myself to retrace my steps, familiar blades of grass brushing my calves.
 
 //[walking to entrance of flower area - Sariel does NOT move]
@@ -537,14 +574,16 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 #sprite NONE 
 The string tightens with disapproval as I step too far, a choked gasp finding itself stuck in my throat. The burn is a gentle, almost affectionate pain.
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Sariel’s voice follows, sweet and distant. 
 
+#sprite: Overlays/sariel3
 Sariel: “Careful. You know what happens when you wander too far.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I retreat instantly, her hum of disapproval easing into silence. 
 
+#sprite: Overlays/eve1
 Eve: “I’m sorry.”
 
 
@@ -553,56 +592,66 @@ Eve: “I’m sorry.”
 #sprite: Overlays/sariel3
 Sariel: “I know you are.” 
 
+#sprite: NONE
 Sariel exhales, the sound halfway between amusement and pity. 
 
-#sprite: Overlays/eve1
+
 // sounds like a >>> FORCED_MOVE:flower_pot
 I return to the pot, still missing one bloom. Sariel stands behind me, her chest lightly brushing against my backside, one hand absentmindedly resting on my hip.
 
 #sprite: Overlays/sariel3
 Sariel: “Oh, poor thing.” 
 
+#sprite: NONE
 She coos, her voice falling somewhere between pity and amusement.
 
+#sprite: Overlays/sariel3
 Sariel: “You worked so hard.”
 
+#sprite: NONE
 From behind, she produces the final flower, perfect and fragrant. 
 
-#sprite: Overlays/eve1
 I stare at the offering in her hand. 
 
+#sprite: Overlays/eve1
 Eve: “You… already had it?”
 
 #sprite: Overlays/sariel3
 Sariel: “Mm.” 
 
+#sprite: NONE
 Sariel twirls the stem between her fingers. 
 
+#sprite: Overlays/sariel3
 Sariel: “You couldn’t do it without me.”
 
 #sprite: Overlays/eve1
 Eve: “I didn’t-”
 
+#sprite: Overlays/sariel3
 Sariel: “You didn’t ask for my help at all.” 
 
+#sprite: NONE
 The words glide from her mouth like silk, yet they hit heavy enough to bruise. 
 
+#sprite: Overlays/sariel3
 Sariel: “I thought you trusted me.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 The guilt lands like a weight in my chest. 
 
+#sprite: Overlays/eve1
 Eve: “I do.”
 
 #sprite: Overlays/sariel3
 Sariel: “Then prove it.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I shiver from the sudden proximity of her breath against my neck. The hand on my hip tightens painfully before falling away.
 
-#sprite: Overlays/sariel3
 Sariel places the stem into my trembling hand. 
 
+#sprite: Overlays/sariel3
 Sariel: “Now, finish it.”
 
 #sprite: NONE
@@ -611,7 +660,7 @@ As the pot receives its final bloom, a heavy creak sounds from the arch.
 #sprite: Overlays/sariel3
 Sariel: “See?” 
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I swallow as she whispers against me.
 
 #sprite: Overlays/sariel3
@@ -619,12 +668,12 @@ Sariel: “When you listen to me, everything is fine.”
 
 Sariel: “You couldn’t have done it without me.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I nod, unsure whether it’s agreement or surrender. The thread tightens once, almost possessive, yet strangely comforting. 
 
-#sprite: Overlays/sariel3
 She smiles delicately, taking a step back. 
 
+#sprite: Overlays/sariel3
 Sariel: “You’re learning to be good.”
 
 >>> STOP_DIALOGUE
@@ -653,18 +702,22 @@ Their pale mushroom caps glisten with dew, bodies shifting slightly as they noti
 
 None blinks. None speaks. They simply watch.
 
-#sprite Overlays/eve1
+#sprite NONE
 A chill crawls up my spine.
 
+#sprite: Overlays/eve1
 Eve: “Sariel…?”
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 She stands just behind me, hands lightly brushing my shoulders, as if positioning me.
 
+#sprite: Overlays/sariel3
 Sariel: “These three guard the gate.”
 
+#sprite: NONE
 Sariel gives a perfunctory glance at the figures before continuing.
 
+#sprite: Overlays/sariel3
 Sariel: “They’ll open it if you identify their roles correctly.”
 
 #sprite: Overlays/eve1
@@ -673,10 +726,13 @@ Eve: “Roles?”
 #sprite: Overlays/sariel3
 Sariel: “One always speaks the truth. One always lies. And one…”
 
+#sprite: NONE
 She slightly shifts the angle of her head, breath now warming my neck. I shiver at the contact.
 
+#sprite: Overlays/sariel3
 Sariel: “One is… unlike the others.”
 
+#sprite: NONE
 After waiting a few moments, I realize that’s all she has to offer and stiffen slightly. 
 
 #sprite: Overlays/eve1
@@ -685,18 +741,22 @@ Eve: “Unlike the others? Isn’t that too vague?”
 #sprite: Overlays/sariel3
 Sariel: “Mm, I thought you were more clever than that, Eve.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 Shame pricks at my skin, hot and uncomfortable.
 
+#sprite: Overlays/eve1
 Eve: “I’m sorry.”
 
+#sprite: NONE
 I reply before I can even process my mouth moving. My chest constricts, placing my heart in a chokehold.
 
 #sprite: Overlays/sariel3
 Sariel: “It’s unpredictable. I suppose random is the demotic term.”
 
+#sprite: NONE
 Before I can respond, mouth already open, she cuts off my chance.
 
+#sprite: Overlays/sariel3
 Sariel: “Don’t overthink it. They won’t tell you their nature directly. And besides, wouldn’t that ruin the fun?”
 
 Sariel: “You’ll make me proud, won’t you?”
@@ -711,27 +771,33 @@ Eve: “I don’t know how to-”
 #sprite: Overlays/sariel3
 Sariel’s body presses flush against my back, her hands gliding up the curve of my neck until her fingers splay gently on each side of my jaw, cupping my cheeks. 
 
+#sprite: NONE
 She turns my gaze to the one on my left, as though prompting me to start already.
 
+#sprite: Overlays/sariel3
 Sariel: “You can do this.”
 
+#sprite: NONE
 She whispers, her breath warm against my ear.
 
+#sprite: Overlays/sariel3
 Sariel: “Show me how clever you are.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I swallow.
 
 #sprite: Overlays/sariel3
 Sariel: “Ask your questions, and they’ll each answer accordingly.”
 
+#sprite: NONE
 After pausing for a moment, she taps her fingers on my skin as though she’s had a lightbulb moment.
 
+#sprite: Overlays/sariel3
 Sariel: “Ah, but I must warn you.”
 
 Sariel: “They will only answer in their native tongue, ‘crrk’ or ‘fmmh,’ instead of ‘yes’ or ‘no.’ Which is which? That’s for you to deduce.”
 
-#sprite: Overlays/eve1
+#sprite: Overlays/NONE
 The noises sound particularly strange coming from her mouth. I wet my lips, fighting back a smile at the absurdity.
 
 #sprite: Overlays/sariel3
@@ -739,7 +805,7 @@ Sariel notices, and something between a laugh and an exhale exits her nose.
 
 Sariel: “Laugh if you’d like. I understand.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I bite my lip, guilt creeping up my throat.
 
 #sprite: Overlays/sariel3
@@ -747,47 +813,55 @@ Sariel: “You can do it, can’t you? Be good for me.”
 
 Sariel: “If you need help, I’ll be right here.”
 
+#sprite: NONE
 Her tone makes simply asking for help feel like complete submission, and my heart thumps heavily.
 
-#sprite: Overlays/eve1
 I peruse the mushrooms. Their eyes are big, wet, and reflective in a way that would almost be cute if not for the size of the creatures. 
 
+#sprite: Overlays/eve1
 Eve: “Sariel…”
 
+#sprite: NONE
 I exhale, my voice barely audible.
 
+#sprite: Overlays/eve1
 Eve: “Which is the random one?”
 
+#sprite: NONE
 She laughs breathily, smile blooming too quickly, delighted by the question.
 
 #sprite: Overlays/sariel3
 Sariel: “Ah-ah, that would be telling. But… if you want my guess…”
 
+#sprite: NONE
 Her lips brush the shell of my ear, and I flinch, heart jumping to my throat.
 
-#sprite: Overlays/eve1
+#sprite: NONE
 Anticipation runs through my veins like a heady drug.
 
 #sprite: Overlays/sariel3
 Sariel: “Aw, did you really think I’d tell you?”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I shrink slightly at the mocking tone she suddenly adopts.
 
 #sprite: Overlays/sariel3
 Sariel: “Go on. Perform for me, Eve. Let me see how well you can do.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I take a deep breath.
 
 Pressing my tongue against the side of my cheek, I step forward.
 
+#sprite: Overlays/eve1
 Eve: “The left mushroom. Does ‘crrk’ mean ‘yes’?”
 
+#sprite: NONE
 I do my best to copy Sariel’s impression of the strange noise.
 
 Her gaze sharpens with scrutiny, and I quickly add to my question before it’s too late.
 
+#sprite: Overlays/eve1
 Eve: “Ah, um, if and only if you are the truthful one… and the, uh, middle mushroom is the random one.”
 
 // creature overlay???
@@ -798,15 +872,16 @@ A low, rough syllable escapes its throat.
 
 Left Mushroom: “Fmmh.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 The sound is sticky. My stomach tightens.
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Sariel’s hands gently lace over my throat.
 
+#sprite: Overlays/sariel3
 Sariel: “Mmm… Interesting.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I move to the middle mushroom, pulse loud in my ears. 
 
 For a good while, I think about what to say. 
@@ -815,6 +890,7 @@ It’s all too fresh. The world and its rules.
 
 My hands clench into fists.
 
+#sprite: Overlays/eve1
 Eve: “If and only if cobwebs can stop bleeding... does ‘crrk’ mean ‘yes’?”
 
 //creature overlay
@@ -825,44 +901,48 @@ Middle Mushroom: “Crrk.”
 
 I wince from the high pitch of the noise, expecting the same deep, throaty rumble as before.
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Sariel chuckles softly behind me.
 
+#sprite: Overlays/sariel3
 Sariel: “I suppose I should have warned you.”
 
 #sprite: Overlays/eve1
 Eve: “How do you-”
 
+#sprite: NONE
 I stop myself before finishing my question. It feels wrong. 
 
-#sprite: Overlays/sariel3
 She snaps me out of my thoughts, sensing my hesitation immediately.
 
+#sprite: Overlays/sariel3
 Sariel: “Aww, Eve.”
 
+#sprite: NONE
 Her voice dips into something velvety and condescending.
 
+#sprite: Overlays/sariel3
 Sariel: “Do you need my help? Or are you going to continue standing there like a fool?”
 
 #sprite: Overlays/eve1
 Eve: “O-Oh.”
 
+#sprite: NONE
 I stutter, embarrassed.
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 Her fingers trail down to the thread around my throat, sliding beneath the string in a way that tightens it considerably.
 
 She flicks her fingers up, tugging just enough to steal a breath.
 
-#sprite: Overlays/eve1
 I nod, desperate for her approval.
 
-#sprite: Overlays/sariel3
 She smiles, pleased.
 
+#sprite: Overlays/sariel3
 Sariel: “Ask one more question. To the middle mushroom again.”
 
-#sprite: Overlays/eve1
+#sprite: NONE
 I feel lightheaded, her touch and voice too much to process at once.
 
 It’s hard to think.
@@ -874,13 +954,21 @@ I flip through every page of my mind, yet they’re all blank, devoid of any mea
 The fear of disappointing her strangles my throat. I need to remember what I wanted to ask.
 
 * [Is ‘fmmh’ ‘yes’ iff. the left one lies?]
+    #sprite: Overlays/eve1
     Eve: “Does ‘fmmh’ mean ‘yes’ if and only if the left mushroom lies?”
+    #sprite: NONE
     Middle Mushroom: “Fmmh.”
+    
 * [Is ‘crrk’ ‘yes’ iff. the left one is random?]
+    #sprite: Overlays/eve1
     Eve: “Does ‘crrk’ mean ‘yes’ if and only if the left mushroom is unpredictable?”
+    #sprite: NONE
     Middle Mushroom: “Crrk.”
+    
 * [is ‘fmmh’ ‘yes’ iff. you are the liar?]
+    #sprite: Overlays/eve1
     Eve: “Does ‘fmmh’ mean ‘yes’ if and only if you are the liar?”
+    #sprite: NONE
     Middle Mushroom: “Crrk.”
 
 - (asked_3rd_question) I chew the inside of my cheek as it answers, looking back helplessly at Sariel for guidance.
@@ -889,7 +977,7 @@ She lets her arms fall slightly, now circling my shoulders, to allow me to face 
 
 I bring my voice down to a hushed whisper, not wanting the mushrooms to hear my answers just yet.
 
-
+#sprite: Overlays/eve1
 Eve: “The left mushroom, it’s…”
 
 //because we don't have a text log rn, I have coded it like this to help the player, at the vary least, to remember what they already chose.
@@ -935,7 +1023,7 @@ Eve: “The left mushroom, it’s…”
 
 - (answer_3_given) Eve: “Right?”
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 A simple smile, heavy with an emotion I can’t read, paints her delicate face.
 
 Sariel looks almost… angelic, but there’s a merciless blade hidden in her gaze that slides between each of my ribs.
@@ -945,17 +1033,21 @@ Sariel looks almost… angelic, but there’s a merciless blade hidden in her ga
 
 = correct_answer
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 She sighs sweetly, and her knuckles suddenly brush along my jaw again.
 
+#sprite: Overlays/sariel3
 Sariel: “Look at you… You really did it.”
 
+#sprite: NONE
 She leans close, her hushed voice gently caressing my skin.
 
+#sprite: Overlays/sariel3
 Sariel: “But you didn’t do as well as I’d hoped.”
 
 Sariel: “It looks like you need me even to solve a simple puzzle.”
 
+#sprite: NONE
 Her delivery is paradoxically somewhere between solemn news and a lighthearted remark.
 
 My chest constricts, cramped and painful.
@@ -963,9 +1055,10 @@ My chest constricts, cramped and painful.
 #sprite: Overlays/eve1
 Eve: “I’m sor-”
 
-#sprite: Overlays/sariel3
+#sprite: NONE
 She cuts me off, her smile and words too gentle for her previous tone.
 
+#sprite: Overlays/sariel3
 Sariel: “But it’s okay. I still love you. I’ll always love you, Eve.”
 
 -> post_answer
@@ -976,28 +1069,38 @@ Sariel: “But it’s okay. I still love you. I’ll always love you, Eve.”
 #sprite: Overlays/sariel3
 Sariel: “Oh, Eve…”
 
+#sprite: NONE
 Her smile suddenly drops.
 
+#sprite: Overlays/sariel3
 Sariel: “You poor thing.”
 
+#sprite: NONE
 A hand slides back up, fingers running over the thread. Her thumb and index suddenly apply pressure on each side of my throat.
 
+#sprite: Overlays/sariel3
 Sariel: “You really thought that was right?”
 
+#sprite: NONE
 A breathy laugh fills the air.
 
 She doesn’t sound surprised, and my shame grows hotter.
 
+#sprite: Overlays/sariel3
 Sariel: “You really can’t do anything on your own, hm?”
 
+#sprite: NONE
 Her tone slides into a whisper, intimate and humiliating.
 
+#sprite: NONE
 Sariel’s hand suddenly grabs my chin. Her grip is too firm, bordering on painful.
 
 She tilts my head toward each mushroom, respectively, as she corrects me. Each movement is sudden and harsh.
 
+#sprite: Overlays/sariel3
 Sariel: “The left mushroom is unpredictable, the middle mushroom is the truth-teller, and the right mushroom is the liar.”
 
+#sprite: NONE
 She murmurs the answers in my ear, each word landing like a reprimand simply veiled with affection.
 
 -> post_answer
@@ -1007,13 +1110,16 @@ She murmurs the answers in my ear, each word landing like a reprimand simply vei
 #sprite: Overlays/sariel3
 Sariel: “Now, tell them the answer.”
 
+#sprite: NONE
 Sariel gestures towards the mushrooms, her arms now dropping to her sides.
 
 #sprite: Overlays/eve1
 Eve: “Right. Sorry.”
 
+#sprite: NONE
 I swallow, my throat feeling rough and dry.
 
+#sprite: Overlays/eve1
 Eve: “The left is random, the middle is truthful, and the right is the liar.”
 //creature sprite...
 #sprite: NONE
@@ -1021,18 +1127,21 @@ The three mushroom figures suddenly drop to the floor, digging into the ground.
 
 Finally, one holds up a key, slotting it into the gate. It’s unexpectedly clean, its luster not lost.
 
-#sprite: Overlays/sariel3
 As the door swings open, Sariel tuts.
 
+#sprite: Overlays/sariel3
 Sariel: “I suppose I should have expected you’d need me.”
 
+#sprite: NONE
 But then, she smiles. It’s soft, yet it feels venomous.
 
+#sprite: Overlays/sariel3
 Sariel: “It’s alright. I think I like you better this way.”
 
 #sprite: Overlays/eve1
 Eve: “I see.”
 
+#sprite: NONE
 I mumble out a response. Her implication cuts deeply, and shame flows freely from the wound.
 
 The path ahead smells of damp earth. I step carefully over the soil, where roots curl into the ground like ribs.

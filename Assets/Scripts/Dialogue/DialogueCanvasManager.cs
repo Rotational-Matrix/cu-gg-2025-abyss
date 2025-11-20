@@ -122,7 +122,6 @@ public class DialogueCanvasManager : MonoBehaviour
     private string currHeader = "";
     private string intermediateBodyText = "";
     private List<string> currTags = new List<string>();
-
     //informs how to read text
     private bool readAsStageLines = true;
 
@@ -356,12 +355,22 @@ public class DialogueCanvasManager : MonoBehaviour
         if (colonIndex == -1)
         {
             HandleSpeakerTag("NO_SPEAKER");
-            return input;
+            HandleSpriteTag("NONE", true);
+            dpHandler.GreyOutText(true);
+            return "<i>" + input + "</i>";
         }
         string preColon = input.Substring(0, colonIndex).Trim(); //doesn't include the colon
         string postColon = input.Substring(colonIndex + 1).Trim();
         //note that, if there exists a colon in the text, either a real speaker or NO_SPEAKER is expected
         HandleSpeakerTag(preColon);
+        if (string.Equals(preColon,"NO_SPEAKER"))
+        {
+            postColon = "<i>" + postColon + "</i>";
+            dpHandler.GreyOutText(true);
+            HandleSpriteTag("NONE", true);
+        }
+        else
+            dpHandler.GreyOutText(false); //reverts to default
         return postColon;
     }
     private string HandleRichText(string input)
