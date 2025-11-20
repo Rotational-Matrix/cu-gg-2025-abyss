@@ -136,6 +136,7 @@ public class StateManager : MonoBehaviour
     [SerializeField] private GameObject playerControllerObj;
 
     //Various objects that StateManager ought know about, but not nee make public.
+    [SerializeField] private GameObject masterUICanvas; //exclusively here so it can be turned on instantly
     [SerializeField] private LeashManager leashManager;
     [SerializeField] private GameObject leash;
 
@@ -290,6 +291,7 @@ public class StateManager : MonoBehaviour
         //public static version = private non-static version
         PlayerCanMoveDuringDialogue = playerCanMoveDuringDialogue;
 
+        masterUICanvas.SetActive(true);
         //leashManager.SetLeashActive(false);
         //leash.SetActive(false);
 
