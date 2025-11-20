@@ -142,7 +142,7 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   nearColor: {r: 1, g: 1, b: 1, a: 1}
-  triggerDistance: 1
+  triggerDistance: 2
   lerpSpeed: 5
 --- !u!198 &6900930258577945902
 ParticleSystem:
@@ -227,7 +227,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.2
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -280,7 +280,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 1.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -862,7 +862,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.1
+      value: 0.05
       mode: 0
       spread: 0
       speed:
