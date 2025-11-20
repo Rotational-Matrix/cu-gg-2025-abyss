@@ -261,9 +261,9 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
 
     // are not actually public. I never made broadcasters, so these will appear public
     //currently exclusively for the prompt becuase I couldn't get a better way
-    public void OnStateChange(bool inMenu, bool inDialogue, bool inExtern)
+    public void OnStateChange(bool inMenu, bool inDialogue, int stateFlag)
     {
-        actPromptPanel.SetActive(!(inMenu || inDialogue || inExtern));
+        actPromptPanel.SetActive(!(inMenu || inDialogue || (stateFlag != 0)));
     }
 
 }
