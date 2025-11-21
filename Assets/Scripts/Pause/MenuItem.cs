@@ -34,6 +34,7 @@ public class MenuItem : SelectableElement, ISelectableElement
         {
             itemValueTextObject.text = PrepareItemValue(); //sets the item value text
             itemTextObject.text = PrepareItemName(); //sets the item name text
+            this.selectorImage.SetActive(false); //wipes selector
             this.gameObject.SetActive(visible); //which is necessarily true...
             
         }
@@ -201,10 +202,9 @@ public class MenuItem : SelectableElement, ISelectableElement
     {
         StateManager.ExitTopMenu();
     }
-    
+
     // as stupid as it is, I can actually make all the methods in this class,
     // and then call them by switchcase based on StateManager.ConfigItem value
 
-    
 
 }

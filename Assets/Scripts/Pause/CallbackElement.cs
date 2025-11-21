@@ -38,6 +38,7 @@ public class CallbackElement : SelectableElement, ISelectableElement
         {
             //SetVisible(true) should *ONLY* be called after AssignBehaviour, SetInputInt
             this.gameObject.SetActive(visible); //which is necessarily true...
+            this.selectorImage.SetActive(!visible); //still wipes selector image
         }
         else
             Clean();
