@@ -22,7 +22,12 @@ public class PlayerAnimationManager : MonoBehaviour
     public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f);
     public Vector3 defaultAnchorPosition = new Vector3(1.6f, 0, 4.04f);
     public static event Action<PlayerAnimationManager> raiseCaveDialogue;
-    public static event Action<PlayerAnimationManager> pause;
+
+    private bool inForcedMove = false;
+    private Vector3 forcedMoveDirection = Vector3.zero;
+
+
+    private bool isReadingInput = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,29 +43,36 @@ public class PlayerAnimationManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //if (StateManager.GetDialogueStatus()) return;
-        Vector3 input = lm.InputVelocity();
-        float x = input.x;
-        float z = input.z;
-        if (z * z > flipEpsilon)
+        if (isReadingInput)
         {
-            if (z > 0)
+            Vector3 input = lm.InputVelocity();
+            if (!isReadingInput) input = Vector3.zero; //should be replaced by forced mvmnt vector
+            float x = input.x;
+            float z = input.z;
+            if (z * z > flipEpsilon)
             {
-                sr.sprite = nSprite;
-                frontFacing = true;
+                if (z > 0)
+                {
+                    sr.sprite = nSprite;
+                    frontFacing = true;
+                }
+                else
+                {
+                    sr.sprite = sSprite;
+                    frontFacing = false;
+                }
+                if (x * x < flipEpsilon) sr.flipX = true;
             }
-            else
+            //this uses sprite flips but can be made to use different sprites with no effort
+            if (x * x > flipEpsilon)
             {
-                sr.sprite = sSprite;
-                frontFacing = false;
+                if (x > 0) sr.flipX = !frontFacing;
+                else sr.flipX = frontFacing;
             }
-            if (x * x < flipEpsilon) sr.flipX = true;
         }
-        //this uses sprite flips but can be made to use different sprites with no effort
-        if (x * x > flipEpsilon)
+        else if(inForcedMove)
         {
-            if (x > 0) sr.flipX = !frontFacing;
-            else sr.flipX = frontFacing;
+            DetermineSpriteDirection(forcedMoveDirection);
         }
     }
     public void Teleport(Cylinder cylinder)
@@ -81,5 +93,44 @@ public class PlayerAnimationManager : MonoBehaviour
             Debug.Log("Cave dialogue should appear");
             if (raiseCaveDialogue != null) raiseCaveDialogue(this);
         }
+    }
+
+    public void DeclareInForcedMove(bool value, Vector3 direction)
+    {
+        inForcedMove = value;
+        if (value)
+        {
+            forcedMoveDirection = direction;
+        }
+    }
+    private void DetermineSpriteDirection(Vector3 direction) //used for forced moves
+    {
+        Vector3 camRelative = Camera.main.transform.InverseTransformDirection(direction);
+        float x = camRelative.x;
+        float z = camRelative.z;
+        if (z * z > flipEpsilon)
+        {
+            if (z > 0)
+            {
+                sr.sprite = nSprite;
+                frontFacing = false;
+            }
+            else
+            {
+                sr.sprite = sSprite;
+                frontFacing = true;
+            }
+        }
+        //this uses sprite flips but can be made to use different sprites with no effort
+        if (x * x > flipEpsilon)
+        {
+            Debug.Log("x: " + x + " z: " + z);
+            sr.flipX = frontFacing ? x < 0 : x > 0;
+        }
+    }
+
+    public void SetReadInputActive(bool value)
+    {
+        isReadingInput = value;
     }
 }

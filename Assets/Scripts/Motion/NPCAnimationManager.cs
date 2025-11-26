@@ -13,6 +13,8 @@ public class NPCAnimationManager : MonoBehaviour
     private DemoMotion dm;
     public float flipEpsilon = 0.025f; //minimum inputvelocity to signal a sprite flip
     public bool frontFacing = true;
+    private Vector3 direction = Vector3.Normalize(new Vector3(-1, 0, -2));
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,11 +25,16 @@ public class NPCAnimationManager : MonoBehaviour
         FlowerManager.OnFlowerPuzzleEnd += Blush;
     }
 
-    // Update is called once per frame
+
+    public void SetDirection(Vector3 direction)
+    {
+        this.direction = direction;
+    }
+    
     void FixedUpdate()
     {
-        Vector3 input = dm.Direction();
-        Vector3 camRelative = Camera.main.transform.InverseTransformDirection(dm.Direction());
+        //Vector3 input = dm.Direction();
+        Vector3 camRelative = Camera.main.transform.InverseTransformDirection(direction);
         float x = camRelative.x;
         float z = camRelative.z;
         if (z * z > flipEpsilon)

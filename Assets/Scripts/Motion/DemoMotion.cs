@@ -56,6 +56,7 @@ public class DemoMotion : MonoBehaviour
                 moving = false; // Stop when reached
                 Debug.Log($"Reached position {currentTargetIndex}");
             }
+
         }
     }
 
@@ -82,10 +83,19 @@ public class DemoMotion : MonoBehaviour
             Debug.Log("Reached the final target. No more positions left.");
             return;
         }
+        
 
         currentTargetIndex++;
         targetPosition = targetPositions[currentTargetIndex];
         moving = true;
+
+        //[Cu]: abruptly added this so that demomotion can be removed from the update loop of NPCAnimationManager
+        if (objectToMove.TryGetComponent<NPCAnimationManager>(out NPCAnimationManager outNPCAM))
+        {
+            direction = (targetPosition - objectToMove.position).normalized; 
+            outNPCAM.SetDirection(direction);
+        }
+
         Debug.Log($"Moving to position {currentTargetIndex}: {targetPosition}");
     }
 }

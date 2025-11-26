@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
     PlayerInputActions inputActions;
     InputAction move;
 
+    private bool isReadingInput = false;
+    private PlayerAnimationManager animationManager;
+
     /*void OnCollisionEnter(Collision collision)
     {
         grounded = true;
@@ -36,11 +39,9 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody>();
 
-        /* [Cu]: There are 3 different colliders on Eve. Right now only the first one is enabled.
-         *       As it so happens, GetComponent returns on the first match. 
-         *       If the other colliders are unneeded, I may suggest deleting them.
-         */
         pCollider = GetComponent<Collider>();
+        animationManager = GetComponent<PlayerAnimationManager>();
+        StateManager.AddStateChangeResponse(this);
     }
 
     public void OnEnable()
@@ -64,6 +65,7 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
     void Update()
     {
         if (move == null) return;
+        if (!isReadingInput) return; //[Cu]: does this Update effectively only matter for reading input?
         inputVector = move.ReadValue<Vector2>();
         if (spriteRenderer != null)
         {
@@ -94,8 +96,13 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
     {
         //FIXXXXXX
         //need never added as listener, so not dangerous
-        if (inMenu || inDialogue) OnDisable();
-        else OnEnable();
+        //if (inMenu || inDialogue) isNotReadingInput = true;
+        //else isNotReadingInput = false;
+        if (stateFlag == (int)StateManager.StateFlag.None)
+            isReadingInput = !(inMenu || inDialogue);
+        else if (stateFlag == (int)StateManager.StateFlag.MoveAllowedInDialogue)
+            isReadingInput = !inMenu;
+            animationManager.SetReadInputActive(isReadingInput);
     }
 
 

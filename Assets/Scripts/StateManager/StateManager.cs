@@ -124,21 +124,28 @@ public class StateManager : MonoBehaviour
         DirectKey
     }
 
+    public enum StateFlag
+    {
+        None = 0,
+        MoveAllowedInDialogue = 1,
+        InForcedMovement = 2,
 
 
-    //honestly, I'm not sure whether we'll do this or not. Most likely, disabling player motion may depend dialogue context
-    [SerializeField] private bool playerCanMoveDuringDialogue = false; //FIXXXX
-    public static bool PlayerCanMoveDuringDialogue { get; private set; } //the accessible equivalent
+    }
 
-    [SerializeField] private GameObject dialogueCanvas;   //Times of entering and leaving not directly chosen by player
-    [SerializeField] private GameObject pauseMenuCanvas;  //accessible at 'instant speed'
+
+
+
+
+    [SerializeField] private GameObject dialogueCanvas;
+    [SerializeField] private GameObject pauseMenuCanvas;
 
     [SerializeField] private GameObject playerControllerObj;
 
     //Various objects that StateManager ought know about, but not nee make public.
     [SerializeField] private GameObject masterUICanvas; //exclusively here so it can be turned on instantly
-    [SerializeField] private LeashManager leashManager;
-    [SerializeField] private GameObject leash;
+    //[SerializeField] private LeashManager leashManager;
+    //[SerializeField] private GameObject leash;
 
 
     //these can be called by other fns' Start() to access pmManager & dcManager
@@ -164,19 +171,12 @@ public class StateManager : MonoBehaviour
 
     //for handling boradcasting
     private static List<IStateManagerListener> stateListeners = new List<IStateManagerListener>();
-    private static int stateFlag = 0;
+    private static StateFlag stateFlag = StateFlag.None;
 
     public static void SetDialogueStatus(bool dialogueStatus)
     {
         isInDialogue = dialogueStatus;
         BroadcastStateChange(); //broadcasing state change!
-        //disables player motion during dialogue (preferable? i'm uncertain)
-        //[Cu]: I'm not sure, we may actually allow both conditions and make it depend on dialogue.
-        if (PlayerCanMoveDuringDialogue) //NOTE TO CHANGE TO BROAADCAST FIXXXX
-        {
-            if (dialogueStatus) Eve.OnEnable();
-            else Eve.OnDisable();
-        }
     }
     public static bool GetDialogueStatus()
     { return isInDialogue; }
@@ -246,6 +246,18 @@ public class StateManager : MonoBehaviour
             BroadcastStateChange();
     }
 
+    //not documented because one should probably not be calling this.
+    // this is a change stataeFlag function
+    public static void SetPlayerForcedMoveStatus(bool isEntering)
+    {
+        if (isEntering)
+            SetStateFlag(StateFlag.InForcedMovement);
+        else
+        {
+            if(stateFlag == StateFlag.InForcedMovement)
+                SetStateFlag(StateFlag.None);
+        }
+    }
 
     //Shortcut fns
     public static void ExitTopMenu()
@@ -273,11 +285,24 @@ public class StateManager : MonoBehaviour
     {
         foreach (IStateManagerListener listener in stateListeners)
         {
-            listener.OnStateChange(IsInMenu(), isInDialogue, stateFlag);
+            listener.OnStateChange(IsInMenu(), isInDialogue, (int)stateFlag);
+        }
+    }
+
+    private static void SetStateFlag(StateFlag sFlag)
+    {
+        if (stateFlag != sFlag)
+        {
+            stateFlag = sFlag;
+            BroadcastStateChange();
         }
     }
 
 
+    public void Start()
+    {
+        BroadcastStateChange();
+    }
 
 
     private void Awake()
@@ -288,8 +313,6 @@ public class StateManager : MonoBehaviour
 
         Eve = playerControllerObj.GetComponent<PlayerController>();
 
-        //public static version = private non-static version
-        PlayerCanMoveDuringDialogue = playerCanMoveDuringDialogue;
 
         masterUICanvas.SetActive(true);
         //leashManager.SetLeashActive(false);

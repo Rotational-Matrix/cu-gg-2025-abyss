@@ -48,3 +48,6 @@ MonoBehaviour:
   dialogueCanvas: {fileID: 0}
   pauseMenuCanvas: {fileID: 0}
   playerControllerObj: {fileID: 0}
+  masterUICanvas: {fileID: 0}
+  leashManager: {fileID: 0}
+  leash: {fileID: 0}
