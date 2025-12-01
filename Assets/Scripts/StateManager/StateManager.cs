@@ -140,6 +140,8 @@ public class StateManager : MonoBehaviour
     [SerializeField] private GameObject dialogueCanvas;
     [SerializeField] private GameObject pauseMenuCanvas;
 
+    [SerializeField] private RoamCmdr roamCommander;
+
     [SerializeField] private GameObject playerControllerObj;
 
     //Various objects that StateManager ought know about, but not nee make public.
@@ -151,6 +153,8 @@ public class StateManager : MonoBehaviour
     //these can be called by other fns' Start() to access pmManager & dcManager
     public static DialogueCanvasManager DCManager { get; private set; }
     public static PauseMenuManager PMManager { get; private set; }
+
+    public static RoamCmdr RCommander { get; private set; } 
 
     public static PlayerController Eve; //static access to Eve's controller is helpful
 
@@ -294,6 +298,11 @@ public class StateManager : MonoBehaviour
         if (stateFlag != sFlag)
         {
             stateFlag = sFlag;
+            if (sFlag == StateFlag.None)
+            {
+                if (RCommander.InForcedMove(Eve.gameObject))
+                    stateFlag = StateFlag.InForcedMovement;
+            }
             BroadcastStateChange();
         }
     }
@@ -310,6 +319,8 @@ public class StateManager : MonoBehaviour
         //note how, if there are 2 StateManagers, one will overwrite the other! (why would there be 2 of these though...)
         DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
+
+        RCommander = roamCommander;
 
         Eve = playerControllerObj.GetComponent<PlayerController>();
 
