@@ -13,6 +13,8 @@ public class MenuItem : SelectableElement, ISelectableElement
      */
 
     //presumably all children of the current GameObject this component is attached to.
+    [SerializeField] public GameObject eve;
+    [SerializeField] public GameObject sarielSprite;
     [SerializeField] private GameObject selectorImage;
     [SerializeField] private TMPro.TMP_Text itemTextObject;
     [SerializeField] private TMPro.TMP_Text itemValueTextObject;
@@ -160,23 +162,32 @@ public class MenuItem : SelectableElement, ISelectableElement
 
     private void AVPopupCall()
     {
-        int max = 99;
-        string maxText = max.ToString();
-        Action<int> bucketCall = (x) => { PauseMenuManager.ConfigValues[configItem] = x; this.RefreshItemVal(); };
+
+        int max;
+        string maxText;
+        Action<int> setExternVal;
+        if (configItem == PauseMenuManager.ConfigItem.Brightness) setExternVal = (x) => {
+            sarielSprite.GetComponent<SarielBrightness>().SetColor(x);
+        };
+        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/ setExternVal = (x) => eve.GetComponent<LeashManager>().SetMaxDist(x / 10f);
+
+        Action<int> bucketCall = (x) => { PauseMenuManager.ConfigValues[configItem] = x; setExternVal(x); this.RefreshItemVal(); };
         string prevValStr = PauseMenuManager.ConfigValues[configItem].ToString(); //danger
         if (configItem == PauseMenuManager.ConfigItem.Brightness)
         {
-            max = 36; //HARDCODED (but lie to user) (put starting value + 1 maybe??)
+            max = 100; //HARDCODED (but lie to user) (put starting value + 1 maybe??)
             if (StateManager.DCManager.GetInkVar<bool>("triedToIncreaseBrightness")) //Inkfile VAR name
             {
                 maxText = "<color=\"red\">" + max.ToString() + "</color>";
             }
             else
             {
+                maxText = "99"; //hardcoded lie to user
                 bucketCall = (x) =>
                 {
                     PauseMenuManager.ConfigValues[configItem] = x;
                     this.RefreshItemVal();
+                    sarielSprite.GetComponent<SarielBrightness>().SetColor(x);
                     if (x >= max) //it will get set to max anyway if it is higher...
                     {
                         StateManager.PMManager.InitAYSPopup("BRIGHTNESS CANNOT BE INCREASED",
@@ -185,6 +196,11 @@ public class MenuItem : SelectableElement, ISelectableElement
                     }
                 };
             }
+        }
+        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/
+        {
+            max = 50;
+            maxText = max.ToString();
         }
         // current mechanism dangerously allows out of range str indicators FIXXXXXXXX
         StateManager.PMManager.InitAVPopup(bucketCall, PrepareItemName(), prevValStr, max, maxText);

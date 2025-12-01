@@ -1636,7 +1636,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2963d45b4b70a43ae87b420ed5d74e6d, type: 3}
---- !u!43 &390014605
+--- !u!43 &386817125
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2366,6 +2366,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: Master UI Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3760900201350454818, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: eve
+      value: 
+      objectReference: {fileID: 1551984643}
+    - target: {fileID: 3760900201350454818, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: sariel
+      value: 
+      objectReference: {fileID: 1089385356}
+    - target: {fileID: 3760900201350454818, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: sarielSprite
+      value: 
+      objectReference: {fileID: 1958355425}
+    - target: {fileID: 5952075333161777034, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: eve
+      value: 
+      objectReference: {fileID: 1551984643}
+    - target: {fileID: 7100877903816674191, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: eve
+      value: 
+      objectReference: {fileID: 1551984643}
+    - target: {fileID: 7100877903816674191, guid: 2969543f4becad4409857fb46f428b6d,
+        type: 3}
+      propertyPath: sariel
+      value: 
+      objectReference: {fileID: 1089385356}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7549,8 +7579,8 @@ MonoBehaviour:
   - {x: 0.7071068, y: 1.0000002, z: 0}
   - {x: 0.7071068, y: -1, z: 0}
   m_ShapePathHash: 0
-  m_Mesh: {fileID: 390014605}
-  m_InstanceId: 101050
+  m_Mesh: {fileID: 386817125}
+  m_InstanceId: 30204
   m_LocalBounds:
     m_Center: {x: 0, y: 0.00000011920929, z: 0}
     m_Extent: {x: 0.7071068, y: 1.0000001, z: 0}
@@ -8630,6 +8660,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1958355426}
   - component: {fileID: 1958355427}
+  - component: {fileID: 1958355428}
   m_Layer: 0
   m_Name: Sariel Sprite
   m_TagString: Untagged
@@ -8672,7 +8703,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: -876546973899608171, guid: 7c10da2b749692249a53784267491037, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8704,6 +8735,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1958355428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958355425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50003c444b4b4f44e84b61dd228f5251, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleIncrease: 0
+  scaleFactor: 499
+  baseIntensity: 0.7
+  maxIntensity: 20
+  light: {fileID: 741579255}
+  sliderSize: 100
+  material: {fileID: 0}
+  start: {x: 0, y: 0, z: 0, w: 0}
+  midpoint: {x: 0.99609375, y: 0, z: 0.75, w: 0}
+  end: {x: 1, y: 1, z: 1, w: 0}
 --- !u!4 &1965191514 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5718942670180848942, guid: 2963d45b4b70a43ae87b420ed5d74e6d,

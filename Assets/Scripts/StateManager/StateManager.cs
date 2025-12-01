@@ -317,6 +317,7 @@ public class StateManager : MonoBehaviour
         masterUICanvas.SetActive(true);
         //leashManager.SetLeashActive(false);
         //leash.SetActive(false);
+        DCManager.SetInkVar<bool>("strlenConfigKnown", true);
 
     }
 }

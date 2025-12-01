@@ -81,4 +81,8 @@ public class LeashManager : MonoBehaviour
         //Applies force
         rb.AddForce(springForce);
     }
+    public void SetMaxDist(float n)
+    {
+        this.maxDist = n;
+    }
 }
