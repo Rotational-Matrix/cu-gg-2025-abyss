@@ -43,7 +43,8 @@ public class SarielBrightness : MonoBehaviour
     {
         if(scaleIncrease) {
             this.gameObject.transform.localScale = scale * (1 + m/scaleFactor);
-            this.gameObject.transform.position = new Vector3(pos.x, pos.y * (1 + m / scaleFactor), pos.z);
+            Vector3 curPos = this.gameObject.transform.position;
+            this.gameObject.transform.position = new Vector3(curPos.x, pos.y * (1 + m / scaleFactor), curPos.z);
         }
         
         float n = (float) m;
