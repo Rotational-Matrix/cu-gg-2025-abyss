@@ -23,6 +23,19 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     
 
+    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, float distPortion, float moveSpeed)
+    {   
+        if (!InForcedMove(objToMove))
+        {
+            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, distPortion, moveSpeed);
+            forcedMoves.Add(forcedMove);
+        }
+    }
+    public bool InForcedMove(GameObject gameObject)
+    {
+        return IndexForcedMove(gameObject) != -1;
+    }
+
     private void Update()
     {
         if (updateForcedMove)
@@ -31,11 +44,12 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             {
                 bool continuing = fMove.IncrementalMove();
                 if (!continuing)
-                    fMove.EndForcedMove();
+                    EndForcedMove(fMove);
             }
         }    
     }
-    
+
+
     
 
     //notably not static
@@ -54,6 +68,25 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
 
 
+    private int IndexForcedMove(GameObject gameObject)
+    {
+        int i = 0;
+        foreach(ForcedMove fMove in forcedMoves)
+        {
+            if(object.Equals(fMove.Identifier(), gameObject))
+                    return i;
+            i++;
+        }
+        return -1;
+    }
+   
+
+
+    private void EndForcedMove(ForcedMove forcedMove)
+    {
+        forcedMove.EndForcedMove();
+        forcedMoves.RemoveAt(IndexForcedMove(gameObject));
+    }
 
 
     //RoamCmr has an update call to progress its forced moves
@@ -104,10 +137,17 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 return true;
         }
         
-        //
+        public GameObject Identifier()
+        {
+            return objectToMove.gameObject;
+        }
         public void EndForcedMove()
         {
-            
+            if (objectToMove.TryGetComponent<PlayerAnimationManager>(out PlayerAnimationManager outPAM))
+            {
+                outPAM.DeclareInForcedMove(false, this.direction);
+                StateManager.SetPlayerForcedMoveStatus(false);
+            }
         }
 
     }
