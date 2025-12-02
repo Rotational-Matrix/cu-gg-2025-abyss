@@ -143,6 +143,7 @@ public class StateManager : MonoBehaviour
     [SerializeField] private RoamCmdr roamCommander;
 
     [SerializeField] private GameObject playerControllerObj;
+    [SerializeField] private SarielController sarielController;
 
     //Various objects that StateManager ought know about, but not nee make public.
     [SerializeField] private GameObject masterUICanvas; //exclusively here so it can be turned on instantly
@@ -156,7 +157,10 @@ public class StateManager : MonoBehaviour
 
     public static RoamCmdr RCommander { get; private set; } 
 
-    public static PlayerController Eve; //static access to Eve's controller is helpful
+    public static PlayerController Eve { get; private set; } //static access to Eve's controller is helpful
+
+    public static SarielController Sariel { get; private set; }
+
 
 
     //this is the current stack of menus opened
@@ -176,6 +180,19 @@ public class StateManager : MonoBehaviour
     //for handling boradcasting
     private static List<IStateManagerListener> stateListeners = new List<IStateManagerListener>();
     private static StateFlag stateFlag = StateFlag.None;
+
+    
+    // both of these are to be altered to include various external information
+    public static void LoadSaveState(int saveStateIndex)
+    {
+        DCManager.RunInkSaveState(saveStateIndex);
+    }
+
+    public static void CreateSaveState(int saveStateIndex)
+    {
+        DCManager.CreateInkSaveState(saveStateIndex);
+    }
+
 
     public static void SetDialogueStatus(bool dialogueStatus)
     {
@@ -323,6 +340,7 @@ public class StateManager : MonoBehaviour
         RCommander = roamCommander;
 
         Eve = playerControllerObj.GetComponent<PlayerController>();
+        Sariel = sarielController;
 
 
         masterUICanvas.SetActive(true);

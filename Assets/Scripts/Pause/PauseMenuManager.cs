@@ -113,6 +113,9 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
     [SerializeField] private GameObject actPromptPanel;
     [SerializeField] private TMPro.TMP_Text actPromptText;
 
+    // start menu (mostly the grid portion)
+    [SerializeField] private CallbackGrid startMenu;
+
     /* Doesn't create the popup, just overwrites properties on the existing one
      */
 
@@ -131,15 +134,21 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         PrepareAYS(actText, call, val, cancelText);
         areYouSurePopup.InitiateGrid();
     }
-    public void InitLSMenu()
+    public void InitLSMenu(bool isLoading)
     {
         //presume there are 3 load save areas (so four options to include quit)
-        PrepareLS();
+        PrepareLS(isLoading);
         loadSaveMenu.InitiateGrid();
     }
     public void InitCTRLMenu()
     {
         controlsMenu.InitiateGrid();
+    }
+
+    // start menu will be treated as regular menu
+    public void InitStartMenu()
+    {
+        //FIXXX
     }
 
 
@@ -222,22 +231,54 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         }
     }
 
-    private void PrepareLS() //to be called on observation, not awake
+    private void StartMenuAwake()
+    {
+        // NEW GAME 
+        // CONTINUE (autosave informed)
+        // LOAD SAVE (not autosave informed)
+        /*Action<int> newGameAction; // should attempt to place in createSave popup, and if sreate, and if AYS, also run
+        Action<int> nestedNGAction = (x)
+        Action<int>
+
+
+        startMenu.SetCallbackAt(0, "NEW GAME", )
+
+        startMenu.SetCallbackAt(1, "CONTINUE", )*/
+        startMenu.SetCallbackAt(2, "LOAD SAVE", (x) => InitLSMenu(true));
+    }
+
+    private void PrepareLS(bool isLoading) //to be called on observation, not awake
     {
         //needs to look at list and observe all 3 save states to run
         for (int i = 0; i < 3; i++)
         {
-            string bucketStr = "LOAD SAVE " + i;
+            string bucketStr = "SAVE " + i;
+            if (isLoading)
+                bucketStr = "LOAD " + bucketStr;
+            else
+                bucketStr = "SET " + bucketStr;
             Action<int> bucketAct;
-            if (StateManager.DCManager.IsInkSaveStateEmpty(i))
+            if(isLoading)
             {
-                bucketStr += " [EMPTY]";
-                bucketAct = StateManager.PhonyAction; //literally do nothing on being chosen
+                if (StateManager.DCManager.IsInkSaveStateEmpty(i))
+                {
+                    bucketStr += " [EMPTY]";
+                    bucketAct = StateManager.PhonyAction; //literally do nothing on being chosen
+                }
+                else
+                {
+                    Action<int> nestedAct = (x) => { StateManager.LoadSaveState(x); };
+                    bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
+                }
             }
             else
             {
-                Action<int> nestedAct = (x) => { StateManager.DCManager.RunInkSaveState(x); };
+                Action<int> nestedAct = (x) => { StateManager.CreateSaveState(x); };
                 bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
+                if (StateManager.DCManager.IsInkSaveStateEmpty(i))
+                {
+                    bucketStr += " [EMPTY]";
+                }
             }
             loadSaveMenu.SetCallbackAt(i, bucketStr, bucketAct);
         }
@@ -258,6 +299,8 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         StateManager.SetDirectAction(avInputHandler.HandleKey);
     }
 
+
+    
 
     // are not actually public. I never made broadcasters, so these will appear public
     //currently exclusively for the prompt becuase I couldn't get a better way

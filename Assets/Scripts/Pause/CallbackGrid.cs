@@ -21,6 +21,7 @@ public sealed class CallbackGrid : DefaultGrid, IGridSelectable //is this redund
      *          - 'inputValue'
      */
     private StateManager.MenuInputType menuInputType = StateManager.MenuInputType.SelectableGrid;
+    private bool canBeSoftExited = true;
 
     public void SetCallbackAt(int index, string displayText, Action<int> setCallback)
     {
@@ -44,8 +45,20 @@ public sealed class CallbackGrid : DefaultGrid, IGridSelectable //is this redund
         this.menuInputType = menuInputType;
     }
 
+    public void SetSoftExitable(bool value)
+    {
+        canBeSoftExited = value;
+    }
+
     public override StateManager.MenuInputType InputType()
     {
         return this.menuInputType;
+    }
+
+    public override bool SoftExitMenu()
+    {
+        if (canBeSoftExited)
+            ExitMenu();
+        return canBeSoftExited;
     }
 }

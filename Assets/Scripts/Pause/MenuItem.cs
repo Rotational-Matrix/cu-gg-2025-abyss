@@ -13,8 +13,6 @@ public class MenuItem : SelectableElement, ISelectableElement
      */
 
     //presumably all children of the current GameObject this component is attached to.
-    [SerializeField] public GameObject eve;
-    [SerializeField] public GameObject sarielSprite;
     [SerializeField] private GameObject selectorImage;
     [SerializeField] private TMPro.TMP_Text itemTextObject;
     [SerializeField] private TMPro.TMP_Text itemValueTextObject;
@@ -146,7 +144,7 @@ public class MenuItem : SelectableElement, ISelectableElement
                 StateManager.PMManager.InitCTRLMenu();
                 break;
             case PauseMenuManager.ConfigItem.LoadSaveOption:
-                StateManager.PMManager.InitLSMenu();
+                StateManager.PMManager.InitLSMenu(true);
                 break;
             case PauseMenuManager.ConfigItem.ExitOption:
                 // NOTE: SHOULD MAKE YOU EXIT THE GAME...ONLY USES AYS TO EXIT (FIXXXXX)
@@ -166,16 +164,18 @@ public class MenuItem : SelectableElement, ISelectableElement
         int max;
         string maxText;
         Action<int> setExternVal;
-        if (configItem == PauseMenuManager.ConfigItem.Brightness) setExternVal = (x) => {
-            sarielSprite.GetComponent<SarielBrightness>().SetColor(x);
-        };
-        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/ setExternVal = (x) => eve.GetComponent<LeashManager>().SetMaxDist(x / 10f);
+        GameObject eve = StateManager.Eve.gameObject;
+        GameObject sarielSprite = StateManager.Sariel.SpriteObject;
+        if (configItem == PauseMenuManager.ConfigItem.Brightness) 
+            setExternVal = (x) => { sarielSprite.GetComponent<SarielBrightness>().SetColor(x); };
+        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/ 
+            setExternVal = (x) => eve.GetComponent<LeashManager>().SetMaxDist(x / 10f);
 
         Action<int> bucketCall = (x) => { PauseMenuManager.ConfigValues[configItem] = x; setExternVal(x); this.RefreshItemVal(); };
         string prevValStr = PauseMenuManager.ConfigValues[configItem].ToString(); //danger
         if (configItem == PauseMenuManager.ConfigItem.Brightness)
         {
-            max = 100; //HARDCODED (but lie to user) (put starting value + 1 maybe??)
+            max = 36; //HARDCODED (but lie to user) (put starting value + 1 maybe??)
             if (StateManager.DCManager.GetInkVar<bool>("triedToIncreaseBrightness")) //Inkfile VAR name
             {
                 maxText = "<color=\"red\">" + max.ToString() + "</color>";

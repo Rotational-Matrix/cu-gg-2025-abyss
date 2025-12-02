@@ -111,6 +111,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
     //Save states of the ink story
     private List<string> saveStateJsons = new List<string>(); // there are constantly 4, but I dond't want to harcode it
+    private string autoSaveJson;
 
     //Sub-hiererchy UI scripts
     private DialoguePanelHandler dpHandler;
@@ -226,9 +227,13 @@ public class DialogueCanvasManager : MonoBehaviour
     public void CreateInkSaveState(int saveStateIndex)
     {
         //if the argument is invalid, chooses to append a new savefile (maybe one may use -1 for deliberate appending)
-        if (saveStateIndex < 0 || saveStateJsons.Count <= saveStateIndex) //append saveState to saved saveStates
+        if (saveStateJsons.Count <= saveStateIndex) //append saveState to saved saveStates
         {
             saveStateJsons.Add(_inkStory.state.ToJson());
+        }
+        else if (saveStateIndex < 0)
+        {
+            autoSaveJson = _inkStory.state.ToJson();
         }
         else
         {
@@ -237,9 +242,13 @@ public class DialogueCanvasManager : MonoBehaviour
     }
     public void RunInkSaveState(int saveStateIndex)
     {
-        if (saveStateJsons.Count <= saveStateIndex || saveStateIndex < 0 || string.Equals(saveStateJsons[saveStateIndex], ""))
+        if (saveStateJsons.Count <= saveStateIndex || string.Equals(saveStateJsons[saveStateIndex], ""))
         {
             throw new System.ArgumentOutOfRangeException("RunInkSaveState doesn't have a savestate at index: " + saveStateIndex);
+        }
+        else if(saveStateIndex < 0) //-1 corresponds ot autosave json...
+        {
+            _inkStory.state.LoadJson(autoSaveJson);
         }
         else
         {
