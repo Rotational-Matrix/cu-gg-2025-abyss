@@ -4,16 +4,46 @@
 // available sprites: eve1, sariel1, sariel2, sariel3 (1,3)
 
 VAR actNumber = 1 //act as in Act I, Act II, etc
-VAR next_scene = -> part_I //will track scene to be called
+VAR next_scene = -> part_I //will track scene to be called (mostly debugger)
+VAR this_scene = -> part_I //will actually track scene to be called
+
+VAR is_start_save = true //...
 
 
 VAR strlenConfigKnown = false
 VAR triedToIncreaseBrightness = false
 VAR cave_visited = false
 
+// note that 0 is not ended, 1 is 'true' and 2 is 'rebel'
+VAR reachedEnding = 0
+
+
+// collection of meta info...
+VAR pastTrueEnding = false
+VAR pastRebelEnding = false
+
+// various states concerning unity status and saving
+// current protocol is that saving is done at >>> STOP DIALOGUE
+// This is goofy, but these will be informed by unity and fns here
+VAR eve_x1 = 0    //
+VAR eve_x2 = 0    // eve Vector3 for saving position
+VAR eve_x3 = 0    //
+VAR sariel_x1 = 0 //
+VAR sariel_x2 = 0 // Sariel Vector3 for saving position
+VAR sariel_x3 = 0 //
+
+VAR leashActive = false // starts 'off'
+
+
+
+
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
 
 VAR flowerCounter = 0
+
+
+// Effectively just macros
+VAR _step = 0.5 //flat distance of a 'step'
 
 VAR _e = "eve" //this is relatively stupid, but at least it can be ctrl-f-ed out
 VAR _s = "sariel" 
@@ -77,8 +107,14 @@ going back to debug stitch -> debug_stitch_1
  * - test selection types 
  */
 
-=== function assign_next_scene(-> this_scene) ===
-~ next_scene = this_scene
+=== function assign_next_scene(-> scene) ===
+~ next_scene = scene
+
+=== function assign_this_scene(-> scene) ===
+~ this_scene = scene
+
+=== function update_scene_var(scene_var, -> scene_val) ===
+~ scene_var = scene_val
 
 //#{sprite(_e, 0)}
 //#{sprite(_s, 0)}
@@ -86,8 +122,22 @@ going back to debug stitch -> debug_stitch_1
 //~ temp spriteFile = 
 sprite: {character == "NONE":NONE|Overlays/{character}_new}
 
+// doesn't touch the positional locations of eve, sar
+// note that it is legal to say forced_move(_e,_s)
+=== function forced_move(character, location) ===
+>>> FORCED_MOVE:{character},{location},TRUE,1
+
+//is_prop means is proportional (if not, the dist is flat)
+=== function forced_move_dir(character, location, is_prop, dist) ===
+>>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}}
 
 
+=== function set_leash_active(value) ===
+~ leashActive = value //sets value of leash for saving
+>>> LEASH_SET:{value:TRUE|FALSE}
+
+=== function backdrop_set(value) ===
+>>> BACKDROP_SET:{value:TRUE|FALSE}
 
 === intro_writing ===
 
@@ -146,6 +196,11 @@ The intro has ended.
 
 -> END //included to quiet system
 
+=== save_assign ===
+>>> START_DIALOGUE
+-> this_scene
+
+
 === pseudo_done ===
 >>> STOP_DIALOGUE
 >>> STOP_DIALOGUE
@@ -181,7 +236,11 @@ lorem ipsum solem dicut
 === part_I ===
 #READ_AS_STAGE_LINES:TRUE
 
+~ assign_this_scene(-> part_I)
+
 >>> START_DIALOGUE
+
+{backdrop_set(true)} //fyi, to coordinate syntax, many '>>> COMMANDS' will be actually ran as functions in the code! I will try to leave START and STOP alone.
 
 #sprite: NONE
 NO_SPEAKER: There is no sound at first.
@@ -242,15 +301,19 @@ Sariel: “And you’re… mine, I think.”
 #sprite: NONE
 Something tender opens in my throat. Not fear, not joy, but something in between.
 
+{backdrop_set(false)}
+
 The light brightens, outlining the suggestion of trees and a path that hadn’t been there mere seconds ago.
 ~ assign_next_scene(-> part_II.segment_1)
-
 >>> STOP_DIALOGUE //I am personally adding this
 -> pseudo_done
 
 === part_II ===
 //#READ_AS_STAGE_LINES:TRUE
 = segment_1 //ends w/ walking to animal area to find lamb
+
+~ assign_this_scene(-> part_II.segment_1)
+
 >>> START_DIALOGUE
 
 #sprite: NONE
@@ -272,6 +335,9 @@ I nod. It’s easier than asking why.
 -> pseudo_done
 
 = lamb_encounter
+
+~ assign_this_scene(-> part_II.lamb_encounter)
+
 >>> START_DIALOGUE
 #sprite: NONE
 We come upon a small, white animal in the underbrush, trembling and breathing in broken rhythms.
@@ -315,9 +381,11 @@ Sariel laughs. It’s gentle and uninhibited, and I find my worries melting unde
 
 = init_cave
 #BLOCK_IF_TRUE: cave_visited
+~ assign_this_scene(-> part_II.init_cave)
 >>> START_DIALOGUE
 
 ~ cave_visited = true
+
 
 #sprite: NONE
 Stepping inside feels like drowning upright. The air is far too damp and thick with must. 
@@ -332,6 +400,7 @@ I hastily turn to gather the lattices of silver strands that cling to the stone 
 
 = post_cave
 
+~ assign_this_scene(-> part_II.post_cave)
 >>> START_DIALOGUE
 
 #sprite: NONE
@@ -349,6 +418,8 @@ Sariel’s voice echoes, distant, yet perfectly clear.
 
 #{sprite(_s, 0)}
 Sariel: “Come back to me.”
+
+{forced_move_dir(_e, _s, true, 0.75)} //legs obeying
 
 #sprite: NONE
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.
@@ -413,6 +484,8 @@ She raises her hand, and something luminescent cinches around my throat. A strin
 #{sprite(_s, 0)}
 Sariel: “Try to move now.”
 
+{forced_move_dir(_e, _s, false, -1)}
+
 #sprite: NONE
 I step back; the thread tightens, and my heart jumps, nerves alight.
 
@@ -475,10 +548,14 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 //CONT AT WALK TO KNAVE AREA
 
 = knave_puzzle
+
+~ assign_this_scene(-> part_II.knave_puzzle)
+>>> START_DIALOGUE
 //merely directs to the actual puzzle because the puzzle is much longer
 -> knave_puzzle_knot
 
 = flower_puzzle
+~ assign_this_scene(-> part_II.flower_puzzle)
 >>> START_DIALOGUE
 #sprite: NONE
 The trees thin, giving way to an almost impossibly symmetrical glade with flowers sparsely scattered.
@@ -551,6 +628,7 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 -> pseudo_done
 
 = last_flower
+~ assign_this_scene(-> part_II.last_flower)
 >>> START_DIALOGUE
 
 #sprite: NONE
@@ -580,7 +658,7 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 -> pseudo_done
 
 = last_flower_psych
-
+~ assign_this_scene(-> part_II.last_flower_psych)
 >>> START_DIALOGUE
 
 //note that more of the ROAM state is visible if no sprite is present

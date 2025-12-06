@@ -186,6 +186,8 @@ public class StateManager : MonoBehaviour
     public static void LoadSaveState(int saveStateIndex)
     {
         DCManager.RunInkSaveState(saveStateIndex);
+        if (saveStateIndex != -1)
+            CreateSaveState(-1); //update autosave
     }
 
     public static void CreateSaveState(int saveStateIndex)
@@ -296,6 +298,10 @@ public class StateManager : MonoBehaviour
     public static void PhonyAction(int useless)
     {
         //This actually *should* to nothing. It is a phony Action<int>
+    }
+    public static void Autosave()
+    {
+        CreateSaveState(-1);
     }
 
 

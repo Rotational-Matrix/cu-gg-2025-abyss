@@ -257,29 +257,26 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
                 bucketStr = "LOAD " + bucketStr;
             else
                 bucketStr = "SET " + bucketStr;
+            //bucketStr += StateManager.DCManager.CanLoadInkSaveState(i);
             Action<int> bucketAct;
             if(isLoading)
             {
-                if (StateManager.DCManager.IsInkSaveStateEmpty(i))
-                {
-                    bucketStr += " [EMPTY]";
-                    bucketAct = StateManager.PhonyAction; //literally do nothing on being chosen
-                }
-                else
+                if (StateManager.DCManager.CanLoadInkSaveState(i))
                 {
                     Action<int> nestedAct = (x) => { StateManager.LoadSaveState(x); };
                     bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
+                }
+                else
+                {
+                    bucketAct = StateManager.PhonyAction; //literally do nothing on being chosen
                 }
             }
             else
             {
                 Action<int> nestedAct = (x) => { StateManager.CreateSaveState(x); };
                 bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
-                if (StateManager.DCManager.IsInkSaveStateEmpty(i))
-                {
-                    bucketStr += " [EMPTY]";
-                }
             }
+            bucketStr += StateManager.DCManager.SaveStateDescriptor(i);
             loadSaveMenu.SetCallbackAt(i, bucketStr, bucketAct);
         }
     }

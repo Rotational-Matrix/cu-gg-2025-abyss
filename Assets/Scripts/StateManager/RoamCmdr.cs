@@ -113,7 +113,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             else if (objectToMove.TryGetComponent<PlayerAnimationManager>(out PlayerAnimationManager outPAM))
             {
                 outPAM.DeclareInForcedMove(true, this.direction);
-                StateManager.SetPlayerForcedMoveStatus(true); //FIXXX THIS WAS LAST THING DONE MAKE ON EXIT/END
+                StateManager.SetPlayerForcedMoveStatus(true);
                 
             }
                 

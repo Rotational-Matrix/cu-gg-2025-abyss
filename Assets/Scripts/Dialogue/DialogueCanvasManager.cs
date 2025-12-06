@@ -1,5 +1,6 @@
 //using Ink.Parsed;
 using Ink.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -110,8 +111,7 @@ public class DialogueCanvasManager : MonoBehaviour
     Story _inkStory;
 
     //Save states of the ink story
-    private List<string> saveStateJsons = new List<string>(); // there are constantly 4, but I dond't want to harcode it
-    private string autoSaveJson;
+    private List<SaveState> saveStates = new List<SaveState>(); // there are constantly 4, but I dond't want to harcode it
 
     //Sub-hiererchy UI scripts
     private DialoguePanelHandler dpHandler;
@@ -133,9 +133,9 @@ public class DialogueCanvasManager : MonoBehaviour
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
         SetDialogueState(false); //it automatically makes sure it is turned off at start.
-        
-        for(int i = 0; i < 3; i++)
-            saveStateJsons.Add(""); //it is just easier to create a fake buffer.
+
+        for (int i = 0; i < 3; i++)
+            saveStates.Add(new SaveState()); //it is just easier to create a fake buffer.
     }
 
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
@@ -226,39 +226,48 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public void CreateInkSaveState(int saveStateIndex)
     {
-        //if the argument is invalid, chooses to append a new savefile (maybe one may use -1 for deliberate appending)
-        if (saveStateJsons.Count <= saveStateIndex) //append saveState to saved saveStates
+        if (saveStateIndex < 0)
         {
-            saveStateJsons.Add(_inkStory.state.ToJson());
+            SaveState.AutoSave(_inkStory);
         }
-        else if (saveStateIndex < 0)
+        else if (saveStateIndex < saveStates.Count)
         {
-            autoSaveJson = _inkStory.state.ToJson();
+            saveStates[saveStateIndex].CopyFromAutoSave();
         }
         else
-        {
-            saveStateJsons[saveStateIndex] = _inkStory.state.ToJson();
-        }
+            throw new ArgumentOutOfRangeException("Gave too large of an index to CreateInkSaveState");
+
     }
-    public void RunInkSaveState(int saveStateIndex)
+    public bool RunInkSaveState(int saveStateIndex)
     {
-        if (saveStateJsons.Count <= saveStateIndex || string.Equals(saveStateJsons[saveStateIndex], ""))
+
+        if (saveStateIndex < 0) //-1 corresponds ot autosave json...
         {
-            throw new System.ArgumentOutOfRangeException("RunInkSaveState doesn't have a savestate at index: " + saveStateIndex);
+            return SaveState.LoadAutoSave(_inkStory);
         }
-        else if(saveStateIndex < 0) //-1 corresponds ot autosave json...
+        else if (saveStateIndex < saveStates.Count)
         {
-            _inkStory.state.LoadJson(autoSaveJson);
+            return saveStates[saveStateIndex].Load(_inkStory);
+        }
+        else // somehow chose an index impossibly large
+            return false;
+    }
+
+    public string SaveStateDescriptor(int index)
+    {
+        if (index >= 0 && index < saveStates.Count) //note that autoSave shouldn't be showing its descriptor
+        {
+            return saveStates[index].Descriptor();
         }
         else
-        {
-            _inkStory.state.LoadJson(saveStateJsons[saveStateIndex]);
-        }
+            throw new ArgumentOutOfRangeException("screwed up SaveStateDescriptor call (did you try to use it on autoSave?)");
     }
-    public bool IsInkSaveStateEmpty(int index)
+    public bool CanLoadInkSaveState(int index)
     {
         //all considered 'empty' for all intents and purposes
-        return saveStateJsons.Count <= index || index < 0 || string.Equals(saveStateJsons[index], "");
+        if (index < 0)
+            return SaveState.CanLoadAutoSave();
+        return index < saveStates.Count && saveStates[index].CanLoad();
     }
 
     public void SetInkVar<T>(string variableName, T newVal) //literally the name of the variable as it appears in the inkstory
