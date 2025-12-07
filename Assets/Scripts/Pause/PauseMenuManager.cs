@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using static UnityEngine.Rendering.DebugUI;
 
 public class PauseMenuManager : MonoBehaviour, IStateManagerListener
@@ -140,6 +141,11 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         PrepareLS(isLoading);
         loadSaveMenu.InitiateGrid();
     }
+    private void InitLSMenu(bool isLoading, Action<int> saveCall)
+    {
+        PrepareLS(isLoading, saveCall);
+        loadSaveMenu.InitiateGrid();
+    }
     public void InitCTRLMenu()
     {
         controlsMenu.InitiateGrid();
@@ -148,7 +154,8 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
     // start menu will be treated as regular menu
     public void InitStartMenu()
     {
-        //FIXXX
+        PrepareStartMenu();
+        startMenu.InitiateGrid();
     }
 
 
@@ -198,6 +205,7 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         LSAwake();
         AVAwake();
         ConfigAwake();
+        StartMenuAwake();
         SetActionPromptActive(false);
     }
     
@@ -233,21 +241,28 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
 
     private void StartMenuAwake()
     {
+        startMenu.SetSoftExitable(false); // the start menu can never be 'left' via esc
         // NEW GAME 
         // CONTINUE (autosave informed)
         // LOAD SAVE (not autosave informed)
-        /*Action<int> newGameAction; // should attempt to place in createSave popup, and if sreate, and if AYS, also run
-        Action<int> nestedNGAction = (x)
-        Action<int>
-
-
-        startMenu.SetCallbackAt(0, "NEW GAME", )
-
-        startMenu.SetCallbackAt(1, "CONTINUE", )*/
+        
+        Action<int> newGameCall = (x) => { StateManager.NewGameSaveState(x); StateManager.LoadSaveState(x); };
+        startMenu.SetCallbackAt(0, "NEW GAME", (x) => InitLSMenu(true, newGameCall));
+        //startMenu.SetCallbackAt(1...) is something that must be defined in prepare startMenu 
         startMenu.SetCallbackAt(2, "LOAD SAVE", (x) => InitLSMenu(true));
     }
 
-    private void PrepareLS(bool isLoading) //to be called on observation, not awake
+    private void PrepareLS(bool isLoading)
+    {
+        Action<int> bucketAct;
+        
+        if (isLoading)
+            bucketAct = (x) => { StateManager.LoadSaveState(x); };
+        else
+            bucketAct = (x) => { StateManager.CreateSaveState(x); StateManager.ExitTopMenu(); };
+        PrepareLS(isLoading, bucketAct);
+    }
+    private void PrepareLS(bool isLoading, Action<int> inputAction) //to be called on observation, not awake
     {
         //needs to look at list and observe all 3 save states to run
         for (int i = 0; i < 3; i++)
@@ -263,7 +278,8 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
             {
                 if (StateManager.DCManager.CanLoadInkSaveState(i))
                 {
-                    Action<int> nestedAct = (x) => { StateManager.LoadSaveState(x); };
+                    //note that loading the save state clears the menu stack
+                    Action<int> nestedAct = (x) => { inputAction(x); }; 
                     bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
                 }
                 else
@@ -273,7 +289,7 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
             }
             else
             {
-                Action<int> nestedAct = (x) => { StateManager.CreateSaveState(x); };
+                Action<int> nestedAct = (x) => { inputAction(x); };
                 bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
             }
             bucketStr += StateManager.DCManager.SaveStateDescriptor(i);
@@ -294,6 +310,26 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
     {
         avInputHandler.InitNumInput(assignValCall, valueName, prevValue, max, maxText);
         StateManager.SetDirectAction(avInputHandler.HandleKey);
+    }
+    private void PrepareStartMenu()
+    {
+        /* NEW GAME (index 0) was fully set in Awake call
+         * LOAD SAVE (index 2) was fully set in Awake call
+         */
+        //(180, 180, 180, 255); is grey for dialogue! I'm using it here
+        string displayText;
+        Action<int> call;
+        if(StateManager.DCManager.CanLoadInkSaveState(-1)) //i.e. if continue would be legal
+        {
+            displayText = "CONTINUE";
+            call = (x) => StateManager.LoadAutosave();
+        }
+        else // if continue would be illegal
+        {
+            displayText = "<color=#B4B4B4FF>CONTINUE</color>";
+            call = StateManager.PhonyAction; // i.e do nothing
+        }
+        startMenu.SetCallbackAt(1, displayText, call);
     }
 
 

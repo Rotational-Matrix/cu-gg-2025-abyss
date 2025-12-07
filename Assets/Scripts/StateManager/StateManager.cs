@@ -188,11 +188,17 @@ public class StateManager : MonoBehaviour
         DCManager.RunInkSaveState(saveStateIndex);
         if (saveStateIndex != -1)
             CreateSaveState(-1); //update autosave
+        ClearMenuStack(); //should never be loaded into a menu
+        // note that 'extra' menu exits are okay
     }
 
     public static void CreateSaveState(int saveStateIndex)
     {
         DCManager.CreateInkSaveState(saveStateIndex);
+    }
+    public static void NewGameSaveState(int saveStateIndex)
+    {
+        DCManager.SetAsNewGame(saveStateIndex);
     }
 
 
@@ -290,6 +296,11 @@ public class StateManager : MonoBehaviour
             MenuStack.Peek().ExitMenu();
         }
     }
+    public static void ClearMenuStack()
+    {
+        while (MenuStack.Count > 0)
+            ExitTopMenu();
+    }
     public static void SoftExitTopMenu()
     {
         if (IsInMenu())
@@ -302,6 +313,10 @@ public class StateManager : MonoBehaviour
     public static void Autosave()
     {
         CreateSaveState(-1);
+    }
+    public static void LoadAutosave()
+    {
+        LoadSaveState(-1);
     }
 
 
@@ -334,6 +349,7 @@ public class StateManager : MonoBehaviour
     public void Start()
     {
         BroadcastStateChange();
+        PMManager.InitStartMenu();
     }
 
 
@@ -350,9 +366,10 @@ public class StateManager : MonoBehaviour
 
 
         masterUICanvas.SetActive(true);
+
         //leashManager.SetLeashActive(false);
         //leash.SetActive(false);
-        DCManager.SetInkVar<bool>("strlenConfigKnown", true);
+        //DCManager.SetInkVar<bool>("strlenConfigKnown", true);
 
     }
 }

@@ -133,6 +133,7 @@ public class DialogueCanvasManager : MonoBehaviour
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
         SetDialogueState(false); //it automatically makes sure it is turned off at start.
+        SaveState.InitNewGameSaveState(_inkStory);
 
         for (int i = 0; i < 3; i++)
             saveStates.Add(new SaveState()); //it is just easier to create a fake buffer.
@@ -224,30 +225,36 @@ public class DialogueCanvasManager : MonoBehaviour
         return incurBlock;
     }
 
-    public void CreateInkSaveState(int saveStateIndex)
+    public void CreateInkSaveState(int saveIndex)
     {
-        if (saveStateIndex < 0)
+        if (saveIndex < 0)
         {
             SaveState.AutoSave(_inkStory);
         }
-        else if (saveStateIndex < saveStates.Count)
+        else if (saveIndex < saveStates.Count)
         {
-            saveStates[saveStateIndex].CopyFromAutoSave();
+            saveStates[saveIndex].CopyFromAutoSave();
         }
         else
             throw new ArgumentOutOfRangeException("Gave too large of an index to CreateInkSaveState");
-
     }
-    public bool RunInkSaveState(int saveStateIndex)
+    public void SetAsNewGame(int saveIndex)
+    {
+        if (saveIndex >= 0 && saveIndex < saveStates.Count) //i.e. valid call
+            saveStates[saveIndex].CopyFromNewGame();
+        else
+            throw new ArgumentOutOfRangeException("Gave invalid argument to SetAsNewGame");
+    }
+    public bool RunInkSaveState(int saveIndex)
     {
 
-        if (saveStateIndex < 0) //-1 corresponds ot autosave json...
+        if (saveIndex < 0) //-1 corresponds ot autosave json...
         {
             return SaveState.LoadAutoSave(_inkStory);
         }
-        else if (saveStateIndex < saveStates.Count)
+        else if (saveIndex < saveStates.Count)
         {
-            return saveStates[saveStateIndex].Load(_inkStory);
+            return saveStates[saveIndex].Load(_inkStory);
         }
         else // somehow chose an index impossibly large
             return false;
