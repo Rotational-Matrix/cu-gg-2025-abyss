@@ -155,6 +155,7 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
     public void InitStartMenu()
     {
         PrepareStartMenu();
+        StateManager.RCommander.SetBackdropActive(true); // this gets turned off only in the load save command
         startMenu.InitiateGrid();
     }
 

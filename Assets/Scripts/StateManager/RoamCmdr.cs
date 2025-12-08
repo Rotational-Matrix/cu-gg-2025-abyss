@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoamCmdr : MonoBehaviour, IStateManagerListener
@@ -18,16 +19,79 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     [SerializeField] private LeashManager leashManager;
     [SerializeField] private GameObject leash;
 
+    [SerializeField] private UnityEngine.UI.Image blackBackdrop;
+
+    [Header("Movement Settings")]
+    public float moveSpeed = 3f;
+
+    private float defaultInertia;// = 1f;     //
+    private float defaultDamping;// = 0.05f;  // all stored in anticipation of slack function
+    private float defaultStrength;// = 1f;    // (will actually set default in awake to whatev stored in leashManager)
+    private float defaultMaxDist;// = 2f;     //
+
     private static List<ForcedMove> forcedMoves = new List<ForcedMove>();
     private static bool updateForcedMove = false;
 
+    private static bool backdropFading = false;
+
+    private readonly static Dictionary<string,Vector3> locDict = new Dictionary<string,Vector3>();
     
 
-    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, float distPortion, float moveSpeed)
+    public static Vector3 ParseMapLocation(string str) //presume the string is all caps, or make it case insensitive!
+    {
+        return locDict[str]; //make sure the dictionary is set prior to calling this, dimwit
+    }
+
+    public void SetLeashActive(bool value) //make leash slackener
+    {
+        leashManager.SetLeashActive(value);
+        leash.SetActive(value);
+    }
+    public void RespondToLoadSave() //called after the new inkfile is present
+    {
+        bool uninformedInkFile = StateManager.DCManager.GetInkVar<float>("leashMaxDist") <= 0;
+        ClearForcedMoves();
+        if (uninformedInkFile) //i.e. inkfile leash coefs haven't been set
+            WriteInkLeashCoef();
+        else
+            ReadInkLeashCoef();
+        SetLeashActive(StateManager.DCManager.GetInkVar<bool>("leashActive"));
+
+    }
+
+    public void ReadInkLeashCoef() // read from inkfile to leashManager
+    {
+        SetLeashCoef(
+            StateManager.DCManager.GetInkVar<float>("leashInertia"),
+            StateManager.DCManager.GetInkVar<float>("leashDamping"),
+            StateManager.DCManager.GetInkVar<float>("leashStrength"),
+            StateManager.DCManager.GetInkVar<float>("leashMaxDist")
+            );
+    }
+    public void WriteInkLeashCoef() // write from inkfile to leashMananger
+    {
+        StateManager.DCManager.SetInkVar<float>("leashInertia", leashManager.inertia);
+        StateManager.DCManager.SetInkVar<float>("leashDamping", leashManager.damping);
+        StateManager.DCManager.SetInkVar<float>("leashStrength", leashManager.strength);
+        StateManager.DCManager.SetInkVar<float>("leashMaxDist", leashManager.maxDist);
+    }
+    public void SetLeashCoef(float inertia, float damping, float strength, float maxDist)
+    {
+        leashManager.inertia = inertia;
+        leashManager.damping = damping;
+        leashManager.strength = strength;
+        leashManager.maxDist = maxDist;
+    }
+    public void SetLeashCoef()
+    {
+        SetLeashCoef(defaultInertia, defaultDamping, defaultStrength, defaultMaxDist);
+    }
+
+    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
     {   
         if (!InForcedMove(objToMove))
         {
-            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, distPortion, moveSpeed);
+            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion, this.moveSpeed);
             forcedMoves.Add(forcedMove);
         }
     }
@@ -46,10 +110,53 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 if (!continuing)
                     EndForcedMove(fMove);
             }
-        }    
+            if (backdropFading)
+            {
+                AlphaDecrement(0.01f);
+            }    
+
+        }
+
     }
 
-
+    public void SetBackdropActive(bool value)
+    {
+        if(backdropFading)
+        {
+            if (value) //setting active while fading stops the fading
+            {
+                backdropFading = false;
+                Color clr = blackBackdrop.color;
+                blackBackdrop.color = new Color(clr.r, clr.g, clr.b, 1);
+            }
+            // else setting inactive while fading just lets it keep fading
+        }
+        else
+        {
+            if (value)
+                blackBackdrop.gameObject.SetActive(true);
+            else
+                backdropFading = true;
+        }
+    }
+    private void AlphaDecrement(float alphaDecrementUnit)
+    {
+        //float currAlpha = blackBackdrop.color.a;
+        //blackBackdrop.color = currAlpha;
+        Color clr = blackBackdrop.color;
+        float alpha = clr.a - alphaDecrementUnit;
+        if (alpha > 0)
+        {
+            blackBackdrop.color = new Color(clr.r, clr.g, clr.b, alpha);
+        }
+        else
+        {
+            blackBackdrop.gameObject.SetActive(false);
+            blackBackdrop.color = new Color(clr.r, clr.g, clr.b, 1);
+            backdropFading = false;
+        }
+    }
+    
     
 
     //notably not static
@@ -62,6 +169,13 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private void Awake()
     {
         StateManager.AddStateChangeResponse(this);
+
+        SetLeashActive(false);
+        defaultInertia = leashManager.inertia;
+        defaultDamping = leashManager.damping;
+        defaultStrength = leashManager.strength;
+        defaultMaxDist = leashManager.maxDist;
+        WriteInkLeashCoef();
     }
 
     //for a given forced move,
@@ -84,10 +198,15 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     private void EndForcedMove(ForcedMove forcedMove)
     {
+        GameObject identifier = forcedMove.Identifier();
         forcedMove.EndForcedMove();
-        forcedMoves.RemoveAt(IndexForcedMove(gameObject));
+        forcedMoves.RemoveAt(IndexForcedMove(identifier));
     }
-
+    private void ClearForcedMoves()
+    {
+        foreach (ForcedMove forcedMove in forcedMoves)
+            EndForcedMove(forcedMove);
+    }
 
     //RoamCmr has an update call to progress its forced moves
 
@@ -98,15 +217,20 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         private Vector3 direction = Vector3.zero;
         private float moveSpeed = 3f;
 
-        public ForcedMove(GameObject objectToMove, Vector3 targetPosition, float distPortion, float moveSpeed)
+        //note that, if isProp, dist is from 0 to 1 as a proportion ofthe course.
+        //           else, dist is flat distance
+        public ForcedMove(GameObject objectToMove, Vector3 targetPosition, bool isProp, float dist, float moveSpeed)
         {
             this.objectToMove = objectToMove.transform;
             this.moveSpeed = moveSpeed;
             this.direction = (targetPosition - this.objectToMove.position).normalized;
-            this.targetPosition = this.objectToMove.position +
-                distPortion * Vector3.Distance(this.objectToMove.position, targetPosition) * direction;
+            if (isProp)
+                this.targetPosition = this.objectToMove.position +
+                    dist * Vector3.Distance(this.objectToMove.position, targetPosition) * direction;
+            else
+                this.targetPosition = this.objectToMove.position + dist * direction;
 
-            if (objectToMove.TryGetComponent<NPCAnimationManager>(out NPCAnimationManager outNPCAM) )
+            if (objectToMove.TryGetComponent<NPCAnimationManager>(out NPCAnimationManager outNPCAM))
             {
                 outNPCAM.SetDirection(this.direction);
             }
@@ -114,7 +238,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             {
                 outPAM.DeclareInForcedMove(true, this.direction);
                 StateManager.SetPlayerForcedMoveStatus(true);
-                
+
             }
                 
         }

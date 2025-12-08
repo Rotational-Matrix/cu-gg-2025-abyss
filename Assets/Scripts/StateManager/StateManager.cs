@@ -186,13 +186,22 @@ public class StateManager : MonoBehaviour
     public static void LoadSaveState(int saveStateIndex)
     {
         DCManager.RunInkSaveState(saveStateIndex);
+        RCommander.RespondToLoadSave(); // must be done prior to character teleportations
+        Eve.transform.position = DCManager.GetInkCharPos(true);     // genuinely teleport eve and sariel
+        Sariel.transform.position = DCManager.GetInkCharPos(false); //
+
+        // need puzzle element spawn (flower and cobweb)
+        RCommander.SetBackdropActive(false);
+        DCManager.ResponseToLoadSave(); // i.e. boot up dialogue if needed
+        
+        ClearMenuStack(); //should never be loaded into a menu (also the only way start menu should be exited
+        
+        // note that 'extra' menu exits are okay
         if (saveStateIndex != -1)
             CreateSaveState(-1); //update autosave
-        ClearMenuStack(); //should never be loaded into a menu
-        // note that 'extra' menu exits are okay
     }
 
-    public static void CreateSaveState(int saveStateIndex)
+    public static void CreateSaveState(int saveStateIndex) //as in overwrite a save state
     {
         DCManager.CreateInkSaveState(saveStateIndex);
     }
@@ -349,13 +358,12 @@ public class StateManager : MonoBehaviour
     public void Start()
     {
         BroadcastStateChange();
-        PMManager.InitStartMenu();
+        PMManager.InitStartMenu(); //calls to Start Start Menu on boot-up
     }
 
 
     private void Awake()
     {
-        //note how, if there are 2 StateManagers, one will overwrite the other! (why would there be 2 of these though...)
         DCManager = dialogueCanvas.GetComponent<DialogueCanvasManager>();
         PMManager = pauseMenuCanvas.GetComponent<PauseMenuManager>();
 

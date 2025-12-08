@@ -4,11 +4,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class DialogueCanvasManager : MonoBehaviour
 {
     /// <summary>
     /// [Cu]'s Documentation
+    /// 
+    /// Dec 7th note - DCM now stands for "using Dictionaries would've been Considerably More effective..."
     /// 
     /// For DialogueCanvasManager, nothing is static, 
     /// so everything is always accessed via 'StateManager.DCManager'
@@ -137,6 +140,12 @@ public class DialogueCanvasManager : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
             saveStates.Add(new SaveState()); //it is just easier to create a fake buffer.
+    }
+
+    public void ResponseToLoadSave()
+    {
+        if (GetInkVar<bool>("is_start_save"))
+            InitiateDialogueState("save_load_knot");
     }
 
     public bool InitiateDialogueState(string knotName) //also "knotName.stitchName" is valid
@@ -286,6 +295,21 @@ public class DialogueCanvasManager : MonoBehaviour
         return (T)(_inkStory.variablesState[variableName]); //forceful cast... please match types!
     }
 
+    public void SetInkCharPos(bool isEve, Vector3 v3) //I'd've used character dicts, but if bools work, they work
+    {
+        string charBase = isEve ? "eve_x" : "sariel_x"; // based on ink var names
+        for (int i = 0; i < 3; i++)
+            SetInkVar<float>(charBase + (i + 1).ToString(), v3[i]);
+    }
+    public Vector3 GetInkCharPos(bool isEve)
+    {
+        string charBase = (isEve) ? "eve_x" : "sariel_x"; // based on ink var names
+        Vector3 v3 = new Vector3();
+        for (int i = 0; i < 3; i++)
+            v3[i] = GetInkVar<float>(charBase + (i + 1).ToString());
+        return v3;
+    }
+
     //##### only on DCM initiated diverting are KnotTags handled #####
     // returns true if divert is blocked
     private bool HandleKnotTags(string knotName) //or knotName.stitchName
@@ -336,6 +360,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
     private void HandleLineCommands(string command)
     {
+        bool handled = true;
         switch (command)
         {
             case "STOP_DIALOGUE": //wipes dialogue panel
@@ -344,11 +369,81 @@ public class DialogueCanvasManager : MonoBehaviour
             case "START_DIALOGUE": //phony, done to allow knot tags to work
                 break;
             default:
-                Debug.Log("Unknown line command received: " + command);
+                handled = false;
                 break;
+        }
+        if (!handled && LineColonCommands(command))
+        {
+            Debug.Log("Line command was not recognised: " + command);
         }
     }
 
+    private bool LineColonCommands(string command)
+    {
+        //protocol for these line commands are: COMMAND:ARG1,ARG2,ARG3,...,ARGN
+        //all parts of any command are expected to be case insensitive
+        int colonIndex = command.IndexOf(':'); // should != -1
+        if (colonIndex == -1 || command.IndexOf(':', colonIndex + 1) != -1)
+            return false; // a quick check to guard against accidents. Can be altered if double colons are allowed
+
+        //now time to generate argv
+        char[] separators = new char[] { ':', ',' };
+        string[] argv = command.ToUpper().Split(separators);
+        for (int i = 0; i < argv.Length; i++) // I bet C programmers love seeing 'argv.Length'
+            argv[i] = argv[i].Trim();
+        return argv[0] switch
+        {
+            "FORCED_MOVE" => ForcedMoveCmd(argv),
+            "AUTOSAVE" => AutosaveCmd(argv),
+            "LEASH_SET" => LeashSetActiveCmd(argv),
+            "BACKDROP_SET" => BackdropSetCmd(argv),
+            _ => false,
+        }; //Holy crap, switch expressions are hella cool!
+    }
+    
+    private bool ForcedMoveCmd(string[] argv)
+    {
+        /* Expected args:
+         * FORCED_MOVE: <character> <location> <isProportional> <distance>
+         */
+        //StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
+        GameObject character = CapsToCharacter(argv[1]);
+        Vector3 location = CapsToLocation(argv[2]);
+        bool isProportional = CapsToBool(argv[3]);
+        float distance = float.Parse(argv[4]);
+        if (object.Equals(character, null) || object.Equals(location, null))
+            return false;
+        StateManager.RCommander.StartForcedMove(character, location, isProportional, distance);
+        return false;
+    }
+    private bool AutosaveCmd(string[] argv)
+    {
+        /* Expected args:
+         * AUTOSAVE: <isStartType>
+         */
+        if (CapsToBool(argv[1]))
+        {
+            SetInkCharPos(true, StateManager.Eve.transform.position);     // set positions prior
+            SetInkCharPos(false, StateManager.Sariel.transform.position); // (this is valid for start saves)
+
+            StateManager.Autosave();
+            return true;
+        }
+        else
+        {
+            throw new NotImplementedException("Autosave non-start type not implemented");
+        }
+    }
+    private bool LeashSetActiveCmd(string[] argv)
+    {
+        StateManager.RCommander.SetLeashActive(CapsToBool(argv[1]));
+        return true;
+    }
+    private bool BackdropSetCmd(string[] argv)
+    {
+        StateManager.RCommander.SetBackdropActive(CapsToBool(argv[1]));
+        return true;
+    }
 
     /* Handle Inline Commands
      * Upon finding an inline operator, calls the appropriate methods.
@@ -585,6 +680,44 @@ public class DialogueCanvasManager : MonoBehaviour
         return result;
     }
 
-
+    private bool CapsToBool(string str)
+    {
+        if (string.Equals(str, "TRUE"))
+            return true;
+        else if (string.Equals(str, "FALSE") || string.Equals(str, "NONE")) //allows NONE, but meant for FALSE
+            return false;
+        else
+            throw new ArgumentException("CapsToBool received:" + str);
+    }
+    
+    private GameObject CapsToCharacter(string str)
+    {
+        if (string.Equals(str, "EVE"))
+            return StateManager.Eve.gameObject;
+        else if (string.Equals(str, "SARIEL"))
+            return StateManager.Sariel.gameObject;
+        else if (string.Equals(str, "NONE"))
+            return null;
+        else
+            throw new ArgumentException("CapsToCharacter received:" + str);
+    }
+    private Vector3 CapsToLocation(string str)
+    {
+        // in accordance with Forced_Move and Demo_Motion, transform.position is used!
+        if (string.Equals(str, "EVE"))
+            return StateManager.Eve.transform.position;
+        else if (string.Equals(str, "SARIEL"))
+            return StateManager.Sariel.transform.position;
+        else if (str.IndexOf('#') == 0) //in case it is needed, #floatx#floaty#floatz is valid
+        {
+            string[] numStrs = str.Split('#', StringSplitOptions.RemoveEmptyEntries);
+            float[] nums = new float[3]; //bc it is a vector 3
+            for (int i = 0; i < 3; i++)
+                nums[i] = float.Parse(numStrs[i]);
+            return new Vector3(nums[0], nums[1], nums[2]);
+        }
+        return RoamCmdr.ParseMapLocation(str);
+    }
+    
 
 }

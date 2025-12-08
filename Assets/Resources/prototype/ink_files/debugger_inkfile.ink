@@ -1,3 +1,4 @@
+//{this_scene == ->part_I: does it, so it does}
 -> debug_knot
 
 //ctrl-f the following: Overlays/ <-- route to get sprites
@@ -7,7 +8,7 @@ VAR actNumber = 1 //act as in Act I, Act II, etc
 VAR next_scene = -> part_I //will track scene to be called (mostly debugger)
 VAR this_scene = -> part_I //will actually track scene to be called
 
-VAR is_start_save = true //...
+VAR is_start_save = true //currently should always be true, add only to account for potential implementation of Dialogue based- non start saves. Note that, if is_start_save, StateManager will attempt to place the save into dialogue using this_scene (this DOES mean that the 'visit number' can arbitrarily become 2 (instead of 1) for autosave starts)
 
 
 VAR strlenConfigKnown = false
@@ -25,21 +26,28 @@ VAR pastRebelEnding = false
 // various states concerning unity status and saving
 // current protocol is that saving is done at >>> STOP DIALOGUE
 // This is goofy, but these will be informed by unity and fns here
-VAR eve_x1 = 0    //
-VAR eve_x2 = 0    // eve Vector3 for saving position
-VAR eve_x3 = 0    //
-VAR sariel_x1 = 0 //
-VAR sariel_x2 = 0 // Sariel Vector3 for saving position
-VAR sariel_x3 = 0 //
+VAR eve_x1 = 0.0    //
+VAR eve_x2 = 0.0    // eve Vector3 for saving position
+VAR eve_x3 = 0.0    //
+VAR sariel_x1 = 0.0 //
+VAR sariel_x2 = 0.0 // Sariel Vector3 for saving position
+VAR sariel_x3 = 0.0 //
 
 VAR leashActive = false // starts 'off'
+
+VAR leashInertia = 0.0  //
+VAR leashDamping = 0.0  // all communicate with RoamCmdr
+VAR leashStrength = 0.0 //
+VAR leashMaxDist = 0.0  // probably the only used coef
 
 
 
 
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
 
-VAR flowerCounter = 0
+VAR flowerCounter = 0 //counter that eve has collected
+VAR cobweb_obtained = 0
+
 
 
 // Effectively just macros
@@ -106,6 +114,10 @@ going back to debug stitch -> debug_stitch_1
  * - list commands
  * - test selection types 
  */
+ 
+=== save_load_knot ===
+>>> START_DIALOGUE
+-> this_scene
 
 === function assign_next_scene(-> scene) ===
 ~ next_scene = scene
@@ -113,8 +125,6 @@ going back to debug stitch -> debug_stitch_1
 === function assign_this_scene(-> scene) ===
 ~ this_scene = scene
 
-=== function update_scene_var(scene_var, -> scene_val) ===
-~ scene_var = scene_val
 
 //#{sprite(_e, 0)}
 //#{sprite(_s, 0)}
@@ -131,6 +141,13 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 === function forced_move_dir(character, location, is_prop, dist) ===
 >>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}}
 
+// 
+=== function autosave(is_start_type, -> scene)
+{ this_scene != scene:
+  ~ is_start_save = is_start_type
+  ~ assign_this_scene(scene)
+  >>> AUTOSAVE:{is_start_type:START|NONE}
+}
 
 === function set_leash_active(value) ===
 ~ leashActive = value //sets value of leash for saving
@@ -196,8 +213,7 @@ The intro has ended.
 
 -> END //included to quiet system
 
-=== save_assign ===
->>> START_DIALOGUE
+
 -> this_scene
 
 
@@ -235,10 +251,8 @@ lorem ipsum solem dicut
 //primarily stolen from the the doc part
 === part_I ===
 #READ_AS_STAGE_LINES:TRUE
-
-~ assign_this_scene(-> part_I)
-
 >>> START_DIALOGUE
+~ autosave(true, -> part_I)
 
 {backdrop_set(true)} //fyi, to coordinate syntax, many '>>> COMMANDS' will be actually ran as functions in the code! I will try to leave START and STOP alone.
 
@@ -311,10 +325,8 @@ The light brightens, outlining the suggestion of trees and a path that hadn’t 
 === part_II ===
 //#READ_AS_STAGE_LINES:TRUE
 = segment_1 //ends w/ walking to animal area to find lamb
-
-~ assign_this_scene(-> part_II.segment_1)
-
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.segment_1)
 
 #sprite: NONE
 Each sound of the forest startles me with its intimacy. The world is a mouth whispering against my ear, and I don’t yet know if it is kind.
@@ -335,10 +347,9 @@ I nod. It’s easier than asking why.
 -> pseudo_done
 
 = lamb_encounter
-
-~ assign_this_scene(-> part_II.lamb_encounter)
-
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.lamb_encounter)
+
 #sprite: NONE
 We come upon a small, white animal in the underbrush, trembling and breathing in broken rhythms.
 
@@ -381,11 +392,10 @@ Sariel laughs. It’s gentle and uninhibited, and I find my worries melting unde
 
 = init_cave
 #BLOCK_IF_TRUE: cave_visited
-~ assign_this_scene(-> part_II.init_cave)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.init_cave)
 
 ~ cave_visited = true
-
 
 #sprite: NONE
 Stepping inside feels like drowning upright. The air is far too damp and thick with must. 
@@ -399,9 +409,8 @@ I hastily turn to gather the lattices of silver strands that cling to the stone 
 -> pseudo_done
 
 = post_cave
-
-~ assign_this_scene(-> part_II.post_cave)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.post_cave)
 
 #sprite: NONE
 My heart finally calms as I finish collecting the last threads the cave has to offer.
@@ -548,15 +557,15 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 //CONT AT WALK TO KNAVE AREA
 
 = knave_puzzle
-
-~ assign_this_scene(-> part_II.knave_puzzle)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.knave_puzzle)
 //merely directs to the actual puzzle because the puzzle is much longer
 -> knave_puzzle_knot
 
 = flower_puzzle
-~ assign_this_scene(-> part_II.flower_puzzle)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.flower_puzzle)
+
 #sprite: NONE
 The trees thin, giving way to an almost impossibly symmetrical glade with flowers sparsely scattered.
 
@@ -568,7 +577,7 @@ I look up from the pale grass bending beneath my feet and spot a large, stone ar
 At its feet sits an empty, unassuming clay pot. Its mouth gapes, waiting to be filled.
 
 #{sprite(_e, 0)}
-Eve: “{false:UwU} What is this?”
+Eve: “{false:UwU }What is this?”
 
 #{sprite(_s, 0)}
 Sariel: “A test.” 
@@ -628,8 +637,8 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 -> pseudo_done
 
 = last_flower
-~ assign_this_scene(-> part_II.last_flower)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.last_flower)
 
 #sprite: NONE
 Sariel hums as she watches me, low and melodic. 
@@ -658,8 +667,8 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 -> pseudo_done
 
 = last_flower_psych
-~ assign_this_scene(-> part_II.last_flower_psych)
 >>> START_DIALOGUE
+~ autosave(true, -> part_II.last_flower_psych)
 
 //note that more of the ROAM state is visible if no sprite is present
 #sprite NONE 
