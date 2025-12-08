@@ -185,6 +185,9 @@ public class StateManager : MonoBehaviour
     // both of these are to be altered to include various external information
     public static void LoadSaveState(int saveStateIndex)
     {
+        // just an fyi on visuals, since I'm totally doing shady things, 
+        // it is really obvious (and funny) that these shady things are happening if I don't provide a backdrop
+        RCommander.SetBackdropActive(true);
         DCManager.RunInkSaveState(saveStateIndex);
         RCommander.RespondToLoadSave(); // must be done prior to character teleportations
         Eve.transform.position = DCManager.GetInkCharPos(true);     // genuinely teleport eve and sariel

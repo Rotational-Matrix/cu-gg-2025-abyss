@@ -148,8 +148,9 @@ public class MenuItem : SelectableElement, ISelectableElement
                 break;
             case PauseMenuManager.ConfigItem.ExitOption:
                 // NOTE: SHOULD MAKE YOU EXIT THE GAME...ONLY USES AYS TO EXIT (FIXXXXX)
-                StateManager.PMManager.InitAYSPopup("QUIT THE GAME (just leaves the pause rn)",
-                    (x) => { ExitCurrentMenu(); }, 0, "DO NOT QUIT THE GAME");
+                StateManager.PMManager.InitAYSPopup("QUIT TO START SCREEN",
+                    (x) => { ExitCurrentMenu(); StateManager.PMManager.InitStartMenu(); }, 
+                    0, "DO NOT QUIT THE GAME");
                 break;
             default:
                 throw new System.ArgumentException("how...?");
@@ -158,17 +159,20 @@ public class MenuItem : SelectableElement, ISelectableElement
         return success;
     }
 
-    private void AVPopupCall()
+    private void AVPopupCall() // did have Johns implementation of Sariel brightness, but alas, [Cu] killed it
     {
 
         int max;
         string maxText;
         Action<int> setExternVal;
         GameObject eve = StateManager.Eve.gameObject;
-        GameObject sarielSprite = StateManager.Sariel.SpriteObject;
-        if (configItem == PauseMenuManager.ConfigItem.Brightness) 
-            setExternVal = (x) => { sarielSprite.GetComponent<SarielBrightness>().SetColor(x); };
-        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/ 
+        //GameObject sarielSprite = StateManager.Sariel.SpriteObject;
+        if (configItem == PauseMenuManager.ConfigItem.Brightness)
+        {
+            //setExternVal = (x) => { sarielSprite.GetComponent<SarielBrightness>().SetColor(x); };
+            setExternVal = (x) => { };
+        }
+        else /*if (configItem == PauseMenuManager.ConfigItem.LeashLength)*/
             setExternVal = (x) => eve.GetComponent<LeashManager>().SetMaxDist(x / 10f);
 
         Action<int> bucketCall = (x) => { PauseMenuManager.ConfigValues[configItem] = x; setExternVal(x); this.RefreshItemVal(); };
@@ -187,7 +191,7 @@ public class MenuItem : SelectableElement, ISelectableElement
                 {
                     PauseMenuManager.ConfigValues[configItem] = x;
                     this.RefreshItemVal();
-                    sarielSprite.GetComponent<SarielBrightness>().SetColor(x);
+                    setExternVal(x);
                     if (x >= max) //it will get set to max anyway if it is higher...
                     {
                         StateManager.PMManager.InitAYSPopup("BRIGHTNESS CANNOT BE INCREASED",

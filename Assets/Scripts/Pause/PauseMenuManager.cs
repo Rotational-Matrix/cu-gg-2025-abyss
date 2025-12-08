@@ -154,6 +154,7 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
     // start menu will be treated as regular menu
     public void InitStartMenu()
     {
+        StateManager.ClearMenuStack(); //because the start menu will always be on bottom...
         PrepareStartMenu();
         StateManager.RCommander.SetBackdropActive(true); // this gets turned off only in the load save command
         startMenu.InitiateGrid();
@@ -248,7 +249,11 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
         // LOAD SAVE (not autosave informed)
         
         Action<int> newGameCall = (x) => { StateManager.NewGameSaveState(x); StateManager.LoadSaveState(x); };
-        startMenu.SetCallbackAt(0, "NEW GAME", (x) => InitLSMenu(true, newGameCall));
+        
+        // note that the special InitLSMenu is considered 'not loading' becuase that only matters for
+        // what kinds of files are deemed available.
+        startMenu.SetCallbackAt(0, "NEW GAME", (x) => InitLSMenu(false, newGameCall));
+        
         //startMenu.SetCallbackAt(1...) is something that must be defined in prepare startMenu 
         startMenu.SetCallbackAt(2, "LOAD SAVE", (x) => InitLSMenu(true));
     }
@@ -293,8 +298,8 @@ public class PauseMenuManager : MonoBehaviour, IStateManagerListener
                 Action<int> nestedAct = (x) => { inputAction(x); };
                 bucketAct = (x) => { InitAYSPopup(bucketStr + "?", nestedAct, x, "DO NOT " + bucketStr); };
             }
-            bucketStr += StateManager.DCManager.SaveStateDescriptor(i);
-            loadSaveMenu.SetCallbackAt(i, bucketStr, bucketAct);
+            string fullStr = bucketStr + StateManager.DCManager.SaveStateDescriptor(i);
+            loadSaveMenu.SetCallbackAt(i, fullStr, bucketAct);
         }
     }
 

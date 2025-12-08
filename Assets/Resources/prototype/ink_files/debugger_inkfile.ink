@@ -116,6 +116,7 @@ going back to debug stitch -> debug_stitch_1
  */
  
 === save_load_knot ===
+//#READ_AS_STAGE_LINES:TRUE
 >>> START_DIALOGUE
 -> this_scene
 
@@ -428,7 +429,7 @@ Sariel’s voice echoes, distant, yet perfectly clear.
 #{sprite(_s, 0)}
 Sariel: “Come back to me.”
 
-{forced_move_dir(_e, _s, true, 0.75)} //legs obeying
+{forced_move_dir(_e, _s, true, 0.5)} //legs obeying
 
 #sprite: NONE
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.

@@ -314,7 +314,9 @@ public class DialogueCanvasManager : MonoBehaviour
     // returns true if divert is blocked
     private bool HandleKnotTags(string knotName) //or knotName.stitchName
     {
-
+        List<string> knotTagList = _inkStory.TagsForContentAtPath(knotName);
+        if (object.Equals(knotTagList, null) || knotTagList.Count == 0)
+            return false; // quick exit in case the tagList either doesn't exist or is empty
         foreach (string tag in _inkStory.TagsForContentAtPath(knotName))
         {
             int result = CheckDivertBlockTags(tag);
@@ -372,12 +374,14 @@ public class DialogueCanvasManager : MonoBehaviour
                 handled = false;
                 break;
         }
-        if (!handled && LineColonCommands(command))
+        if (!handled)
         {
-            Debug.Log("Line command was not recognised: " + command);
+            if(!LineColonCommands(command))
+                Debug.Log("Line command was not recognised: " + command);
         }
     }
 
+    //returns success at handling command
     private bool LineColonCommands(string command)
     {
         //protocol for these line commands are: COMMAND:ARG1,ARG2,ARG3,...,ARGN
@@ -398,7 +402,7 @@ public class DialogueCanvasManager : MonoBehaviour
             "LEASH_SET" => LeashSetActiveCmd(argv),
             "BACKDROP_SET" => BackdropSetCmd(argv),
             _ => false,
-        }; //Holy crap, switch expressions are hella cool!
+        }; //Holy crap, switch expressions are hella cool! [however I need to just make a command dictionary]
     }
     
     private bool ForcedMoveCmd(string[] argv)
@@ -421,7 +425,7 @@ public class DialogueCanvasManager : MonoBehaviour
         /* Expected args:
          * AUTOSAVE: <isStartType>
          */
-        if (CapsToBool(argv[1]))
+        if (string.Equals(argv[1], "START"))
         {
             SetInkCharPos(true, StateManager.Eve.transform.position);     // set positions prior
             SetInkCharPos(false, StateManager.Sariel.transform.position); // (this is valid for start saves)

@@ -23,6 +23,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     [Header("Movement Settings")]
     public float moveSpeed = 3f;
+    public float flatCloseEnoughRadius = 0.1f;
 
     private float defaultInertia;// = 1f;     //
     private float defaultDamping;// = 0.05f;  // all stored in anticipation of slack function
@@ -91,7 +92,8 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {   
         if (!InForcedMove(objToMove))
         {
-            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion, this.moveSpeed);
+            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion, 
+                this.moveSpeed, this.flatCloseEnoughRadius);
             forcedMoves.Add(forcedMove);
         }
     }
@@ -204,8 +206,8 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     }
     private void ClearForcedMoves()
     {
-        foreach (ForcedMove forcedMove in forcedMoves)
-            EndForcedMove(forcedMove);
+        while (forcedMoves.Count > 0)
+            EndForcedMove(forcedMoves[0]);
     }
 
     //RoamCmr has an update call to progress its forced moves
@@ -216,15 +218,18 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         private Vector3 targetPosition;
         private Vector3 direction = Vector3.zero;
         private float moveSpeed = 3f;
+        private float flatCloseEnoughRadius;
 
         //note that, if isProp, dist is from 0 to 1 as a proportion ofthe course.
         //           else, dist is flat distance
-        public ForcedMove(GameObject objectToMove, Vector3 targetPosition, bool isProp, float dist, float moveSpeed)
+        public ForcedMove(GameObject objectToMove, Vector3 targetPosition, bool isDistProportional, 
+            float dist, float moveSpeed, float flatCloseEnoughRadius)
         {
             this.objectToMove = objectToMove.transform;
             this.moveSpeed = moveSpeed;
+            this.flatCloseEnoughRadius = flatCloseEnoughRadius;
             this.direction = (targetPosition - this.objectToMove.position).normalized;
-            if (isProp)
+            if (isDistProportional)
                 this.targetPosition = this.objectToMove.position +
                     dist * Vector3.Distance(this.objectToMove.position, targetPosition) * direction;
             else
@@ -252,7 +257,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 moveSpeed * Time.deltaTime
             );
             direction = (targetPosition - objectToMove.position).normalized;
-            if (Vector3.Distance(objectToMove.position, targetPosition) < 0.01f)
+            if (Vector3.Distance(objectToMove.position, targetPosition) < flatCloseEnoughRadius)
             {
                 direction = Vector3.zero;
                 return false;
