@@ -108,6 +108,8 @@ public class PlayerAnimationManager : MonoBehaviour
         Vector3 camRelative = Camera.main.transform.InverseTransformDirection(direction);
         float x = camRelative.x;
         float z = camRelative.z;
+        //float x = direction.x;
+        //float z = direction.z;
         if (z * z > flipEpsilon)
         {
             if (z > 0)
@@ -124,8 +126,8 @@ public class PlayerAnimationManager : MonoBehaviour
         //this uses sprite flips but can be made to use different sprites with no effort
         if (x * x > flipEpsilon)
         {
-            Debug.Log("x: " + x + " z: " + z);
-            sr.flipX = frontFacing ? x < 0 : x > 0;
+            //Debug.Log("x: " + x + " z: " + z); [Cu] forced moves are for some reason inverse of actual input
+            sr.flipX = frontFacing ? x > 0 : x < 0;
         }
     }
 

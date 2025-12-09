@@ -142,7 +142,7 @@ public class DialogueCanvasManager : MonoBehaviour
     private void InitInk()
     {
         _inkStory = new Story(inkAsset.text);
-        //could call WriteInkLeashCoef here, (however, everything is made to function w/o such change
+        StateManager.RCommander.WriteInkLeashCoef();
         SetInkCharPos(); // initialise eve and sariel position
         SaveState.InitNewGameSaveState(_inkStory);
         for (int i = 0; i < 3; i++)

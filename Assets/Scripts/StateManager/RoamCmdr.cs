@@ -189,7 +189,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         defaultDamping = leashManager.damping;
         defaultStrength = leashManager.strength;
         defaultMaxDist = leashManager.maxDist;
-        WriteInkLeashCoef();
+        //WriteInkLeashCoef(); //will probably cause error bc RCommander is above DCM in hierarchy
     }
 
     //for a given forced move,
