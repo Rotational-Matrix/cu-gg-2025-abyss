@@ -25,13 +25,17 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     public float moveSpeed = 3f;
     public float flatCloseEnoughRadius = 0.1f;
 
+    [Header("Last State Broadcast (inMenu, inDialogue, stateFlag)")]
+    [SerializeField] private string MostRecentStateBroadcast = "";
+
     private float defaultInertia;// = 1f;     //
     private float defaultDamping;// = 0.05f;  // all stored in anticipation of slack function
     private float defaultStrength;// = 1f;    // (will actually set default in awake to whatev stored in leashManager)
     private float defaultMaxDist;// = 2f;     //
 
     private static List<ForcedMove> forcedMoves = new List<ForcedMove>();
-    private static bool updateForcedMove = false;
+    private static bool updateForcedMove = false; // stolen to mean 'in non menustate'
+    private static bool killForcedMovesAtUpdate = false; //
 
     private static bool backdropFading = false;
 
@@ -93,7 +97,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         if (!InForcedMove(objToMove))
         {
             ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion, 
-                this.moveSpeed, this.flatCloseEnoughRadius);
+                this.moveSpeed, this.flatCloseEnoughRadius, true);
             forcedMoves.Add(forcedMove);
         }
     }
@@ -106,11 +110,18 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {
         if (updateForcedMove)
         {
-            foreach (ForcedMove fMove in forcedMoves)
+            int fMove_origCount = forcedMoves.Count;
+            for (int i = forcedMoves.Count - 1; i >= 0; i--) //decrem to account for deletion without issue
             {
-                bool continuing = fMove.IncrementalMove();
+                bool continuing = forcedMoves[i].IncrementalMove();
                 if (!continuing)
-                    EndForcedMove(fMove);
+                    EndForcedMove(forcedMoves[i]);
+            }
+            if (killForcedMovesAtUpdate) //ensures killing forced moves doesn't cause an error w/update
+            {
+                while (forcedMoves.Count > 0)
+                    EndForcedMove(forcedMoves[0]);
+                killForcedMovesAtUpdate = false; 
             }
             if (backdropFading)
             {
@@ -165,6 +176,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     public void OnStateChange(bool inMenu, bool inDialogue, int stateFlag)
     {
         updateForcedMove = !inMenu; //no input from stateFlag here, since typically this sets it as ForcedMove
+        FormatStateChangeForInspector(inMenu, inDialogue, stateFlag); //literally just for inspector
     }
 
 
@@ -186,12 +198,10 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     private int IndexForcedMove(GameObject gameObject)
     {
-        int i = 0;
-        foreach(ForcedMove fMove in forcedMoves)
+        for (int i = forcedMoves.Count - 1;  i >= 0; i--)
         {
-            if(object.Equals(fMove.Identifier(), gameObject))
+            if (object.Equals(forcedMoves[i].Identifier(), gameObject))
                     return i;
-            i++;
         }
         return -1;
     }
@@ -201,13 +211,13 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private void EndForcedMove(ForcedMove forcedMove)
     {
         GameObject identifier = forcedMove.Identifier();
-        forcedMove.EndForcedMove();
         forcedMoves.RemoveAt(IndexForcedMove(identifier));
+        forcedMove.EndForcedMove(); // must be AFTER it is removed from the list 
+        // (ordering bc externally fMove only seems 'done' when not in list)
     }
     private void ClearForcedMoves()
     {
-        while (forcedMoves.Count > 0)
-            EndForcedMove(forcedMoves[0]);
+        killForcedMovesAtUpdate = true; //sets up all forced moves to be cleared out
     }
 
     //RoamCmr has an update call to progress its forced moves
@@ -223,8 +233,15 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         //note that, if isProp, dist is from 0 to 1 as a proportion ofthe course.
         //           else, dist is flat distance
         public ForcedMove(GameObject objectToMove, Vector3 targetPosition, bool isDistProportional, 
-            float dist, float moveSpeed, float flatCloseEnoughRadius)
+            float dist, float moveSpeed, float flatCloseEnoughRadius, bool ignoreY)
         {
+            // this is gross, but it is because Eve base y_pos != sariel base y_pos
+            // meaning not only will flying probably occur, but eve will attempt to phase into ground
+            // currently the ground forces eve to approx 0.63 if she tries to go low enough
+            // sariel is stable at 0, so eve cannot even get close
+            if(ignoreY)
+                targetPosition.y = objectToMove.transform.position.y;
+
             this.objectToMove = objectToMove.transform;
             this.moveSpeed = moveSpeed;
             this.flatCloseEnoughRadius = flatCloseEnoughRadius;
@@ -281,5 +298,13 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     }
 
+
+
+    private void FormatStateChangeForInspector(bool inMenu, bool inDialogue, int stateFlag)
+    {
+        string inMenuStr = inMenu ? "true" : "false";
+        string inDialogueStr = inDialogue ? "true" : "false";
+        MostRecentStateBroadcast = "(" + inMenuStr + ", " + inDialogueStr + ", " + stateFlag.ToString() + ")";
+    }
 
 }

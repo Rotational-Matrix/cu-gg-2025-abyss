@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
             isReadingInput = !(inMenu || inDialogue);
         else if (stateFlag == (int)StateManager.StateFlag.MoveAllowedInDialogue)
             isReadingInput = !inMenu;
-            animationManager.SetReadInputActive(isReadingInput);
+        animationManager.SetReadInputActive(isReadingInput);
     }
 
 

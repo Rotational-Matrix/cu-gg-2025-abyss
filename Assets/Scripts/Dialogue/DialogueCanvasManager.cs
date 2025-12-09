@@ -132,14 +132,21 @@ public class DialogueCanvasManager : MonoBehaviour
 
     private void Awake()
     {
-        _inkStory = new Story(inkAsset.text);
+        InitInk(); // creates inkstory, and 
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
         SetDialogueState(false); //it automatically makes sure it is turned off at start.
-        SaveState.InitNewGameSaveState(_inkStory);
+    }
 
+    // creates the inkstory whilst also properly informing the newgame save state and providing it with proper external vals
+    private void InitInk()
+    {
+        _inkStory = new Story(inkAsset.text);
+        //could call WriteInkLeashCoef here, (however, everything is made to function w/o such change
+        SetInkCharPos(); // initialise eve and sariel position
+        SaveState.InitNewGameSaveState(_inkStory);
         for (int i = 0; i < 3; i++)
-            saveStates.Add(new SaveState()); //it is just easier to create a fake buffer.
+            saveStates.Add(new SaveState()); // make save options
     }
 
     public void ResponseToLoadSave()
@@ -295,6 +302,13 @@ public class DialogueCanvasManager : MonoBehaviour
         return (T)(_inkStory.variablesState[variableName]); //forceful cast... please match types!
     }
 
+    public void SetInkCharPos() //overload for setting both current positions
+    { SetInkCharPos(true); SetInkCharPos(false); }
+    public void SetInkCharPos(bool isEve) // overload for current position
+    {
+        Vector3 v3 = isEve ? StateManager.Eve.transform.position : StateManager.Sariel.transform.position;
+        SetInkCharPos(isEve, v3);
+    }
     public void SetInkCharPos(bool isEve, Vector3 v3) //I'd've used character dicts, but if bools work, they work
     {
         string charBase = isEve ? "eve_x" : "sariel_x"; // based on ink var names
@@ -427,8 +441,7 @@ public class DialogueCanvasManager : MonoBehaviour
          */
         if (string.Equals(argv[1], "START"))
         {
-            SetInkCharPos(true, StateManager.Eve.transform.position);     // set positions prior
-            SetInkCharPos(false, StateManager.Sariel.transform.position); // (this is valid for start saves)
+            SetInkCharPos(); //set all characters positions prior to 'start' save
 
             StateManager.Autosave();
             return true;
