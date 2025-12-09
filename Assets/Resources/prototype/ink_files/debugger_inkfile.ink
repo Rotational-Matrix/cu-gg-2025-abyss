@@ -135,12 +135,12 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 
 // doesn't touch the positional locations of eve, sar
 // note that it is legal to say forced_move(_e,_s)
-=== function forced_move(character, location) ===
->>> FORCED_MOVE:{character},{location},TRUE,1
+=== function forced_move(character, location, spdFactor) ===
+>>> FORCED_MOVE:{character},{location},TRUE,1,{spdFactor}
 
 //is_prop means is proportional (if not, the dist is flat)
-=== function forced_move_dir(character, location, is_prop, dist) ===
->>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}}
+=== function forced_move_dir(character, location, is_prop, dist, spdFactor) ===
+>>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}},{spdFactor}
 
 // 
 === function autosave(is_start_type, -> scene)
@@ -153,6 +153,24 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 === function set_leash_active(value) ===
 ~ leashActive = value //sets value of leash for saving
 >>> LEASH_SET:{value:TRUE|FALSE}
+
+=== function set_leash_coef(inertia, damping, strength, maxDist, activeVal) ===
+{inertia > 0:
+~ leashInertia = inertia
+}
+{damping > 0:
+~ leashDamping = damping
+}
+{strength > 0: 
+~ leashStrength = strength
+}
+{maxDist > 0:
+~ leashMaxDist = maxDist
+}
+~ set_leash_active(activeVal) //notably NOT in a conditional
+
+
+
 
 === function backdrop_set(value) ===
 >>> BACKDROP_SET:{value:TRUE|FALSE}
@@ -429,7 +447,7 @@ Sariel’s voice echoes, distant, yet perfectly clear.
 #{sprite(_s, 0)}
 Sariel: “Come back to me.”
 
-{forced_move_dir(_e, _s, true, 0.5)} //legs obeying
+{forced_move_dir(_e, _s, true, 0.5, 1)} //legs obeying
 
 #sprite: NONE
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.
@@ -488,13 +506,15 @@ After a beat, Sariel speaks again.
 #{sprite(_s, 0)}
 Sariel: “Maybe, it’s best if we make sure you can’t drift away into danger like that again.”
 
+{set_leash_active(true)}
+
 #sprite: NONE
 She raises her hand, and something luminescent cinches around my throat. A string of light stretches between us, vanishing into Sariel’s palm. 
 
 #{sprite(_s, 0)}
 Sariel: “Try to move now.”
 
-{forced_move_dir(_e, _s, false, -1)}
+{forced_move_dir(_e, _s, false, -1, 1)}
 
 #sprite: NONE
 I step back; the thread tightens, and my heart jumps, nerves alight.

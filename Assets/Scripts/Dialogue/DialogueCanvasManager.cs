@@ -3,6 +3,7 @@ using Ink.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -129,6 +130,8 @@ public class DialogueCanvasManager : MonoBehaviour
     //informs how to read text
     private bool readAsStageLines = true;
 
+    private Dictionary<string, Func<string[], bool>> colonLineCommands = new();
+
 
     private void Awake()
     {
@@ -147,6 +150,11 @@ public class DialogueCanvasManager : MonoBehaviour
         SaveState.InitNewGameSaveState(_inkStory);
         for (int i = 0; i < 3; i++)
             saveStates.Add(new SaveState()); // make save options
+        colonLineCommands.Add("FORCED_MOVE", ForcedMoveCmd);
+        colonLineCommands.Add("AUTOSAVE", AutosaveCmd);
+        colonLineCommands.Add("LEASH_SET", LeashSetActiveCmd);
+        //colonLineCommands.Add("LEASH_COEF", LeashSetCoefCmd); merged into LEASH_SET
+        colonLineCommands.Add("BACKDROP_SET", BackdropSetCmd);
     }
 
     public void ResponseToLoadSave()
@@ -409,29 +417,30 @@ public class DialogueCanvasManager : MonoBehaviour
         string[] argv = command.ToUpper().Split(separators);
         for (int i = 0; i < argv.Length; i++) // I bet C programmers love seeing 'argv.Length'
             argv[i] = argv[i].Trim();
-        return argv[0] switch
+        try
         {
-            "FORCED_MOVE" => ForcedMoveCmd(argv),
-            "AUTOSAVE" => AutosaveCmd(argv),
-            "LEASH_SET" => LeashSetActiveCmd(argv),
-            "BACKDROP_SET" => BackdropSetCmd(argv),
-            _ => false,
-        }; //Holy crap, switch expressions are hella cool! [however I need to just make a command dictionary]
+            return colonLineCommands[argv[0]](argv);
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
     }
     
     private bool ForcedMoveCmd(string[] argv)
     {
         /* Expected args:
-         * FORCED_MOVE: <character> <location> <isProportional> <distance>
+         * FORCED_MOVE: <character> <location> <isProportional> <distance> <speedFactor>
          */
         //StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
         GameObject character = CapsToCharacter(argv[1]);
         Vector3 location = CapsToLocation(argv[2]);
         bool isProportional = CapsToBool(argv[3]);
         float distance = float.Parse(argv[4]);
+        float spdFactor = float.Parse(argv[5]);
         if (object.Equals(character, null) || object.Equals(location, null))
             return false;
-        StateManager.RCommander.StartForcedMove(character, location, isProportional, distance);
+        StateManager.RCommander.StartForcedMove(character, location, isProportional, distance, spdFactor);
         return false;
     }
     private bool AutosaveCmd(string[] argv)
@@ -453,13 +462,35 @@ public class DialogueCanvasManager : MonoBehaviour
     }
     private bool LeashSetActiveCmd(string[] argv)
     {
-        StateManager.RCommander.SetLeashActive(CapsToBool(argv[1]));
-        return true;
+        bool settingActive = CapsToBool(argv[1]);
+        
+        if (argv.Length == 2) //i.e. cmd:<active value>
+        {
+            if (settingActive) //meaning going from OFF to ON, (or just staying ON) 
+            {
+                StateManager.RCommander.ReadInkLeashCoef(); //so read while OFF
+                StateManager.RCommander.SetLeashActive(settingActive);
+            }
+            else
+            {
+                StateManager.RCommander.SetLeashActive(settingActive);
+                StateManager.RCommander.ReadInkLeashCoef(); //always read while OFF
+            }
+            return true;
+        }
+        else 
+            return false;
     }
     private bool BackdropSetCmd(string[] argv)
     {
-        StateManager.RCommander.SetBackdropActive(CapsToBool(argv[1]));
-        return true;
+        if (argv.Length == 2) //i.e. cmd:<active value>
+        {
+            StateManager.RCommander.SetBackdropActive(CapsToBool(argv[1]));
+            return true;
+        }
+        else
+            return false;
+
     }
 
     /* Handle Inline Commands

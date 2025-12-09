@@ -47,6 +47,23 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         return locDict[str]; //make sure the dictionary is set prior to calling this, dimwit
     }
 
+    private void InitLocationDict() //call at awake or earlier (can this be set in the field?)
+    {
+        //realistically, the y component is almost certainly going to get ignored
+        locDict.Add("ANIMAL_AREA",          new Vector3(3, 0, 0));
+        locDict.Add("CAVE_ENTRANCE",        new Vector3(0, 0, 0));
+        locDict.Add("CAVE_INTERIOR",        new Vector3(0, 0, 3));
+        locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
+        locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
+        locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
+        locDict.Add("KNAVE_MUSH1",          new Vector3(0, 0, -1)); //
+        locDict.Add("KNAVE_MUSH2",          new Vector3(0, 0, -2)); // only needed bc Eve and Sar walk towards them
+        locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, I'll get RCmdr transforms)
+        //locDict.Add("LAMB_SPRITE", )
+
+
+    }
+
     public void SetLeashActive(bool value) //make leash slackener
     {
         leashManager.SetLeashActive(value);
@@ -92,12 +109,13 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         SetLeashCoef(defaultInertia, defaultDamping, defaultStrength, defaultMaxDist);
     }
 
-    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
+    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, 
+        float distPortion, float spdFactor)
     {   
         if (!InForcedMove(objToMove))
         {
-            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion, 
-                this.moveSpeed, this.flatCloseEnoughRadius, true);
+            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion,
+                this.moveSpeed * spdFactor, this.flatCloseEnoughRadius, true);
             forcedMoves.Add(forcedMove);
         }
     }
@@ -183,7 +201,8 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private void Awake()
     {
         StateManager.AddStateChangeResponse(this);
-
+        InitLocationDict();
+        
         SetLeashActive(false);
         defaultInertia = leashManager.inertia;
         defaultDamping = leashManager.damping;
@@ -219,8 +238,6 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {
         killForcedMovesAtUpdate = true; //sets up all forced moves to be cleared out
     }
-
-    //RoamCmr has an update call to progress its forced moves
 
     private class ForcedMove : object
     {
