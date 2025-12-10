@@ -58,7 +58,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
         locDict.Add("KNAVE_MUSH1",          new Vector3(0, 0, -1)); //
         locDict.Add("KNAVE_MUSH2",          new Vector3(0, 0, -2)); // only needed bc Eve and Sar walk towards them
-        locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, I'll get RCmdr transforms)
+        locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, RCmdr will get transforms)
         //locDict.Add("LAMB_SPRITE", )
 
 
@@ -310,6 +310,10 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             {
                 outPAM.DeclareInForcedMove(false, this.direction);
                 StateManager.SetPlayerForcedMoveStatus(false);
+            }
+            else if (objectToMove.TryGetComponent<SarielController>(out SarielController outSC))
+            {
+                outSC.OnFinishedForcedMove();
             }
         }
 

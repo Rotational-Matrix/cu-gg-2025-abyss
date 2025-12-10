@@ -13,7 +13,7 @@ VAR is_start_save = true //currently should always be true, add only to account 
 
 VAR strlenConfigKnown = false
 VAR triedToIncreaseBrightness = false
-VAR cave_visited = false
+VAR block_init_cave = true
 
 // note that 0 is not ended, 1 is 'true' and 2 is 'rebel'
 VAR reachedEnding = 0
@@ -48,7 +48,7 @@ VAR leashMaxDist = 0.0  // probably the only used coef
 VAR flowerCounter = 0 //counter that eve has collected
 VAR cobweb_obtained = 0
 
-
+VAR sariel_can_interact = true //sariel will call this as a check to see if she can interact // TODO : make sure this gets into the update next scene fn!!!!
 
 // Effectively just macros
 VAR _step = 0.5 //flat distance of a 'step'
@@ -270,6 +270,7 @@ lorem ipsum solem dicut
 //primarily stolen from the the doc part
 === part_I ===
 #READ_AS_STAGE_LINES:TRUE
+//initiate event: new game start
 >>> START_DIALOGUE
 ~ autosave(true, -> part_I)
 
@@ -342,7 +343,7 @@ The light brightens, outlining the suggestion of trees and a path that hadn’t 
 -> pseudo_done
 
 === part_II ===
-//#READ_AS_STAGE_LINES:TRUE
+//initiate event: talk to sariel
 = segment_1 //ends w/ walking to animal area to find lamb
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.segment_1)
@@ -361,10 +362,12 @@ Each of her words is draped in fondness.
 I nod. It’s easier than asking why.
 
 ~ assign_next_scene(-> part_II.lamb_encounter)
+~ forced_move(_s,"ANIMAL_AREA", 1) //SARIEL FORCED MOVE TO ANIMAL AREA
 >>> STOP_DIALOGUE
 //[walking to animal area]
 -> pseudo_done
 
+//initiate event: talk to sariel once she finishes her forced move
 = lamb_encounter
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.lamb_encounter)
@@ -404,17 +407,17 @@ Eve: “If you’re watching the lamb, does that mean I… have to go alone?”
 
 #sprite: NONE
 Sariel laughs. It’s gentle and uninhibited, and I find my worries melting under its warmth. 
-
+~ block_init_cave = false
 ~ assign_next_scene(-> part_II.init_cave)
 >>> STOP_DIALOGUE //[walking to cave]
 -> pseudo_done
 
 = init_cave
-#BLOCK_IF_TRUE: cave_visited
+#BLOCK_IF_TRUE: block_init_cave
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.init_cave)
 
-~ cave_visited = true
+~ block_init_cave = true
 
 #sprite: NONE
 Stepping inside feels like drowning upright. The air is far too damp and thick with must. 
@@ -572,6 +575,7 @@ Her gaze has a quality that makes me feel pried open, exposed, and collected.
 Not giving more thought to it, I scurry after her, my teeth lightly pinching the tip of my tongue.
 
 //[walk to knave puzzle area]
+~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE OT KNAVE PUZZLE AREA
 ~ assign_next_scene(-> part_II.knave_puzzle)
 >>> STOP_DIALOGUE
 -> pseudo_done

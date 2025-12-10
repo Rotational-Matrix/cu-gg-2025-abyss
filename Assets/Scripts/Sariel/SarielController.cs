@@ -13,5 +13,13 @@ public class SarielController : MonoBehaviour
     [SerializeField] public GameObject LightObject;
     [SerializeField] public GameObject TriggerObject;
 
+    public void OnFinishedForcedMove()
+    {
+        if (!TriggerObject.TryGetComponent<NPCInteractionManager>(out NPCInteractionManager outNPCIM))
+            Debug.Log("Failed to find Sariel's NPCInteractionManager. (was it moved from the trigger obj?)");
+        else
+            outNPCIM.AlertToUpdateInteract(StateManager.DCManager.GetInkVar<bool>("sariel_can_interact"));
+    }
+
 
 }

@@ -47,12 +47,29 @@ public class NPCInteractionManager : InteractableElement
 
     //needs access to only npc's interactable trigger (the npc will prolly have a smaller, actual collider)
     //[SerializeField] private Collider interactTrigger; The trigger must be on the same object that 
+    
     [SerializeField] private string knotName;
 
+    private void Start()
+    {
+        AlertToUpdateInteract(true);
+    }
     public override void ExecuteInteract()
     {
         StateManager.DCManager.InitiateDialogueState(knotName);
+        AlertToUpdateInteract(false);
     }
+    public override void AlertToUpdateInteract(bool value) //something has to call this...
+    {
+        gameObject.GetComponent<Collider>().enabled = value;
+        //OnTriggerEnter will get triggered if trigger turns on && object in trigger
+        //OnTriggerExit will *NOT* get triggered if trigger turns off && object was in trigger
+        if (!value) 
+            StateManager.RemoveInteraction(this);
+    }
+
+
+
     //note that, by inheriting from InteractableElement, this inherits OnTriggerEnter and OnTriggerExit
 
 
