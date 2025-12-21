@@ -15,10 +15,25 @@ public class SarielController : MonoBehaviour
 
     public void OnFinishedForcedMove()
     {
-        if (!TriggerObject.TryGetComponent<NPCInteractionManager>(out NPCInteractionManager outNPCIM))
-            Debug.Log("Failed to find Sariel's NPCInteractionManager. (was it moved from the trigger obj?)");
+        AlertToUpdateInteract(StateManager.DCManager.GetInkVar<bool>("sariel_can_interact"));
+    }
+
+    public void SetSarielCanInteract(bool value)
+    {
+        bool prevValue = StateManager.DCManager.GetInkVar<bool>("sariel_can_interact");
+        if (prevValue != value)
+        {
+            StateManager.DCManager.SetInkVar<bool>("sariel_can_interact", value);
+            AlertToUpdateInteract(value);
+        }
+    }
+
+    private void AlertToUpdateInteract(bool value)
+    {
+        if (TriggerObject.TryGetComponent<NPCInteractionManager>(out NPCInteractionManager outNPCIM))
+            outNPCIM.AlertToUpdateInteract(value);
         else
-            outNPCIM.AlertToUpdateInteract(StateManager.DCManager.GetInkVar<bool>("sariel_can_interact"));
+            Debug.Log("Failed to find Sariel's NPCInteractionManager. (was it moved from the trigger obj?)");
     }
 
 

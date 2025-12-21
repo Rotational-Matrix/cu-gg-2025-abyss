@@ -25,8 +25,16 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     public float moveSpeed = 3f;
     public float flatCloseEnoughRadius = 0.1f;
 
+    [Header("Puzzle Settings")]
+    [SerializeField] private int totalFlowerNum = 10;
+    [SerializeField] private FlowerTrigger[] FlowerArray; //this includes all 10 (even if the 10th isn't shown)
+    [SerializeField] private GameObject FlowerPot; //the flower pot will be goofy FIXXX
+    
+
     [Header("Last State Broadcast (inMenu, inDialogue, stateFlag)")]
     [SerializeField] private string MostRecentStateBroadcast = "";
+
+    
 
     private float defaultInertia;// = 1f;     //
     private float defaultDamping;// = 0.05f;  // all stored in anticipation of slack function
@@ -56,6 +64,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
         locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
         locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
+        locDict.Add("DEMO_FLOWER_POS",      new Vector3(-1, 0, 1));
         locDict.Add("KNAVE_MUSH1",          new Vector3(0, 0, -1)); //
         locDict.Add("KNAVE_MUSH2",          new Vector3(0, 0, -2)); // only needed bc Eve and Sar walk towards them
         locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, RCmdr will get transforms)
@@ -327,5 +336,64 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         string inDialogueStr = inDialogue ? "true" : "false";
         MostRecentStateBroadcast = "(" + inMenuStr + ", " + inDialogueStr + ", " + stateFlag.ToString() + ")";
     }
+
+
+    // vvvvv begin puzzle section vvvvv
+
+    
+    public void IncremFlowerCount() // only public bc I may have RCMDR call it
+    {
+        int newFlowerCount = StateManager.DCManager.GetInkVar<int>("flowerCounter") + 1;
+        StateManager.DCManager.SetInkVar<int>("flowerCounter", newFlowerCount); //incremFlowerCount
+
+        if (newFlowerCount == totalFlowerNum - 1) //i.e. on last flower
+        {
+            StateManager.Sariel.SetSarielCanInteract(true); // allows for 'psych' transition
+        }
+    }
+
+    private void CreateFlowers(bool inPuzzle, bool flowersPickedUp) // 'value' is whatever FlowerCounter says
+    {
+        /* Preconditions:
+         * totalFlowerNum is expected to be 10 (but this behaves with reasonable numbers)
+         *  - note that flowerCounter values yield the following params:
+         *      0                   -> (false, false)
+         *      0 < x < (tF# - 1)   -> (true,  false)
+         *      totalFlowerNum - 1, -> (true,  true)
+         *      totalFlowerNum      -> (false, true)
+         *  - the FlowerArray ought to be full of totalFlowerCount number of flowers
+         */
+        // note that flowers are always already in the correct position
+        // note that flowerCounter tracks collected flower number, not current flowers in scene...
+        // remember that FlowerArray[0] is demsontration flower
+        // and FlowerArray[totalFlowerNum - 1] is hidden flower
+        FlowerArray[0].SetFlowerActive(!(inPuzzle || flowersPickedUp)); // demo flower
+        FlowerArray[totalFlowerNum - 1].SetFlowerActive(false); //'hidden flower'
+        for (int i = 1; i < totalFlowerNum - 1; i++)
+        {
+            FlowerArray[i].SetFlowerActive(!flowersPickedUp);
+        }
+    }
+    public void SetHiddenFlowerActive(bool value)
+    {
+        FlowerArray[totalFlowerNum].SetFlowerActive(value);
+    }
+
+
+    public void ReadFlowerCount()
+    {
+        int inkFlowerCounter = StateManager.DCManager.GetInkVar<int>("flowerCounter");
+        bool inPuzzle = inkFlowerCounter > 0 && inkFlowerCounter < totalFlowerNum;
+        bool flowersPickedUp = inkFlowerCounter >= totalFlowerNum - 1; 
+        if (inPuzzle && !flowersPickedUp)
+        {
+            // if someone somehow saves in the middle of the flower puzzle,
+            // then I'm going to restart their progress upon loading that save
+            inkFlowerCounter = 1;
+            StateManager.DCManager.SetInkVar<int>("flowerCounter", inkFlowerCounter);
+        }
+        CreateFlowers(inPuzzle, flowersPickedUp);
+    }
+
 
 }

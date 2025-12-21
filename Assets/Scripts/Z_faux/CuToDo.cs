@@ -16,8 +16,11 @@ using UnityEngine;
 ///         - in general the actual transitions need be implemented
 ///     - cobweb needs to exist for loading sake and for puzzle sake
 ///         - needs to be inaccessible/not interactable prior to puzzle
-///     - Flower creation needs to exist for loading sake and for puzzle sake
-///         - needs to be localised around FLOWER_AREA_SARIEL, and be inaccessible/not interactable prior to puzzle
+///     - Flower Puzzle:
+///         - flower creation needs to exist for loading sake and for puzzle sake
+///             - needs to be localised around FLOWER_AREA_SARIEL, inaccessible/not interactable prior to puzzle
+///         - maybe make 'fake flowers' (like script suggests)
+///         - need POT (and pot that fills w/ flowers)
 ///     - Cave trigger must be made to exist in some trivial fashion
 ///     - Forced moves may need the following features
 ///         - perpendicular left/right movement given some target position
