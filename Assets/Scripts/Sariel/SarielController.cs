@@ -24,8 +24,8 @@ public class SarielController : MonoBehaviour
         if (prevValue != value)
         {
             StateManager.DCManager.SetInkVar<bool>("sariel_can_interact", value);
-            AlertToUpdateInteract(value);
         }
+        AlertToUpdateInteract(value);
     }
 
     private void AlertToUpdateInteract(bool value)

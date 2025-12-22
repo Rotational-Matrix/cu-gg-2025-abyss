@@ -79,6 +79,7 @@ Entering Debug Knot (1st stitch)
  + [Go through next main dialogue]
     -> next_scene
  
+
 = debug_test_run
 #{sprite("NONE",1)}
 #{sprite("eve",1)}
@@ -115,13 +116,53 @@ going back to debug stitch -> debug_stitch_1
  * - test selection types 
  */
  
+ 
+=== admin_powers ===
+= init
+What do you want to do?
++ [Commands]
+    ->commands
++ [Scene Selection]
+    ->scene_select
++ [Leave]
+    >>> STOP_DIALOGUE
+    ->pseudo_done
+= commands
+What commands to forcefully attempt (will break game)
++ [Leash]
+    Set Active?
+    + + [True]
+        {set_leash_active(true)}
+        ->commands
+    + + [False]
+        {set_leash_active(false)}
+        ->commands
+    + + [Back To Cmds]
+        ->commands
+
++ [Leave]
+    >>> STOP_DIALOGUE
+    ->pseudo_done
+
+= scene_select
+Which scene to head to? (note, this is added for convenience, will almost certainly break the game)
++ [Next Scene]
+    ->next_scene
++ [Any Other Scene]
+    Okay, so this could be implemented, but right now it isn't the most important thing. I have kept this here primarily to have instant access to the 'next scene' operator (that sariel used to provide).
+    ->scene_select
++ [Leave]
+    >>> STOP_DIALOGUE
+    ->pseudo_done
+ 
 === save_load_knot ===
 //#READ_AS_STAGE_LINES:TRUE
 >>> START_DIALOGUE
 -> this_scene
 
-=== function assign_next_scene(-> scene) ===
+=== function assign_next_scene(-> scene, sarInitiatesNext) ===
 ~ next_scene = scene
+~ sariel_can_interact = sarInitiatesNext
 
 === function assign_this_scene(-> scene) ===
 ~ this_scene = scene
@@ -142,6 +183,8 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 === function forced_move_dir(character, location, is_prop, dist, spdFactor) ===
 >>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}},{spdFactor}
 
+=== function teleport(character, location, x_offset, z_offset) ===
+>>> TELEPORT:{character},{location},{x_offset},{z_offset}
 // 
 === function autosave(is_start_type, -> scene)
 { this_scene != scene:
@@ -242,6 +285,13 @@ The intro has ended.
 >>> STOP_DIALOGUE
 -> debug_knot // this is just to be safe.
 
+
+=== next_scene_knot ===
+#READ_AS_STAGE_LINES:TRUE
+
+>>> START_DIALOGUE
+-> next_scene
+
 === sariel_interact ===
 #READ_AS_STAGE_LINES:TRUE
 
@@ -338,8 +388,9 @@ Something tender opens in my throat. Not fear, not joy, but something in between
 {backdrop_set(false)}
 
 The light brightens, outlining the suggestion of trees and a path that hadn’t been there mere seconds ago.
-~ assign_next_scene(-> part_II.segment_1)
->>> STOP_DIALOGUE //I am personally adding this
+~ assign_next_scene(-> part_II.segment_1, true)
+>>> SARIEL_INSTANT_INTERACT:TRUE //bc sariel responsible for next transition and not after forced move
+>>> STOP_DIALOGUE
 -> pseudo_done
 
 === part_II ===
@@ -361,7 +412,7 @@ Each of her words is draped in fondness.
 
 I nod. It’s easier than asking why.
 
-~ assign_next_scene(-> part_II.lamb_encounter)
+~ assign_next_scene(-> part_II.lamb_encounter, true)
 ~ forced_move(_s,"ANIMAL_AREA", 1) //SARIEL FORCED MOVE TO ANIMAL AREA
 >>> STOP_DIALOGUE
 //[walking to animal area]
@@ -408,7 +459,7 @@ Eve: “If you’re watching the lamb, does that mean I… have to go alone?”
 #sprite: NONE
 Sariel laughs. It’s gentle and uninhibited, and I find my worries melting under its warmth. 
 ~ block_init_cave = false
-~ assign_next_scene(-> part_II.init_cave)
+~ assign_next_scene(-> part_II.init_cave, false) //sariel NOT RESPONSIBLE for next transition! The darned cave is!
 >>> STOP_DIALOGUE //[walking to cave]
 -> pseudo_done
 
@@ -425,7 +476,7 @@ Stepping inside feels like drowning upright. The air is far too damp and thick w
 I hastily turn to gather the lattices of silver strands that cling to the stone interior.
 
 //[puzzle time]
-~ assign_next_scene(-> part_II.post_cave)
+~ assign_next_scene(-> part_II.post_cave, false) //seems to trigger on cobweb pickup (since there doesn't exist cobwebs yet, rigging via the admin powers is necessary...
 >>> STOP_DIALOGUE
 
 -> pseudo_done
@@ -437,12 +488,12 @@ I hastily turn to gather the lattices of silver strands that cling to the stone 
 #sprite: NONE
 My heart finally calms as I finish collecting the last threads the cave has to offer.
 
-Then, static. A flicker at the edge of my sight. Something shifts ahead of me, hoofed and wrong, its silhouette splitting from the fuzzy darkness.
+Then, static. A flicker at the edge of my sight. Something shifts ahead of me, hoofed and wrong, its silhouette splitting from the fuzzy darkness. //Wait... Where is this occurring? I have not implemented this...
 
 My breath stutters, my heart pounding violently against my ribcage. The dull noise of the cave distills into a single sharp frequency, burrowing itself into my skull.
 
 #{sprite(_s, 0)}
-Sariel: “Eve.” 
+Sariel: “Eve.” //hold up, eve should be in cave, whereas sariel should be in animal area
 
 #sprite: NONE
 Sariel’s voice echoes, distant, yet perfectly clear. 
@@ -575,8 +626,8 @@ Her gaze has a quality that makes me feel pried open, exposed, and collected.
 Not giving more thought to it, I scurry after her, my teeth lightly pinching the tip of my tongue.
 
 //[walk to knave puzzle area]
-~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE OT KNAVE PUZZLE AREA
-~ assign_next_scene(-> part_II.knave_puzzle)
+~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE TO KNAVE PUZZLE AREA
+~ assign_next_scene(-> part_II.knave_puzzle, true) //sariel is responsible for initiating the next scene (after forcedMove)
 >>> STOP_DIALOGUE
 -> pseudo_done
 //CONT AT WALK TO KNAVE AREA
@@ -657,7 +708,7 @@ Filled with the fervor to please Sariel, I stride towards the edge of the grassy
 Kneeling, I begin to gather flowers, inhaling the scents and making mental comparisons to the one Sariel had shown me. The petals cling to my fingers, wet with dew.
 
 //[puzzle time - collect 8 more flowers]
-~ assign_next_scene(-> part_II.last_flower)
+~ assign_next_scene(-> part_II.last_flower, false) //will get set true by the final flower
 >>> STOP_DIALOGUE
 -> pseudo_done
 
@@ -687,7 +738,8 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 
 //[walking to entrance of flower area - Sariel does NOT move]
 // GOTO FIXXX prolly triggers on either perimeter or on reenter trigger
-~ assign_next_scene(-> part_II.last_flower_psych)
+~ assign_next_scene(-> part_II.last_flower_psych, false)//due to leash stretches
+>>> SARIEL_DIST_TRIGGER:TRUE,{leashMaxDist} //to simulate attempting to stretch the leash
 >>> STOP_DIALOGUE
 -> pseudo_done
 
@@ -711,7 +763,7 @@ I retreat instantly, her hum of disapproval easing into silence.
 #{sprite(_e, 0)}
 Eve: “I’m sorry.”
 
-
+{forced_move_dir(_e, _s, false, 1, 2)} //will face towards sariel when she does this
 //[Eve gets moved back to Sariel without roam state when the line above is read - don’t exit dialogue state] //Tusen takk! this is very helpful
 // >>> FORCED_MOVE:TO_SARIEL
 #{sprite(_s, 0)}
@@ -721,8 +773,9 @@ Sariel: “I know you are.”
 Sariel exhales, the sound halfway between amusement and pity. 
 
 
-// sounds like a >>> FORCED_MOVE:flower_pot
+{forced_move_dir(_e, "FLOWER_POT_POS", true, 0.7, 1)}
 I return to the pot, still missing one bloom. Sariel stands behind me, her chest lightly brushing against my backside, one hand absentmindedly resting on my hip.
+//{forced_move_dir(_s, _e, true, 0.7, 1)} NOTE, Make sariel actually move to moving target.
 
 #{sprite(_s, 0)}
 Sariel: “Oh, poor thing.” 
@@ -1272,7 +1325,8 @@ I mumble out a response. Her implication cuts deeply, and shame flows freely fro
 The path ahead smells of damp earth. I step carefully over the soil, where roots curl into the ground like ribs.
 
 //[walking to end of path before flower area]
-~ assign_next_scene(-> part_II.flower_puzzle)
+{forced_move(_s,"FLOWER_AREA_SARIEL", 1)}
+~ assign_next_scene(-> part_II.flower_puzzle, true) //sariel responsible for next transition after forced move
 >>> STOP_DIALOGUE
 -> pseudo_done
 

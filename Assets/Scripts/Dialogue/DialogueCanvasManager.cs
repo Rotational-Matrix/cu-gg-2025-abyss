@@ -155,6 +155,10 @@ public class DialogueCanvasManager : MonoBehaviour
         colonLineCommands.Add("LEASH_SET", LeashSetActiveCmd);
         //colonLineCommands.Add("LEASH_COEF", LeashSetCoefCmd); merged into LEASH_SET
         colonLineCommands.Add("BACKDROP_SET", BackdropSetCmd);
+        colonLineCommands.Add("HIDDEN_FLOWER_ACTIVE", HiddenFlowerCmd);
+        colonLineCommands.Add("SARIEL_INSTANT_INTERACT", SetSarielCanInteractCmd);
+        colonLineCommands.Add("TELEPORT", TeleportCmd);
+        colonLineCommands.Add("SARIEL_DIST_TRIGGER", SetSarielDistTriggerCmd);
     }
 
     public void ResponseToLoadSave()
@@ -433,15 +437,21 @@ public class DialogueCanvasManager : MonoBehaviour
          * FORCED_MOVE: <character> <location> <isProportional> <distance> <speedFactor>
          */
         //StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
-        GameObject character = CapsToCharacter(argv[1]);
-        Vector3 location = CapsToLocation(argv[2]);
-        bool isProportional = CapsToBool(argv[3]);
-        float distance = float.Parse(argv[4]);
-        float spdFactor = float.Parse(argv[5]);
-        if (object.Equals(character, null) || object.Equals(location, null))
+        if (argv.Length == 6)
+        {
+            GameObject character = CapsToCharacter(argv[1]);
+            Vector3 location = CapsToLocation(argv[2]);
+            bool isProportional = CapsToBool(argv[3]);
+            float distance = float.Parse(argv[4]);
+            float spdFactor = float.Parse(argv[5]);
+            if (object.Equals(character, null) || object.Equals(location, null))
+                return false;
+            StateManager.RCommander.StartForcedMove(character, location, isProportional, distance, spdFactor);
+            Debug.Log("ForcedMove: " + argv[0] + ":" + argv[1] + "," + argv[2] + "," + argv[3] + "," + argv[4] + "," + argv[5]);
+            return true;
+        }
+        else
             return false;
-        StateManager.RCommander.StartForcedMove(character, location, isProportional, distance, spdFactor);
-        return false;
     }
     private bool AutosaveCmd(string[] argv)
     {
@@ -490,7 +500,64 @@ public class DialogueCanvasManager : MonoBehaviour
         }
         else
             return false;
+    }
+    private bool HiddenFlowerCmd(string[] argv)
+    {
+        if (argv.Length == 2) //i.e. cmd:<active value>
+        {
+            StateManager.RCommander.SetHiddenFlowerActive(CapsToBool(argv[1]));
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool SetSarielCanInteractCmd(string[] argv)
+    {
+        if (argv.Length == 2) //i.e. cmd:<active value>
+        {
+            StateManager.Sariel.SetSarielCanInteract(CapsToBool(argv[1]));
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool TeleportCmd(string[] argv)
+    {
+        /* Expected args:
+         * TELEPORT: <character> <location> <offsetX> <offsetY>
+         */
+        if (argv.Length == 5)
+        {
+            GameObject character = CapsToCharacter(argv[1]);
+            Vector3 location = CapsToLocation(argv[2]);
+            float flatXOffset = float.Parse(argv[3]);
+            float flatZOffset = float.Parse(argv[4]);
+            if (object.Equals(character, null) || object.Equals(location, null))
+                return false;
 
+            Vector3 tpLoc = new(location.x + flatXOffset, character.transform.position.y, location.z + flatZOffset);
+            // note that the character is never deactivated
+            character.transform.position = tpLoc;
+            Debug.Log("Teleport cmd called:" + argv[0] + ":" + argv[1] + "," + argv[2] + "," + argv[3] + "," + argv[4]);
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool SetSarielDistTriggerCmd(string[] argv)
+    {
+        /* Expected args:
+         * SET_SARIEL_DIST_TRIGGER: <active-value> <rho>
+         */
+        if (argv.Length == 3) //i.e. cmd:<active value>
+        {
+            bool activeValue = CapsToBool(argv[1]);
+            float rho = float.Parse(argv[2]);
+            StateManager.RCommander.SetSarielDistTrigger(activeValue, rho);
+            return true;
+        }
+        else
+            return false;
     }
 
     /* Handle Inline Commands

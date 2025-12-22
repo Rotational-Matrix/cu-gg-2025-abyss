@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -30,25 +32,63 @@ using UnityEngine;
 ///             - multi-forcedMoves (this will be a pain though)
 ///             - forced moves towards continuously moving object (not as much of a pain)
 ///     - learn how to save unity files between runs
+///     - make debugger in CuToDo
 ///     - KNOWN ISSUE: teleporting (especially in save-loading) needs an extra-long-decay-timer for the backdrop
 ///     - add fns into dialogue
 ///     - add parts 3, 4, and alternate route and their corresponding puzzles
+///     - >>> HIDDEN_FLOWER_ACTIVE:(bool value)
 ///     - >>> REACHED_ENDING:(ending-number)
 ///         - tampers w/ NEWGAME save, has image, etc...
-/// 
-/// 
+///         
 /// </summary>
-public class CuToDo : Object //that's right, I'm objectifying myself. Beat it, punk!
+
+
+public class CuToDo : MonoBehaviour //that's right, I'm objectifying myself. Beat it, punk!
 {
     // Start is called before the first frame update
+    [SerializeField] private GameObject flatImage; //should have sprite renderer w/sprite = null
+    private static GameObject staticFlatImage;
+    private static List<GameObject> locationMarkerList = new List<GameObject>();
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        staticFlatImage = flatImage; //Instantiate(flatImage);
+    }
+
+    public static void DebugLocations(Dictionary<string,Vector3> locDict) //called to 
+    {
+        float min_x = 0, min_z = 0, max_x = 0, max_z = 0, locNum = 0;
+
+        foreach (Vector3 loc in locDict.Values)
+        {
+            if (loc.x > max_x) max_x = loc.x;
+            if (loc.x < min_x) min_x = loc.x;
+            if (loc.z > max_z) max_z = loc.z;
+            if (loc.z < min_z) min_z = loc.z;
+            //I don't actually care about min or max y bc y is mostly irrelevant here
+            locNum++; // will be used for y instead
+            //presume the dictionary has no duplicate values...
+        }
+        float range_x = max_x - min_x, range_z = max_z - min_z;
+
+        float kvpNum = 0;
+        foreach (KeyValuePair<string,Vector3> locKvp in locDict)
+        {
+            GameObject newMarker;
+            newMarker = Instantiate(staticFlatImage, locKvp.Value, Quaternion.identity);
+            newMarker.name = locKvp.Key;
+            SpriteRenderer sr = newMarker.GetComponent<SpriteRenderer>();
+            Color clr = new Color(
+                (locKvp.Value.x - min_x) / range_x, 
+                (kvpNum++) / locNum, 
+                (locKvp.Value.z - min_z) / range_z
+                );
+            sr.color = clr;
+            locationMarkerList.Add(newMarker);
+        }
     }
 }

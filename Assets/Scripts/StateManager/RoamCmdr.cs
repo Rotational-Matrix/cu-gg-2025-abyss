@@ -31,6 +31,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     [SerializeField] private GameObject FlowerPot; //the flower pot will be goofy FIXXX
     
 
+
     [Header("Last State Broadcast (inMenu, inDialogue, stateFlag)")]
     [SerializeField] private string MostRecentStateBroadcast = "";
 
@@ -47,8 +48,15 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     private static bool backdropFading = false;
 
+    private static bool sarielDistTriggerActive = false;
+    private static float sarielDistTriggerRho = -1;
+
     private readonly static Dictionary<string,Vector3> locDict = new Dictionary<string,Vector3>();
     
+    public static void DeleteThisFunction() //FIXXX 
+    {
+        CuToDo.DebugLocations(locDict); // yeah I'm sorry
+    }
 
     public static Vector3 ParseMapLocation(string str) //presume the string is all caps, or make it case insensitive!
     {
@@ -61,10 +69,12 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("ANIMAL_AREA",          new Vector3(3, 0, 0));
         locDict.Add("CAVE_ENTRANCE",        new Vector3(0, 0, 0));
         locDict.Add("CAVE_INTERIOR",        new Vector3(0, 0, 3));
+        locDict.Add("SARIEL_TP_CAVE",       new Vector3(0, 0, 4)); // sariel TPs here when eve in cave
         locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
         locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
         locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
         locDict.Add("DEMO_FLOWER_POS",      new Vector3(-1, 0, 1));
+        locDict.Add("FLOWER_POT_POS",       new Vector3(-2, 0, 1));
         locDict.Add("KNAVE_MUSH1",          new Vector3(0, 0, -1)); //
         locDict.Add("KNAVE_MUSH2",          new Vector3(0, 0, -2)); // only needed bc Eve and Sar walk towards them
         locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, RCmdr will get transforms)
@@ -78,7 +88,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         leashManager.SetLeashActive(value);
         leash.SetActive(value);
     }
-    public void RespondToLoadSave() //called after the new inkfile is present
+    public void RespondToLoadSave() //called *after* the new inkfile is present
     {
         bool uninformedInkFile = StateManager.DCManager.GetInkVar<float>("leashMaxDist") <= 0;
         ClearForcedMoves();
@@ -87,6 +97,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         else
             ReadInkLeashCoef();
         SetLeashActive(StateManager.DCManager.GetInkVar<bool>("leashActive"));
+        ReadFlowerCount(); // update Flower puzzle
 
     }
 
@@ -153,10 +164,28 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             if (backdropFading)
             {
                 AlphaDecrement(0.01f);
-            }    
+            }
+            if (sarielDistTriggerActive)
+            {
+                Vector3 ev3 = StateManager.Eve.transform.position;
+                Vector3 sv3 = StateManager.Sariel.transform.position;
+                ev3.y = sv3.y = 0; // to explicitly ignore y differences
+                if (Vector3.Distance(ev3, sv3) > sarielDistTriggerRho - 0.05f)
+                {
+                    sarielDistTriggerActive = false; //sets the trigger off
+                    StateManager.DCManager.InitiateDialogueState("next_scene_knot");
+                }
+            }
 
         }
 
+    }
+
+    public void SetSarielDistTrigger(bool isTurningOn, float rho)
+    {
+        sarielDistTriggerActive = false; //to prevent update triggering mid fn call and ruining everything
+        sarielDistTriggerRho = rho;
+        sarielDistTriggerActive = isTurningOn;
     }
 
     public void SetBackdropActive(bool value)
@@ -368,19 +397,20 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         // remember that FlowerArray[0] is demsontration flower
         // and FlowerArray[totalFlowerNum - 1] is hidden flower
         FlowerArray[0].SetFlowerActive(!(inPuzzle || flowersPickedUp)); // demo flower
-        FlowerArray[totalFlowerNum - 1].SetFlowerActive(false); //'hidden flower'
+        SetHiddenFlowerActive(false); //'hidden flower' turned off
         for (int i = 1; i < totalFlowerNum - 1; i++)
         {
             FlowerArray[i].SetFlowerActive(!flowersPickedUp);
         }
+        //FLOWER POT SHOULD BE 'FILLED' when FLOWERS PICKED UP AND NOT IN PUZZLE FIXXX
     }
-    public void SetHiddenFlowerActive(bool value)
+    public void SetHiddenFlowerActive(bool value) //called as part of a DCM fn
     {
         FlowerArray[totalFlowerNum].SetFlowerActive(value);
     }
 
 
-    public void ReadFlowerCount()
+    private void ReadFlowerCount()
     {
         int inkFlowerCounter = StateManager.DCManager.GetInkVar<int>("flowerCounter");
         bool inPuzzle = inkFlowerCounter > 0 && inkFlowerCounter < totalFlowerNum;
