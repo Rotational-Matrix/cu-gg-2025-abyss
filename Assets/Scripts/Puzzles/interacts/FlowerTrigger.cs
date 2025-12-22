@@ -2,10 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// HI THIS IS CURRENTLY USELESS, BUT I AM KEEPING IT TO QUICKLY INFORM OTHER C SHARP FILES ([Cu]: Dec 22)
+/// </summary>
+
+
 [RequireComponent(typeof(Collider))]
 public class FlowerTrigger : InteractableElement
 {
-    // ne
+    [SerializeField] private GameObject flowerObject;
     /*
     // All interactableElements need to have some kind of OnTriggerExit and OnTriggerEnter
 
@@ -45,7 +51,7 @@ public class FlowerTrigger : InteractableElement
     {
         // for laziness, presumes the flower object to be attached to itself
         AlertToUpdateInteract(value);
-        gameObject.SetActive(value);
+        flowerObject.SetActive(value);
     }
 
 

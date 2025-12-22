@@ -49,6 +49,19 @@ MonoBehaviour:
   blackBackdrop: {fileID: 0}
   moveSpeed: 1.5
   flatCloseEnoughRadius: 0.01
+  totalFlowerNum: 10
+  FlowerArray:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  FlowerPot: {fileID: 0}
   MostRecentStateBroadcast: 
 --- !u!1 &2247073604683906261
 GameObject:

@@ -27,7 +27,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     [Header("Puzzle Settings")]
     [SerializeField] private int totalFlowerNum = 10;
-    [SerializeField] private FlowerTrigger[] FlowerArray; //this includes all 10 (even if the 10th isn't shown)
+    [SerializeField] private Flower[] FlowerArray; //this includes all 10 (even if the 10th isn't shown)
     [SerializeField] private GameObject FlowerPot; //the flower pot will be goofy FIXXX
     
 
@@ -369,8 +369,13 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     // vvvvv begin puzzle section vvvvv
 
+    public bool FlowersPickable()
+    {
+        return StateManager.DCManager.GetInkVar<bool>("flower_puzzle_start");
+    }
+    //public bool FIXXXXX ADD VAVE AND VOBWEB 
     
-    public void IncremFlowerCount() // only public bc I may have RCMDR call it
+    public void IncremFlowerCount() 
     {
         int newFlowerCount = StateManager.DCManager.GetInkVar<int>("flowerCounter") + 1;
         StateManager.DCManager.SetInkVar<int>("flowerCounter", newFlowerCount); //incremFlowerCount
@@ -381,7 +386,10 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         }
     }
 
-    private void CreateFlowers(bool inPuzzle, bool flowersPickedUp) // 'value' is whatever FlowerCounter says
+    // [Cu] made a mistake! 
+
+    
+    private void CreateFlowers(bool inPuzzle, bool flowersPickedUp)
     {
         /* Preconditions:
          * totalFlowerNum is expected to be 10 (but this behaves with reasonable numbers)
@@ -413,16 +421,19 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private void ReadFlowerCount()
     {
         int inkFlowerCounter = StateManager.DCManager.GetInkVar<int>("flowerCounter");
-        bool inPuzzle = inkFlowerCounter > 0 && inkFlowerCounter < totalFlowerNum;
         bool flowersPickedUp = inkFlowerCounter >= totalFlowerNum - 1; 
-        if (inPuzzle && !flowersPickedUp)
+        if (!flowersPickedUp)
         {
             // if someone somehow saves in the middle of the flower puzzle,
             // then I'm going to restart their progress upon loading that save
-            inkFlowerCounter = 1;
+            inkFlowerCounter = 0;
             StateManager.DCManager.SetInkVar<int>("flowerCounter", inkFlowerCounter);
         }
-        CreateFlowers(inPuzzle, flowersPickedUp);
+        SetHiddenFlowerActive(false); //'hidden flower' turned off
+        for (int i = 0; i < totalFlowerNum - 1; i++)
+        {
+            FlowerArray[i].SetFlowerActive(!flowersPickedUp);
+        }
     }
 
 

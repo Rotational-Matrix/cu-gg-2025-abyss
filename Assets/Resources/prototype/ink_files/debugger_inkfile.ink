@@ -45,6 +45,10 @@ VAR leashMaxDist = 0.0  // probably the only used coef
 
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
 
+VAR cave_transition_allowed = false
+VAR flower_puzzle_start = false
+VAR cobweb_puzzle_start = false
+
 VAR flowerCounter = 0 //counter that eve has collected
 VAR cobweb_obtained = 0
 
@@ -459,6 +463,7 @@ Eve: “If you’re watching the lamb, does that mean I… have to go alone?”
 #sprite: NONE
 Sariel laughs. It’s gentle and uninhibited, and I find my worries melting under its warmth. 
 ~ block_init_cave = false
+~ cave_transition_allowed = true
 ~ assign_next_scene(-> part_II.init_cave, false) //sariel NOT RESPONSIBLE for next transition! The darned cave is!
 >>> STOP_DIALOGUE //[walking to cave]
 -> pseudo_done
@@ -469,6 +474,8 @@ Sariel laughs. It’s gentle and uninhibited, and I find my worries melting unde
 ~ autosave(true, -> part_II.init_cave)
 
 ~ block_init_cave = true
+~ cobweb_puzzle_start = true //so that cobweb can be grabbed!
+~ cave_transition_allowed = false
 
 #sprite: NONE
 Stepping inside feels like drowning upright. The air is far too damp and thick with must. 
@@ -640,6 +647,7 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 
 = flower_puzzle
 >>> START_DIALOGUE
+~ flower_puzzle_start = true 
 ~ autosave(true, -> part_II.flower_puzzle)
 
 #sprite: NONE
