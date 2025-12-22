@@ -13,7 +13,7 @@ public abstract class InteractableElement : MonoBehaviour
     protected virtual void OnTriggerEnter(Collider other)
     {
         if (object.Equals(StateManager.Eve.pCollider, other))
-            StateManager.AddInteraction(this); //maybe make prompt appear
+            StateManager.AddInteraction(this); //makes prompt appear (if not already present)
     }
     protected virtual void OnTriggerExit(Collider other)
     {
