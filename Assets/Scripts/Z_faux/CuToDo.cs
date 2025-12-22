@@ -14,7 +14,7 @@ using UnityEngine;
 ///     
 /// 
 /// ACTUAL TODO:
-///     - Sariel's can_interact var needs to be incorporated into the update_next_scene function
+///     - Sariel's can_interact var needs to be incorporated into the update_next_scene function (should exist now)
 ///         - in general the actual transitions need be implemented
 ///     - cobweb needs to exist for loading sake and for puzzle sake
 ///         - needs to be inaccessible/not interactable prior to puzzle
