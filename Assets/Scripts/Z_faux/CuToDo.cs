@@ -45,13 +45,15 @@ using UnityEngine;
 
 public class CuToDo : MonoBehaviour //that's right, I'm objectifying myself. Beat it, punk!
 {
+    [SerializeField] private bool enableLocationMarkers = false;
     // Start is called before the first frame update
     [SerializeField] private GameObject flatImage; //should have sprite renderer w/sprite = null
     private static GameObject staticFlatImage;
     private static List<GameObject> locationMarkerList = new List<GameObject>();
     void Start()
     {
-        
+        if (enableLocationMarkers)
+            RoamCmdr.DeleteThisFunction();
     }
 
     private void Awake()

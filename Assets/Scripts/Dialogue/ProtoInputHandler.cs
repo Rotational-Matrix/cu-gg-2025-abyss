@@ -229,7 +229,7 @@ public class ProtoInputHandler : MonoBehaviour
             if (keyPressed == debug_forceStartDialogue)
                 dcManager.InitiateDialogueState(null);
             else if (keyPressed == debug_forceJumpDialogue)
-                dcManager.DivertTo(forceJumpKnotName);
+                dcManager.InitiateDialogueState(forceJumpKnotName);
         }
         if (!StateManager.GetDialogueStatus())
         {

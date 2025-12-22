@@ -16,6 +16,7 @@ public class SarielController : MonoBehaviour
     public void OnFinishedForcedMove()
     {
         AlertToUpdateInteract(StateManager.DCManager.GetInkVar<bool>("sariel_can_interact"));
+        SarielObject.GetComponent<NPCAnimationManager>().SetDirection(Vector3.zero);
     }
 
     public void SetSarielCanInteract(bool value)

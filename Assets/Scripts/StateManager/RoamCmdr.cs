@@ -406,7 +406,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     }
     public void SetHiddenFlowerActive(bool value) //called as part of a DCM fn
     {
-        FlowerArray[totalFlowerNum].SetFlowerActive(value);
+        FlowerArray[totalFlowerNum - 1].SetFlowerActive(value);
     }
 
 
