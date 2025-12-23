@@ -61,7 +61,7 @@ public class MovementAudio : MonoBehaviour
         bool isMoving = speed > movementThreshold;
         Vector2 position2D = new Vector2(transform.position.x, transform.position.z);
         float distanceToCave = Vector2.Distance(position2D, cavePosition);
-        Debug.Log("Distance to cave: " + distanceToCave);
+        //Debug.Log("Distance to cave: " + distanceToCave); [Cu] blocked this bc it is always running
         inCave = distanceToCave <= caveDetectionRadius;
         if (isMoving && !audioSource.isPlaying && footstepClip != null)
         {

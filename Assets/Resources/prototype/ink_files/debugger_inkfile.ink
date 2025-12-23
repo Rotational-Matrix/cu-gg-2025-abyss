@@ -48,6 +48,7 @@ VAR leashMaxDist = 0.0  // probably the only used coef
 VAR cave_transition_allowed = false
 VAR flower_puzzle_start = false
 VAR cobweb_puzzle_start = false
+VAR cobweb_puzzle_ended = false
 
 VAR flowerCounter = 0 //counter that eve has collected
 VAR cobweb_obtained = 0
@@ -186,6 +187,9 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 //is_prop means is proportional (if not, the dist is flat)
 === function forced_move_dir(character, location, is_prop, dist, spdFactor) ===
 >>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}},{spdFactor}
+
+=== function forced_move_away_off(character, location, flatDistAway, offX, offZ, spdFactor) ===
+>>> FORCED_MOVE:{character},{location},{flatDistAway},{offX},{offZ},{spdFactor}
 
 === function teleport(character, location, x_offset, z_offset) ===
 >>> TELEPORT:{character},{location},{x_offset},{z_offset}
@@ -647,7 +651,6 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 
 = flower_puzzle
 >>> START_DIALOGUE
-~ flower_puzzle_start = true 
 ~ autosave(true, -> part_II.flower_puzzle)
 
 #sprite: NONE
@@ -687,6 +690,8 @@ The fragrance is strange. It’s sweet at first, then metallic, then faintly sha
 Sariel: “This one.”
 
 Sariel: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
+
+~ flower_puzzle_start = true //flowers now interactible
 
 #sprite: NONE
 I glance across the meadow. 
@@ -747,7 +752,7 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 //[walking to entrance of flower area - Sariel does NOT move]
 // GOTO FIXXX prolly triggers on either perimeter or on reenter trigger
 ~ assign_next_scene(-> part_II.last_flower_psych, false)//due to leash stretches
->>> SARIEL_DIST_TRIGGER:TRUE,{leashMaxDist} //to simulate attempting to stretch the leash
+>>> SARIEL_DIST_TRIGGER:TRUE,{3 * leashMaxDist} // NOTE: leashMaxDist does not actually translate well! When MaxDist = 1, I can typically have a natural slack dist of 2 map units, and can reach up to perchance 4 map units away
 >>> STOP_DIALOGUE
 -> pseudo_done
 

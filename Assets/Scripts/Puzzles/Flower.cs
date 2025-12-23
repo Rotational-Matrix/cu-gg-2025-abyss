@@ -65,8 +65,8 @@ public class Flower : MonoBehaviour
 
     private void RoamCmdrOnTriggerEnter(Collider other)
     {
-        if (!object.Equals(StateManager.Eve.pCollider, other)) return; //i.e. only trigger on eve collider
-        if (picked || !StateManager.RCommander.FlowersPickable()) return; 
+        if (!object.Equals(StateManager.Eve.pCollider, other)) return; // i.e. only trigger on eve collider
+        if (picked || !StateManager.RCommander.FlowersPickable()) return;
         picked = true;
 
         if (col != null) col.enabled = false;

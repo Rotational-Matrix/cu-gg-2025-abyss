@@ -69,7 +69,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("ANIMAL_AREA",          new Vector3(3, 0, 0));
         locDict.Add("CAVE_ENTRANCE",        new Vector3(0, 0, 0));
         locDict.Add("CAVE_INTERIOR",        new Vector3(0, 0, 3));
-        locDict.Add("SARIEL_TP_CAVE",       new Vector3(0, 0, 4)); // sariel TPs here when eve in cave
+        //locDict.Add("SARIEL_TP_CAVE",       new Vector3(0, 0, 4)); // sariel TPs here when eve in cave [she doesn't]
         locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
         locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
         locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
@@ -139,6 +139,18 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             forcedMoves.Add(forcedMove);
         }
     }
+    // distFrom, offestX, offsetZ overload
+    public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, float flatDistAway,
+        float offsetX, float offsetZ, float spdFactor)
+    {
+        if (!InForcedMove(objToMove))
+        {
+            ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, flatDistAway, offsetX,
+                offsetZ, this.moveSpeed * spdFactor, this.flatCloseEnoughRadius);
+            forcedMoves.Add(forcedMove);
+        }
+    }
+
     public bool InForcedMove(GameObject gameObject)
     {
         return IndexForcedMove(gameObject) != -1;
@@ -290,11 +302,28 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         public ForcedMove(GameObject objectToMove, Vector3 targetPosition, bool isDistProportional, 
             float dist, float moveSpeed, float flatCloseEnoughRadius, bool ignoreY)
         {
+            BaseFMConstructor(objectToMove, targetPosition, isDistProportional, dist, moveSpeed,
+                flatCloseEnoughRadius, ignoreY);
+        }
+        //overloads of constructor
+        //constructor that allows flat dist from target and offset
+        public ForcedMove(GameObject objectToMove, Vector3 targetPosition, float flatDistAway,
+            float offsetX, float offsetZ, float moveSpeed, float flatCloseEnoughRadius)
+        {
+            Vector3 tempDirection = (targetPosition - this.objectToMove.position).normalized;
+            Vector3 modifiedTargetPos = targetPosition - (flatDistAway * tempDirection);
+            modifiedTargetPos.x += offsetX;
+            modifiedTargetPos.z += offsetZ;
+            BaseFMConstructor(objectToMove, modifiedTargetPos, true, 1, moveSpeed, flatCloseEnoughRadius, true);
+        }
+        private void BaseFMConstructor(GameObject objectToMove, Vector3 targetPosition, bool isDistProportional,
+            float dist, float moveSpeed, float flatCloseEnoughRadius, bool ignoreY)
+        {
             // this is gross, but it is because Eve base y_pos != sariel base y_pos
             // meaning not only will flying probably occur, but eve will attempt to phase into ground
             // currently the ground forces eve to approx 0.63 if she tries to go low enough
             // sariel is stable at 0, so eve cannot even get close
-            if(ignoreY)
+            if (ignoreY)
                 targetPosition.y = objectToMove.transform.position.y;
 
             this.objectToMove = objectToMove.transform;
@@ -317,8 +346,9 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 StateManager.SetPlayerForcedMoveStatus(true);
 
             }
-                
+
         }
+
 
         //returns true whilst it is still going.
         public bool IncrementalMove()
@@ -373,7 +403,19 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {
         return StateManager.DCManager.GetInkVar<bool>("flower_puzzle_start");
     }
-    //public bool FIXXXXX ADD VAVE AND VOBWEB 
+    public bool CaveTransitionActive()
+    {
+        return StateManager.DCManager.GetInkVar<bool>("cave_transition_allowed");
+    }
+    public bool CobwebCanBeTaken()
+    {
+        return StateManager.DCManager.GetInkVar<bool>("cobweb_puzzle_start");
+    }
+
+    /*private bool CreateCobweb()
+    {
+
+    }*/ //need cobweb trigger for this.
     
     public void IncremFlowerCount() 
     {

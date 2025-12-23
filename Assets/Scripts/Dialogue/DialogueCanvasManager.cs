@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -307,7 +309,7 @@ public class DialogueCanvasManager : MonoBehaviour
 
     public void SetInkVar<T>(string variableName, T newVal) //literally the name of the variable as it appears in the inkstory
     {
-        _inkStory.variablesState[variableName] = newVal; //it...allows this (please make the type of newVal match the variable...)
+        _inkStory.variablesState[variableName] = newVal; //it...allows this (pls make newVal type match the variable)
     }
     public T GetInkVar<T>(string variableName)
     {
@@ -430,24 +432,63 @@ public class DialogueCanvasManager : MonoBehaviour
             return false;
         }
     }
+    private void DebugLogCmd(string[] argv) //not an actual cmd, will never be called by ink
+    {
+        int argc = argv.Length;
+        if (argc == 0) return; //who would pass an empty array?
+        StringBuilder sb = new StringBuilder();
+        sb.Append(argv[0]);
+        sb.Append(':');
+        if (argc > 1) // if cmd composed of merely executable (I'm so AP pilled)
+        {
+            int i = 1;
+            sb.Append(argv[i++]); //first arg
+            while (i < argc)
+            {
+                sb.Append(',');
+                sb.Append(argv[i++]);
+            }
+        }
+        Debug.Log(sb.ToString());
+    }
     
     private bool ForcedMoveCmd(string[] argv)
     {
         /* Expected args:
          * FORCED_MOVE: <character> <location> <isProportional> <distance> <speedFactor>
+         * OR:
+         * FORCED_MOVE: <character> <location> <flatDistAway> <offsetX> <offsetZ> <speedFactor> 
          */
         //StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
         if (argv.Length == 6)
         {
             GameObject character = CapsToCharacter(argv[1]);
             Vector3 location = CapsToLocation(argv[2]);
+            if (object.Equals(character, null) || object.Equals(location, null)) return false;
+
             bool isProportional = CapsToBool(argv[3]);
             float distance = float.Parse(argv[4]);
             float spdFactor = float.Parse(argv[5]);
-            if (object.Equals(character, null) || object.Equals(location, null))
-                return false;
-            StateManager.RCommander.StartForcedMove(character, location, isProportional, distance, spdFactor);
-            Debug.Log("ForcedMove: " + argv[0] + ":" + argv[1] + "," + argv[2] + "," + argv[3] + "," + argv[4] + "," + argv[5]);
+            
+            StateManager.RCommander.StartForcedMove(character, location, 
+                isProportional, distance, spdFactor);
+            DebugLogCmd(argv); //NOTE: instance of debug log called here
+            return true;
+        }
+        else if (argv.Length == 7) //offset & away from version
+        {
+            GameObject character = CapsToCharacter(argv[1]);
+            Vector3 location = CapsToLocation(argv[2]);
+            if (object.Equals(character, null) || object.Equals(location, null)) return false;
+
+            float flatDistAway = float.Parse(argv[3]);
+            float offsetX = float.Parse(argv[4]);
+            float offsetZ = float.Parse(argv[5]);
+            float spdFactor = float.Parse(argv[6]);
+
+            StateManager.RCommander.StartForcedMove(character, location, 
+                flatDistAway, offsetX, offsetZ, spdFactor);
+            DebugLogCmd(argv); //NOTE: instance of debug log called here
             return true;
         }
         else
@@ -538,7 +579,7 @@ public class DialogueCanvasManager : MonoBehaviour
             Vector3 tpLoc = new(location.x + flatXOffset, character.transform.position.y, location.z + flatZOffset);
             // note that the character is never deactivated
             character.transform.position = tpLoc;
-            Debug.Log("Teleport cmd called:" + argv[0] + ":" + argv[1] + "," + argv[2] + "," + argv[3] + "," + argv[4]);
+            DebugLogCmd(argv);
             return true;
         }
         else
