@@ -190,6 +190,7 @@ public class StateManager : MonoBehaviour
         RCommander.SetBackdropActive(true);
         DCManager.RunInkSaveState(saveStateIndex);
         RCommander.RespondToLoadSave(); // must be done prior to character teleportations
+        ClearInteractStack(); 
         Eve.transform.position = DCManager.GetInkCharPos(true);     // genuinely teleport eve and sariel
         Sariel.transform.position = DCManager.GetInkCharPos(false); //
 

@@ -46,22 +46,7 @@ public class Flower : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (picked) return;
-        picked = true;
-
-        if (col != null) col.enabled = false;
-        if (spriteRenderer != null) spriteRenderer.enabled = false;
-
-        manager.AddFlower();
-
-        if (particleSystem != null)
-        {
-            ParticleSystem p = Instantiate(particleSystem, transform.position, Quaternion.identity);
-            p.Play();
-            Destroy(p.gameObject, p.main.duration + p.main.startLifetime.constantMax);
-        }
-
-        gameObject.SetActive(false);
+        RoamCmdrOnTriggerEnter(other);
     }
 
     private IEnumerator DisableAfterParticles()
@@ -75,5 +60,36 @@ public class Flower : MonoBehaviour
         }
 
         this.gameObject.SetActive(false);
+    }
+
+
+    private void RoamCmdrOnTriggerEnter(Collider other)
+    {
+        if (!object.Equals(StateManager.Eve.pCollider, other)) return; // i.e. only trigger on eve collider
+        if (picked || !StateManager.RCommander.FlowersPickable()) return;
+        picked = true;
+
+        if (col != null) col.enabled = false;
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
+
+        //manager.AddFlower();
+        StateManager.RCommander.IncremFlowerCount();
+
+        if (particleSystem != null)
+        {
+            ParticleSystem p = Instantiate(particleSystem, transform.position, Quaternion.identity);
+            p.Play();
+            Destroy(p.gameObject, p.main.duration + p.main.startLifetime.constantMax);
+        }
+
+        gameObject.SetActive(false);
+    }
+
+    public void SetFlowerActive(bool value)
+    {
+        picked = !value;
+        if (col != null) col.enabled = value;
+        if (spriteRenderer != null) spriteRenderer.enabled = value;
+        gameObject.SetActive(value);
     }
 }
