@@ -2,20 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
 public class RoamCmdr : MonoBehaviour, IStateManagerListener
 {
-    /* RoamCmdr (I cannot be bothered to type RoamCommander)
-     * 
-     * the goal of this is to be able to do the following:
-     *      - allow for usage of the MOVE command
-     *          - needs access to eve & sariel GameObjects (see DemoMotion for 'b-line' code)
-     *              - perchance change b-line?
-     *      - allow for forced teleportation (not necessarily trigger focused)
-     */
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject spotLight;
+    [SerializeField] private Landmarks landmarks;
 
-    // May have this hold the LeashManager and leash
     [SerializeField] private LeashManager leashManager;
     [SerializeField] private GameObject leash;
 
@@ -29,7 +24,9 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     [SerializeField] private int totalFlowerNum = 10;
     [SerializeField] private Flower[] FlowerArray; //this includes all 10 (even if the 10th isn't shown)
     [SerializeField] private GameObject FlowerPot; //the flower pot will be goofy FIXXX
-    
+
+    [SerializeField] private CobwebTrigger cobweb;
+
 
 
     [Header("Last State Broadcast (inMenu, inDialogue, stateFlag)")]
@@ -67,18 +64,19 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {
         //realistically, the y component is almost certainly going to get ignored
         locDict.Add("ANIMAL_AREA",          new Vector3(3, 0, 0));
-        locDict.Add("CAVE_ENTRANCE",        new Vector3(0, 0, 0));
-        locDict.Add("CAVE_INTERIOR",        new Vector3(0, 0, 3));
-        //locDict.Add("SARIEL_TP_CAVE",       new Vector3(0, 0, 4)); // sariel TPs here when eve in cave [she doesn't]
+        locDict.Add("CAVE_ENTRANCE",        new Vector3(18, 0, -20)); // This one is actual!
+        locDict.Add("CAVE_INTERIOR",        landmarks.Cave); // USE TRIGGER CYL 1 OR LANDMARK!!!!
         locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
         locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
         locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
-        locDict.Add("DEMO_FLOWER_POS",      new Vector3(-1, 0, 1));
-        locDict.Add("FLOWER_POT_POS",       new Vector3(-2, 0, 1));
-        locDict.Add("KNAVE_MUSH1",          new Vector3(0, 0, -1)); //
-        locDict.Add("KNAVE_MUSH2",          new Vector3(0, 0, -2)); // only needed bc Eve and Sar walk towards them
-        locDict.Add("KNAVE_MUSH3",          new Vector3(0, 0, -3)); // (don't need to set, RCmdr will get transforms)
-        //locDict.Add("LAMB_SPRITE", )
+        locDict.Add("DEMO_FLOWER",          landmarks.DemoFlower);
+        locDict.Add("HIDDEN_FLOWER",        landmarks.HiddenFlower);
+        locDict.Add("FLOWER_POT",           landmarks.FlowerPot);
+        locDict.Add("KNAVE_MUSH1",          landmarks.Mush1); //
+        locDict.Add("KNAVE_MUSH2",          landmarks.Mush2); // only needed bc Eve and Sar walk towards them
+        locDict.Add("KNAVE_MUSH3",          landmarks.Mush3); // (don't need to set, RCmdr will get transforms)
+        locDict.Add("LAMB",                 landmarks.Lamb);
+        locDict.Add("COBWEB",               landmarks.Cobweb);
 
 
     }
@@ -98,6 +96,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             ReadInkLeashCoef();
         SetLeashActive(StateManager.DCManager.GetInkVar<bool>("leashActive"));
         ReadFlowerCount(); // update Flower puzzle
+        CreateCobweb();    // update Cobweb puzzle
 
     }
 
@@ -387,7 +386,24 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     }
 
-
+    // a shortcut, but a helpful one
+    public void TPSariel(Vector3 targetPos) // automatically ignores y
+    {
+        float tempY = StateManager.Sariel.transform.position.y;
+        StateManager.Sariel.transform.position = new(targetPos.x,tempY,targetPos.z);
+    }
+    public void TPEve(Vector3 targetPos)
+    {
+        float tempY = StateManager.Eve.transform.position.y;
+        Vector3 v3 = new(targetPos.x, tempY, targetPos.z);
+        StateManager.Eve.transform.position = v3;
+        mainCamera.TryGetComponent<CameraFollow>(out CameraFollow outCF);
+        if(!object.Equals(outCF,null))
+        {
+            outCF.FastMove(StateManager.Eve.gameObject);
+        }
+        spotLight.transform.position = v3;
+    }
 
     private void FormatStateChangeForInspector(bool inMenu, bool inDialogue, int stateFlag)
     {
@@ -412,10 +428,18 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         return StateManager.DCManager.GetInkVar<bool>("cobweb_puzzle_start");
     }
 
-    /*private bool CreateCobweb()
+    private void CreateCobweb()
     {
+        bool cobExists = !StateManager.DCManager.GetInkVar<bool>("cobweb_puzzle_ended"); //spawns if not taken
+        cobweb.SetCobwebActive(cobExists);
+    }
 
-    }*/ //need cobweb trigger for this.
+    public void ReactToCobweb()
+    {
+        //needs tro call ink dialogue and perish
+        //StateManager.DCManager.SetInkVar<bool>("cobweb_puzzle_ended", true) //set in ink
+        StateManager.DCManager.InitiateDialogueState("part_II.post_cave"); //stitch played after cobweb
+    }
     
     public void IncremFlowerCount() 
     {

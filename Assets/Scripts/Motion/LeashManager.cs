@@ -76,7 +76,7 @@ public class LeashManager : MonoBehaviour
         Vector3 springForce = (workingDistance * strength) * distanceDirection;
         //Computes small force in the direction of player motion
         Vector3 inputVelocity = InputVelocity();
-        rb.AddForce(inertia* rb.velocity.magnitude* inputVelocity);
+        rb.AddForce(inertia * rb.velocity.magnitude * inputVelocity);
         strain = inputVelocity.magnitude > 0.05 && workingDistance > 0.05 && !Similar(inputVelocity, springForce);
         //Applies force
         rb.AddForce(springForce);

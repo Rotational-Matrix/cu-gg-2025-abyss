@@ -65,7 +65,11 @@ public class PlayerController : MonoBehaviour, IStateManagerListener
     void Update()
     {
         if (move == null) return;
-        if (!isReadingInput) return; //[Cu]: does this Update effectively only matter for reading input?
+        if (!isReadingInput)
+        {
+            inputVector = Vector3.zero;
+            return;
+        }
         inputVector = move.ReadValue<Vector2>();
         if (spriteRenderer != null)
         {

@@ -190,9 +190,9 @@ public class StateManager : MonoBehaviour
         RCommander.SetBackdropActive(true);
         DCManager.RunInkSaveState(saveStateIndex);
         RCommander.RespondToLoadSave(); // must be done prior to character teleportations
-        ClearInteractStack(); 
-        Eve.transform.position = DCManager.GetInkCharPos(true);     // genuinely teleport eve and sariel
-        Sariel.transform.position = DCManager.GetInkCharPos(false); //
+        ClearInteractStack();
+        RCommander.TPSariel(DCManager.GetInkCharPos(false)); // genuinely teleport eve and sariel
+        RCommander.TPEve(DCManager.GetInkCharPos(true));     //
 
         // need puzzle element spawn (flower and cobweb)
         RCommander.SetBackdropActive(false);

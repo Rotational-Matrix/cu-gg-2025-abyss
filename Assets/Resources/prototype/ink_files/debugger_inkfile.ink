@@ -473,7 +473,7 @@ Sariel laughs. It’s gentle and uninhibited, and I find my worries melting unde
 -> pseudo_done
 
 = init_cave
-#BLOCK_IF_TRUE: block_init_cave
+//#BLOCK_IF_TRUE: block_init_cave
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.init_cave)
 

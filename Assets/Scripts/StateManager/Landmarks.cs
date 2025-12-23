@@ -14,6 +14,8 @@ public class Landmarks : MonoBehaviour
 {
     [SerializeField] private GameObject _lamb;
     public Vector3 Lamb { get { return _lamb.transform.position; } }
+    [SerializeField] private GameObject _cave; // set to trigger cyl (1) 
+    public Vector3 Cave { get { return _cave.transform.position + new Vector3(1.5f, 0f, 3f); } } 
     [SerializeField] private GameObject _mush1;
     public Vector3 Mush1 { get { return _mush1.transform.position; } }
     [SerializeField] private GameObject _mush2;

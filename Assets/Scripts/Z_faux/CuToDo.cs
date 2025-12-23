@@ -35,6 +35,14 @@ using UnityEngine;
 ///     - >>> HIDDEN_FLOWER_ACTIVE:(bool value)
 ///     - >>> REACHED_ENDING:(ending-number)
 ///         - tampers w/ NEWGAME save, has image, etc...
+/// MORE RECENT TODO:  
+///     - Cylinder seems to control cave-trigger
+///         - Sariel's bringing has been made conditional
+///         - The 'cyl' to leave the cave appears to actually be trivially small and invisible...
+///             - alter this
+///     - Cobweb Exists! but maybe needs to be raised (current collider to low (changining it to 2.0 height did trick)
+///         - Honestly steal from flower script, and place in cave
+///     
 ///         
 /// </summary>
 

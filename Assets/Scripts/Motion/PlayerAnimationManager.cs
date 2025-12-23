@@ -18,10 +18,9 @@ public class PlayerAnimationManager : MonoBehaviour
     private CameraFollow cameraFollow;
     public GameObject anchor;
     public GameObject light;
-    private bool inCave;
-    public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f);
-    public Vector3 defaultAnchorPosition = new Vector3(1.6f, 0, 4.04f);
-    public static event Action<PlayerAnimationManager> raiseCaveDialogue;
+    //private bool inCave;
+    public Vector3 defaultPosition = new Vector3(2.25f, 0.75f, 0f); //what actually are these? [Cu]
+    public Vector3 defaultAnchorPosition = new Vector3(1.6f, 0, 4.04f); //turns out anchor is Sariel!
 
     private bool inForcedMove = false;
     private Vector3 forcedMoveDirection = Vector3.zero;
@@ -31,12 +30,11 @@ public class PlayerAnimationManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        inCave = false;
         //rb = playerObject.GetComponent<Rigidbody>();
         GameObject spriteContainer = playerObject.transform.GetChild(0).gameObject;
         sr = spriteContainer.GetComponent<SpriteRenderer>();
         lm = playerObject.GetComponent<LeashManager>();
-        Cylinder.onCylinderEntrance += Teleport;
+        //Cylinder.onCylinderEntrance += Teleport;
         cameraFollow = camera.GetComponent<CameraFollow>();
     }
 
@@ -77,7 +75,8 @@ public class PlayerAnimationManager : MonoBehaviour
     }
     public void Teleport(Cylinder cylinder)
     {
-        Vector3 newPos = inCave ? defaultPosition : cave.transform.position;
+        TeleportModified(false, cylinder.IsTeleportingToCave()); // [Cu] is being evil
+        /*Vector3 newPos = inCave ? defaultPosition : cave.transform.position;
         Debug.Log("Moving to " + newPos.x + ", " + newPos.y + ", " + newPos.z);
         Vector3 newAnchorPos = newPos + (defaultAnchorPosition - defaultPosition);
         newAnchorPos.y = 0f;
@@ -92,8 +91,29 @@ public class PlayerAnimationManager : MonoBehaviour
         {
             Debug.Log("Cave dialogue should appear");
             if (raiseCaveDialogue != null) raiseCaveDialogue(this);
+        }*/
+    }
+
+    public void TeleportModified(bool bringSariel, bool tpToCave)
+    {
+        Vector3 caveEntrance = RoamCmdr.ParseMapLocation("CAVE_ENTRANCE");
+        Vector3 caveInterior = RoamCmdr.ParseMapLocation("CAVE_INTERIOR");
+        Vector3 newPos = tpToCave ? caveInterior : caveEntrance;
+        //Debug.Log("Moving to " + newPos.x + ", " + newPos.y + ", " + newPos.z);
+        if (bringSariel)
+        { 
+            Vector3 newAnchorPos = newPos + (defaultAnchorPosition - defaultPosition); //currently keeping
+            StateManager.RCommander.TPSariel(newAnchorPos);
+        }
+        Vector3 shiftedPos = new(newPos.x + 1, newPos.y, newPos.z + 1);
+        StateManager.RCommander.TPEve(newPos);
+        if (tpToCave && StateManager.RCommander.CaveTransitionActive())
+        {
+            StateManager.DCManager.InitiateDialogueState("part_II.init_cave"); // init_cave stitch name...
         }
     }
+
+
 
     public void DeclareInForcedMove(bool value, Vector3 direction)
     {
