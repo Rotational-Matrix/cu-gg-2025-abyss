@@ -3012,7 +3012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tracks:
-  - {fileID: 8300000, guid: 9753f8f113ae34ae5924f51d31a2570e, type: 3}
+  - {fileID: 8300000, guid: 9353fe89df9be4367b9a7844bb267aa4, type: 3}
   fadeDuration: 1.5
   autoAdvance: 1
 --- !u!4 &391079208
@@ -7363,7 +7363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   footstepClip: {fileID: 8300000, guid: 97629ced99f3654469408087aaffe639, type: 3}
-  caveFootstepClip: {fileID: 8300000, guid: 154ce035b4259c64fb35419b68cf558d, type: 3}
+  caveFootstepClip: {fileID: 8300000, guid: 8bf534b93eba4477a89e87ced1ca89b7, type: 3}
   movementThreshold: 0.1
   caveDetectionRadius: 20
   cave: {fileID: 1322454144}
@@ -11579,7 +11579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   footstepClip: {fileID: 8300000, guid: 3a27030cefc52e245bb8c0a16ffa2465, type: 3}
-  caveFootstepClip: {fileID: 8300000, guid: 154ce035b4259c64fb35419b68cf558d, type: 3}
+  caveFootstepClip: {fileID: 8300000, guid: eea94c10ccc9a429bb815a8275329301, type: 3}
   movementThreshold: 0.1
   caveDetectionRadius: 20
   cave: {fileID: 1322454144}
@@ -16930,6 +16930,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pause_canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 2845465860027721301, guid: b881a75e5b3031345b9ae1352485a12a,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2845465860027721301, guid: b881a75e5b3031345b9ae1352485a12a,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7761373169213506502, guid: b881a75e5b3031345b9ae1352485a12a,
         type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -17341,6 +17351,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Dialogue_canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318183796227414319, guid: 4fe812235f10e5b46aeb8b149bebb936,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318183796227414319, guid: 4fe812235f10e5b46aeb8b149bebb936,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
