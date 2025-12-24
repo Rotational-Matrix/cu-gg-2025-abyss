@@ -7,7 +7,10 @@ using System.Linq;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.Android;
+using UnityEngine.U2D;
 using UnityEngine.Windows;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class DialogueCanvasManager : MonoBehaviour
 {
@@ -133,11 +136,14 @@ public class DialogueCanvasManager : MonoBehaviour
     private bool readAsStageLines = true;
 
     private Dictionary<string, Func<string[], bool>> colonLineCommands = new();
+    // dialogue sprites are associated with a character (of course, null ones may exist)
+    private Dictionary<(GameObject, string), Sprite> dialogueSprites = new(); 
 
 
     private void Awake()
     {
         InitInk(); // creates inkstory, and 
+        InitSprites();
         dpHandler = dialoguePanel.GetComponent<DialoguePanelHandler>();
         ccHandler = choiceCanvas.GetComponent<ChoiceCanvasHandler>();
         SetDialogueState(false); //it automatically makes sure it is turned off at start.
@@ -161,6 +167,24 @@ public class DialogueCanvasManager : MonoBehaviour
         colonLineCommands.Add("SARIEL_INSTANT_INTERACT", SetSarielCanInteractCmd);
         colonLineCommands.Add("TELEPORT", TeleportCmd);
         colonLineCommands.Add("SARIEL_DIST_TRIGGER", SetSarielDistTriggerCmd);
+    }
+    private void InitSprites()
+    {
+        // note that there will be a lot of Resources.Load<Sprite>(filepath) calls
+        string recpath = "Overlays/";
+        GameObject _e = StateManager.Eve.gameObject; // the macros are back!
+        GameObject _s = StateManager.Sariel.gameObject;
+
+        dialogueSprites.Add((_e, "DEFAULT"), Resources.Load<Sprite>(recpath + "eve_new"));
+        dialogueSprites.Add((_e, "CRY"), Resources.Load<Sprite>(recpath + "eve_cry"));
+        dialogueSprites.Add((_e, "SAD"), Resources.Load<Sprite>(recpath + "eve_new_sad"));
+        dialogueSprites.Add((_e, "SILHOUETTE"), Resources.Load<Sprite>(recpath + "evesilhouette"));
+
+        dialogueSprites.Add((_s, "DEFAULT"), Resources.Load<Sprite>(recpath + "sariel_new"));
+        dialogueSprites.Add((_s, "SMILE"), Resources.Load<Sprite>(recpath + "sariel_new_smile"));
+        dialogueSprites.Add((_s, "DISAPPOINTED"), Resources.Load<Sprite>(recpath + "Sariel_disappointed"));
+        dialogueSprites.Add((_s, "LAUGH"), Resources.Load<Sprite>(recpath + "sariel_new_smile")); //doesn't exist
+        dialogueSprites.Add((_s, "SILHOUETTE"), Resources.Load<Sprite>(recpath + "sarielsilhouette"));
     }
 
     public void ResponseToLoadSave()
@@ -625,6 +649,11 @@ public class DialogueCanvasManager : MonoBehaviour
         else
             return HandleRichText(input);
     }
+    // new protocol is being added, expected [speaker],[character],[emotion]
+    // note that if [speaker] is a character, the 2nd option need not exist (but can)
+    // if [emotion] DNE, assume default.
+    // will read according to number of args
+    // will always have character, and no sprite will be a character
     private string HandleInlineSpeaker(string input)
     {
         int colonIndex = input.IndexOf(':');
@@ -637,16 +666,43 @@ public class DialogueCanvasManager : MonoBehaviour
         }
         string preColon = input.Substring(0, colonIndex).Trim(); //doesn't include the colon
         string postColon = input.Substring(colonIndex + 1).Trim();
-        //note that, if there exists a colon in the text, either a real speaker or NO_SPEAKER is expected
-        HandleSpeakerTag(preColon);
-        if (string.Equals(preColon,"NO_SPEAKER"))
+        //new protocol, split by commas
+        string[] preColonArgs = preColon.Split(',');
+        //if (argv.Length == 1) // must be speaker only
+        HandleSpeakerTag(preColonArgs[0]); // speaker will always be first
+        if (string.Equals(preColonArgs[0], "NO_SPEAKER"))
         {
             postColon = "<i>" + postColon + "</i>";
             dpHandler.GreyOutText(true);
             HandleSpriteTag("NONE", true);
+            return postColon;
         }
-        else
-            dpHandler.GreyOutText(false); //reverts to default
+        string[] preColonCaps = new string[preColonArgs.Length];
+        for (int i = 0; i < preColonArgs.Length; i++)
+        {
+            preColonCaps[i] = preColonArgs[i].Trim().ToUpper();
+        }
+        if (preColonArgs.Length == 1)
+        {
+            GameObject bucket = CapsToCharacter(preColonCaps[0]);
+            HandleSpriteTag((bucket, "DEFAULT"), true); // note that it is legal for bucket to be null here
+        }
+        else if (preColonArgs.Length == 2) //then either [spkr + char],[emo] or [spkr],[char + silent default]
+        {
+            GameObject bucket = CapsToCharacter(preColonCaps[1]);
+            if (!object.Equals(bucket, null)) // i.e. [spkr],[char + silent default]
+                HandleSpriteTag((bucket, "DEFAULT"), true);
+            else // must be [spkr + char],[emo]
+            {
+                bucket = CapsToCharacter(preColonCaps[0]);
+                HandleSpriteTag((bucket, preColonCaps[1]), true); //bucket being null is legal here
+            }
+        }
+        else //assert (preColonArgs.Length == 3) // must be [spkr],[char],[emo]
+        {
+            HandleSpriteTag((CapsToCharacter(preColonCaps[1]), preColonCaps[2]), true);
+        }
+        dpHandler.GreyOutText(false); //reverts to default
         return postColon;
     }
     private string HandleRichText(string input)
@@ -795,6 +851,27 @@ public class DialogueCanvasManager : MonoBehaviour
                 currRightSprite = Resources.Load<Sprite>(tag);
         }
     }
+    private void HandleSpriteTag(Sprite sprite, bool isLeft)
+    {
+        if (isLeft)
+            currLeftSprite = sprite;
+        else
+            currRightSprite = sprite;
+    }
+    //this last overload 
+    private void HandleSpriteTag((GameObject,string) key, bool isLeft)
+    {
+        Sprite sprite;
+        try
+        {
+            sprite = dialogueSprites[key];
+        }
+        catch (KeyNotFoundException)
+        {
+            sprite = null;
+        }
+        HandleSpriteTag(sprite, isLeft);
+    }
 
     private void HandleAudioTag(string tag)
     {
@@ -852,10 +929,8 @@ public class DialogueCanvasManager : MonoBehaviour
             return StateManager.Eve.gameObject;
         else if (string.Equals(str, "SARIEL"))
             return StateManager.Sariel.gameObject;
-        else if (string.Equals(str, "NONE"))
-            return null;
         else
-            throw new ArgumentException("CapsToCharacter received:" + str);
+            return null; // thrown on every non eve or sariel call
     }
     private Vector3 CapsToLocation(string str)
     {

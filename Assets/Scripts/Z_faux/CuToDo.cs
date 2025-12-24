@@ -40,8 +40,12 @@ using UnityEngine;
 ///         - Sariel's bringing has been made conditional
 ///         - The 'cyl' to leave the cave appears to actually be trivially small and invisible...
 ///             - alter this
-///     - Cobweb Exists! but maybe needs to be raised (current collider to low (changining it to 2.0 height did trick)
-///         - Honestly steal from flower script, and place in cave
+///     - Cobweb Exists! but maybe needs to be raised (current collider too low (changing it to 2.0 height did trick))
+///     - Changes exist in doc to implement
+///         - [speaker],[character],[sprite] paradigm 
+///         - alters to knave puzzle
+///     - apparently there exists error in scene
+///     
 ///     
 ///         
 /// </summary>
