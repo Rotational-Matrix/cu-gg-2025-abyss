@@ -45,6 +45,9 @@ using UnityEngine;
 ///         - [speaker],[character],[sprite] paradigm 
 ///         - alters to knave puzzle
 ///     - apparently there exists error in scene
+///     - Flower pot existence and sprite update
+///         - none,
+///     - italics in doc
 ///     
 ///     
 ///         

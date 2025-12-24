@@ -215,7 +215,7 @@ I don’t yet know what hearing means, nor what it is to be alive.
 
 I only know the shape and sound of that voice, smooth and deliberate with utmost clarity. 
 
-It cuts through the fog of my barely formed thoughts, condensing vapor into something tangible, something real. 
+It cuts through the fog of my barely formed thoughts, condensing vapor into something tangible, something <i>real</i>. 
 
 The flutter it leaves in my chest suppresses the trace of unease that grazes my heart.
 
@@ -229,7 +229,7 @@ The light’s murmurs are feminine and warm.
 
 ???,Sariel,silhouette: “I’ll help you understand.”
 
-I don’t ask what safe means, yet the word takes root in my chest all the same, sprouting into belief. 
+I don’t ask what <i>safe</i> means, yet the word takes root in my chest all the same, sprouting into belief. 
 
 The world begins to congeal around me. Damp air, cool soil, and petrichor. 
 
@@ -259,11 +259,14 @@ The light brightens, outlining the suggestion of trees and a path that hadn’t 
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.segment_1)
 
+
 Each sound of the forest startles me with its intimacy. The world is a mouth whispering against my ear, and I don’t yet know if it is kind.
 
 Sariel, luminous as ever, trails ahead. 
 
-Sariel,Sariel,default: “Stay close.” 
+ 
+Sariel: “Stay close.” 
+
 
 Each of her words is draped in fondness.
 
@@ -285,13 +288,18 @@ We come upon a small, white animal in the underbrush, trembling and breathing in
 
 Its wool is matted with blood, a red too vivid for the incipient palette of my sight.
 
-Sariel,Sariel,default: “Oh, you poor thing.” 
+ 
+Sariel: “Oh, you poor thing.” 
+
 
 Sariel’s murmurs are gentle. 
 
-Sariel,Sariel,default: “An injured lamb. We can help it. Don’t you want to help, Eve?”
+ 
+Sariel: “An injured lamb. We can help it. Don’t you want to help, Eve?”
 
-Eve,Eve,default: “Eve?” 
+ 
+Eve: “Eve?” 
+
 
 I echo the name, a lump in my throat. 
 
@@ -299,14 +307,17 @@ I do. The want is immediate, almost desperate, because helping feels like proof 
 
 Sariel’s hand glides along the side of my neck, guiding my gaze towards the dark mouth of a cave in the distance. 
 
-Sariel,Sariel,default: “There’s a cave nearby. It’s dark, but you’ll be safe if you hurry. The cobwebs inside can be used to mend wounds.”
+ 
+Sariel: “There’s a cave nearby. It’s dark, but you’ll be safe if you hurry. The cobwebs inside can be used to mend wounds.”
+
 
 I peer into the void. Unease worms its way under my skin.
 
-Eve,Eve,sad: “If you’re watching the lamb, does that mean I… have to go alone?”
+ 
+Eve: “If you’re watching the lamb, does that mean I… have to go alone?”
+
 
 Sariel laughs. It’s gentle and uninhibited, and I find my worries melting under its warmth. 
-
 ~ block_init_cave = false
 ~ cave_transition_allowed = true
 ~ assign_next_scene(-> part_II.init_cave, false) //sariel NOT RESPONSIBLE for next transition! The darned cave is!
@@ -340,95 +351,126 @@ I hastily turn to gather the lattices of silver strands that cling to the stone 
 
 My heart finally calms as I finish collecting the last threads the cave has to offer.
 
-Then, static. A flicker at the edge of my sight. Something shifts ahead of me, hoofed and wrong, its silhouette splitting from the fuzzy darkness.
+Then, static. A flicker at the edge of my sight. Something shifts ahead of me, hoofed and wrong, its silhouette splitting from the fuzzy darkness. //Wait... Where is this occurring? I have not implemented this...
 
 My breath stutters, my heart pounding violently against my ribcage. The dull noise of the cave distills into a single sharp frequency, burrowing itself into my skull.
 
-Sariel,Sariel,default: “Eve.” 
+>>> TELEPORT:SARIEL,CAVE_ENTRANCE,1.0,1.0 
+
+Sariel: “Eve.” //hold up, eve should be in cave, whereas sariel should be in animal area
+
 
 Sariel’s voice echoes, distant, yet perfectly clear. 
 
-Sariel,Sariel,default: “Come back to me.”
+ 
+Sariel: “Come back to me.”
 
-
-{forced_move_dir(_e, _s, true, 0.5, 1)} //legs obeying
+//{forced_move_dir(_e, "CAVE_INTERIOR", true, 0.7, 1)} //legs obeying
+>>> TELEPORT:{_e},CAVE_ENTRANCE,0,0
 
 
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.
 
 When I stumble into the light again, Sariel catches me. Her embrace is too tight, almost reverent. 
 
-Sariel,Sariel,default: “There, there.”
+ 
+Sariel: “There, there.”
 
-Sariel,Sariel,default: “See how dangerous it was without me?”
+Sariel: “See how dangerous it was without me?”
+
 
 Her words are soft and breathy.
 
-Eve,Eve,cry: “Sariel-” 
+ 
+Eve: “Sariel-”
+
 
 I choke. I try to speak, but my words, a sob, snag in my throat. Sariel brushes a strand of hair away from my face and smiles.
 
-Sariel,Sariel,smile: “You found exactly what I needed. Such a good girl.”
+ 
+Sariel,smile: “You found exactly what I needed. Such a good girl.”
+
 
 My hands tremble, my heart struggling to come back to a level of normalcy as I watch her tend to the wounded animal, wrapping its leg in the gathered silk. The threads cling beautifully, glowing softly in Sariel’s light.
 
-Sariel,Sariel,smile: “Cobwebs have always been excellent for stopping bleeding,” Sariel explains. “Isn’t that lovely? To be enveloped until you’re whole again.”
+ 
+Sariel,smile: “Cobwebs have always been excellent for stopping bleeding,” Sariel explains. “Isn’t that lovely? To be enveloped until you’re whole again.”
+
 
 I watch the lamb shiver, its leg fully cocooned. An emotion I can’t place ripples somewhere deep within me.
 
-Sariel,Sariel,default: “I was worried for you. My heart stopped when you suggested going alone.”
+ 
+Sariel: “I was worried for you. My heart stopped when you suggested going alone.”
 
-Eve,Eve,cry: “I- I was only-”
+ 
+Eve: “I- I was only-”
 
-Sariel,Sariel,default: “I know. You just wanted to help.”
+ 
+Sariel: “I know. You just wanted to help.”
 
-Sariel,Sariel,default: “And you did. You did so well. But…” 
+Sariel: “And you did. You did so well. But…” 
+
 
 There’s a pause sharp enough to draw blood. 
 
-Sariel,Sariel,disappointed: “You frightened me, and it seems for good reason.”
+ 
+Sariel,disappointed: “You frightened me, and it seems for good reason.”
+
 
 The guilt blooms instantly, raw and uncomfortable. 
 
+
 After a beat, Sariel speaks again.
 
-Sariel,Sariel,default: “Maybe, it’s best if we make sure you can’t drift away into danger like that again.”
-
+ 
+Sariel: “Maybe, it’s best if we make sure you can’t drift away into danger like that again.”
 
 {set_leash_active(true)}
 
 
 She raises her hand, and something luminescent cinches around my throat. A string of light stretches between us, vanishing into Sariel’s palm. 
 
-Sariel,Sariel,default: “Try to move now.”
-
+ 
+Sariel: “Try to move now.”
 
 {forced_move_dir(_e, _s, false, -1, 1)}
 
 
 I step back; the thread tightens, and my heart jumps, nerves alight.
 
-Sariel,Sariel,smile: “See?” 
+ 
+Sariel,smile: “See?” 
+
 
 Sariel’s smile is a wound wrapped in sweetness.
 
-Sariel,Sariel,smile: “Isn’t that better? Don’t you feel safer?”
+ 
+Sariel,smile: “Isn’t that better? Don’t you feel safer?”
+
 
 Her last word echoes through my chest, hollow and obedient. 
 
+
 She hums softly, almost amused. 
 
-Sariel,Sariel,smile: “Mm, isn’t she beautiful?”
+ 
+Sariel,smile: “Mm, isn’t she beautiful?”
+
 
 I lift my head, and our eyes meet, but it feels as though her gaze peels back every layer of my being. 
 
-Eve,Eve,default: “What?”
+ 
+Eve: “What?”
+
 
 Silence. Then, she laughs. 
 
-Sariel,Sariel,laugh: “I’m talking about you.”
+ 
+Sariel,laugh: “I’m talking about you.”
 
-Sariel,Sariel,default: “Now, follow.”
+ 
+Sariel: “Now, follow.”
+
 
 Her tone shifts suddenly to strict and authoritative, making my back straighten reflexively.
 
@@ -448,7 +490,6 @@ Her gaze has a quality that makes me feel pried open, exposed, and collected.
 
 Not giving more thought to it, I scurry after her, my teeth lightly pinching the tip of my tongue.
 
-
 //[walk to knave puzzle area]
 ~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE TO KNAVE PUZZLE AREA
 ~ assign_next_scene(-> part_II.knave_puzzle, true) //sariel is responsible for initiating the next scene (after forcedMove)
@@ -465,34 +506,46 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 = flower_puzzle
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.flower_puzzle)
+// FORCED_MOVE: <character> <location> <flatDistAway> <offsetX> <offsetZ> <speedFactor>
+~ forced_move_away_off(_s,"FLOWER_AREA_SARIEL", 0, 0, 0, 1)
 
 
 The trees thin, giving way to an almost impossibly symmetrical glade with flowers sparsely scattered.
 
+
 I look up from the pale grass bending beneath my feet and spot a large, stone archway.
+
+//sprite: pot
 
 At its feet sits an empty, unassuming clay pot. Its mouth gapes, waiting to be filled.
 
-Eve,Eve,default: “What is this?”
+ 
+Eve: “{false:UwU }What is this?”
 
-Sariel,Sariel,default: “A test.” 
+ 
+Sariel: “A test.” 
+
 
 As Sariel answers, her feet still for only just a moment. 
 
-Sariel,Sariel,default: “Everything is.”
+ 
+Sariel: “Everything is.”
+
 
 She walks among the flowers with effortless grace, the same way light bends through glass and refracts into a breathtaking spectrum. 
 
 Sariel crouches, lifting a blossom by its stem, and brings it to my face.
 
-Sariel,Sariel,default: “Smell.”
+ 
+Sariel: “Smell.”
 
+#sprite: Overlays/NONE
 The fragrance is strange. It’s sweet at first, then metallic, then faintly sharp.
 
-Sariel,Sariel,default: “This one.”
+ 
+Sariel: “This one.”
 
-Sariel,Sariel,default: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
-
+Sariel: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
 
 ~ flower_puzzle_start = true //flowers now interactible
 
@@ -503,16 +556,19 @@ I don’t want to question her.
 
 But curiosity tips the scale, outweighing my reluctance.
 
-Eve,Eve,default: “How do you know which kind it wants?”
+ 
+Eve: “How do you know which kind it wants?”
+
 
 She smiles, soft and unbothered. 
 
-Sariel,Sariel,smile: “Don’t you trust me?”
+ 
+Sariel: “Don’t you trust me?”
+
 
 I do. Before thinking, I nod, though a restless feeling flickers behind my ribs.
 
 Filled with the fervor to please Sariel, I stride towards the edge of the grassy opening. 
-
 
 //[walking to flower area]
 //many of the [walking] may become forced movement commands, but this one is 100% a forced movement command
@@ -532,18 +588,22 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 
 Sariel hums as she watches me, low and melodic. 
 
-Sariel,Sariel,default: “You move so delicately, Eve. Like it’s your own garden you’re tending to.”
+ 
+Sariel: “You move so delicately, Eve. Like it’s your own garden you’re tending to.”
 
-Eve,Eve,default: “There aren’t any left.” 
+ 
+Eve: “There aren’t any left.” 
+
 
 I sigh, picking another scentless flower and tossing it aside. 
 
-Sariel,Sariel,default: “There are always more if you know where to look.”
+ 
+Sariel: “There are always more if you know where to look.”
+
 
 Her tone is delicate, yet cruel and chastising, causing me to shrink in embarrassment.
 
 I force myself to retrace my steps, familiar blades of grass brushing my calves.
-
 
 //[walking to entrance of flower area - Sariel does NOT move]
 // GOTO FIXXX prolly triggers on either perimeter or on reenter trigger
@@ -557,85 +617,111 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 ~ autosave(true, -> part_II.last_flower_psych)
 
 //note that more of the ROAM state is visible if no sprite is present
+#sprite NONE 
 The string tightens with disapproval as I step too far, a choked gasp finding itself stuck in my throat. The burn is a gentle, almost affectionate pain.
+
 
 Sariel’s voice follows, sweet and distant. 
 
-Sariel,Sariel,default: “Careful. You know what happens when you wander too far.”
+ 
+Sariel: “Careful. You know what happens when you wander too far.”
+
 
 I retreat instantly, her hum of disapproval easing into silence. 
 
-Eve,Eve,sad: “I’m sorry.”
-
+ 
+Eve: “I’m sorry.”
 
 {forced_move_dir(_e, _s, false, 1, 2)} //will face towards sariel when she does this
 //[Eve gets moved back to Sariel without roam state when the line above is read - don’t exit dialogue state] //Tusen takk! this is very helpful
 // >>> FORCED_MOVE:TO_SARIEL
  
-Sariel,Sariel,default: “I know you are.” 
+Sariel: “I know you are.” 
+
 
 Sariel exhales, the sound halfway between amusement and pity. 
-
 
 
 {forced_move_dir(_e, "FLOWER_POT_POS", true, 0.7, 1)}
 I return to the pot, still missing one bloom. Sariel stands behind me, her chest lightly brushing against my backside, one hand absentmindedly resting on my hip.
 //{forced_move_dir(_s, _e, true, 0.7, 1)} NOTE, Make sariel actually move to moving target.
 
-Sariel,Sariel,default: “Oh, poor thing.” 
+ 
+Sariel: “Oh, poor thing.” 
+
 
 She coos, her voice falling somewhere between pity and amusement.
 
-Sariel,Sariel,default: “You worked so hard.”
+ 
+Sariel: “You worked so hard.”
+
 
 From behind, she produces the final flower, perfect and fragrant. 
 
 I stare at the offering in her hand. 
 
-Eve,Eve,default: “You… already had it?”
+ 
+Eve: “You… already had it?”
 
-Sariel,Sariel,default: “Mm.” 
+ 
+Sariel: “Mm.” 
+
 
 Sariel twirls the stem between her fingers. 
 
-Sariel,Sariel,default: “You couldn’t do it without me.”
+ 
+Sariel: “You couldn’t do it without me.”
 
-Eve,Eve,default: “I didn’t-”
+ 
+Eve: “I didn’t-”
 
-Sariel,Sariel,disappointed: “You didn’t ask for my help at all.” 
+ 
+Sariel: “You didn’t ask for my help at all.” 
+
 
 The words glide from her mouth like silk, yet they hit heavy enough to bruise. 
 
-Sariel,Sariel,disappointed: “I thought you trusted me.”
+ 
+Sariel: “I thought you trusted me.”
+
 
 The guilt lands like a weight in my chest. 
 
-Eve,Eve,sad: “I do.”
+ 
+Eve: “I do.”
 
+ 
 Sariel: “Then prove it.”
+
 
 I shiver from the sudden proximity of her breath against my neck. The hand on my hip tightens painfully before falling away.
 
 Sariel places the stem into my trembling hand. 
 
-Sariel,Sariel,default: “Now, finish it.”
+ 
+Sariel: “Now, finish it.”
+
 
 As the pot receives its final bloom, a heavy creak sounds from the arch.
 
-Sariel,Sariel,default: “See?” 
+ 
+Sariel: “See?” 
+
 
 I swallow as she whispers against me.
 
-Sariel,Sariel,default: “When you listen to me, everything is fine.”
+ 
+Sariel: “When you listen to me, everything is fine.”
 
-Sariel,Sariel,default: “You couldn’t have done it without me.”
+Sariel: “You couldn’t have done it without me.”
+
 
 I nod, unsure whether it’s agreement or surrender. The thread tightens once, almost possessive, yet strangely comforting. 
 
 She smiles delicately, taking a step back. 
 
-Sariel,Sariel,smile: “You’re learning to be good.”
-
+ 
+Sariel: “You’re learning to be good.”
 
 >>> STOP_DIALOGUE
 ->pseudo_done
@@ -649,11 +735,13 @@ Sariel,Sariel,smile: “You’re learning to be good.”
 
 The branches twist inward like devout believers bent in prayer.
 
+// sprite may actually be the creatures here
+
 They follow the curvature of a very narrow opening, and the function of my brain stutters for a moment as my gaze flits downward.
 
 Ahead sits a cluster of… creatures. 
 
-Three mushroom-like, ranine figures. They are humanoid by only the faintest suggestion of their height and overall form. 
+Three mushroom-like figures. They are humanoid by only the faintest suggestion of their height and overall form. 
 
 Behind them is a heavy wooden gate, the spotty lacquer a testament to its wear.
 
@@ -661,117 +749,168 @@ Their pale mushroom caps glisten with dew, bodies shifting slightly as they noti
 
 None blinks. None speaks. They simply watch.
 
+#sprite NONE
 A chill crawls up my spine.
 
-Eve,Eve,default: “Sariel…?”
+ 
+Eve: “Sariel…?”
+
 
 She stands just behind me, hands lightly brushing my shoulders, as if positioning me.
 
-Sariel,Sariel,default: “These three guard the gate.”
+ 
+Sariel: “These three guard the gate.”
+
 
 Sariel gives a perfunctory glance at the figures before continuing.
 
-Sariel,Sariel,default: “They’ll open it if you identify their roles correctly.”
+ 
+Sariel: “They’ll open it if you identify their roles correctly.”
 
-Eve,Eve,default: “Roles?”
+ 
+Eve: “Roles?”
 
-Sariel,Sariel,default: “One always speaks the truth. One always lies. And one…”
+ 
+Sariel: “One always speaks the truth. One always lies. And one…”
+
 
 She slightly shifts the angle of her head, breath now warming my neck. I shiver at the contact.
 
-Sariel,Sariel,default: “One is… unlike the others.”
+ 
+Sariel: “One is… unlike the others.”
+
 
 After waiting a few moments, I realize that’s all she has to offer and stiffen slightly. 
 
-Eve,Eve,default: “Unlike the others? Isn’t that too vague?”
+ 
+Eve: “Unlike the others? Isn’t that too vague?”
 
-Sariel,Sariel,disappointed: “Mm, I thought you were more clever than that, Eve.”
+ 
+Sariel,disappointed: “Mm, I thought you were more clever than that, Eve.”
+
 
 Shame pricks at my skin, hot and uncomfortable.
 
-Eve,Eve,sad: “I’m sorry.”
+ 
+Eve: “I’m sorry.”
+
 
 I reply before I can even process my mouth moving. My chest constricts, placing my heart in a chokehold.
 
-Sariel,Sariel,default: “It’s unpredictable. I suppose random is the demotic term.”
+ 
+Sariel: “It’s unpredictable. I suppose random is the demotic term.”
+
 
 Before I can respond, mouth already open, she cuts off my chance.
 
-Sariel,Sariel,default: “Don’t overthink it. They won’t tell you their nature directly. And besides, wouldn’t that ruin the fun?”
+ 
+Sariel: “Don’t overthink it. They won’t tell you their nature directly. And besides, wouldn’t that ruin the fun?”
 
-Sariel,Sariel,default: “You’ll make me proud, won’t you?”
+Sariel: “You’ll make me proud, won’t you?”
+
+//maybe mushroom sprite
 
 The mushrooms remain motionless, their beady eyes as unsettling as ever.
 
-Eve,Eve,default: “I don’t know how to-”
+ 
+Eve: “I don’t know how to-”
 
+ 
 Sariel’s body presses flush against my back, her hands gliding up the curve of my neck until her fingers splay gently on each side of my jaw, cupping my cheeks. 
+
 
 She turns my gaze to the one on my left, as though prompting me to start already.
 
-Sariel,Sariel,default: “You can do this.”
+ 
+Sariel: “You can do this.”
+
 
 She whispers, her breath warm against my ear.
 
-Sariel,Sariel,default: “Show me how clever you are.”
+ 
+Sariel: “Show me how clever you are.”
+
 
 I swallow.
 
-Sariel,Sariel,default: “Ask your questions, and they’ll each answer accordingly.”
+ 
+Sariel: “Ask your questions, and they’ll each answer accordingly.”
+
 
 After pausing for a moment, she taps her fingers on my skin as though she’s had a lightbulb moment.
 
-Sariel,Sariel,default: “Ah, but I must warn you.”
+ 
+Sariel: “Ah, but I must warn you.”
 
-Sariel,Sariel,default: “They will only answer in their native tongue, ‘crrk’ or ‘fmmh,’ instead of ‘yes’ or ‘no.’ Which is which? That’s for you to deduce.”
+Sariel: “They will only answer in their native tongue, ‘crrk’ or ‘fmmh,’ instead of ‘yes’ or ‘no.’ Which is which? That’s for you to deduce.”
 
 The noises sound particularly strange coming from her mouth. I wet my lips, fighting back a smile at the absurdity.
 
+ 
 Sariel notices, and something between a laugh and an exhale exits her nose.
 
-Sariel,Sariel,laugh: “Laugh if you’d like. I understand.”
+Sariel,laugh: “Laugh if you’d like. I understand.”
+
 
 I bite my lip, guilt creeping up my throat.
 
-Sariel,Sariel,default: “You can do it, can’t you? Be good for me.”
+ 
+Sariel: “You can do it, can’t you? Be good for me.”
 
-Sariel,Sariel,default: “If you need help, I’ll be right here.”
+Sariel: “If you need help, I’ll be right here.”
+
 
 Her tone makes simply asking for help feel like complete submission, and my heart thumps heavily.
 
 I peruse the mushrooms. Their eyes are big, wet, and reflective in a way that would almost be cute if not for the size of the creatures. 
 
-Eve,Eve,default: “Sariel…”
+ 
+Eve: “Sariel…”
+
 
 I exhale, my voice barely audible.
 
-Eve,Eve,default: “Which is the random one?”
+ 
+Eve: “Which is the random one?”
+
 
 She laughs breathily, smile blooming too quickly, delighted by the question.
 
-Sariel,Sariel,laugh: “Ah-ah, that would be telling. But… if you want my guess…”
+ 
+Sariel,laugh: “Ah-ah, that would be telling. But… if you want my guess…”
+
 
 Her lips brush the shell of my ear, and I flinch, heart jumping to my throat.
 
+
 Anticipation runs through my veins like a heady drug.
 
-Sariel,Sariel,smile: “Aw, did you really think I’d tell you?”
+ 
+Sariel: “Aw, did you really think I’d tell you?”
+
 
 I shrink slightly at the mocking tone she suddenly adopts.
 
-Sariel,Sariel,default: “Go on. Perform for me, Eve. Let me see how well you can do.”
+ 
+Sariel: “Go on. Perform for me, Eve. Let me see how well you can do.”
+
 
 I take a deep breath.
 
 Pressing my tongue against the side of my cheek, I step forward.
 
-Eve,Eve,default: “The left mushroom. Does ‘crrk’ mean ‘yes’?”
+ 
+Eve: “The left mushroom. Does ‘crrk’ mean ‘yes’?”
+
 
 I do my best to copy Sariel’s impression of the strange noise.
 
 Her gaze sharpens with scrutiny, and I quickly add to my question before it’s too late.
 
-Eve,Eve,default: “Ah, um, if and only if you are the truthful one… and the, uh, middle mushroom is the random one.”
+ 
+Eve: “Ah, um, if and only if you are the truthful one… and the, uh, middle mushroom is the random one.”
+
+// creature overlay???
 
 The creature’s cap tilts.
 
@@ -779,11 +918,15 @@ A low, rough syllable escapes its throat.
 
 Left Mushroom: “Fmmh.”
 
+
 The sound is sticky. My stomach tightens.
+
 
 Sariel’s hands gently lace over my throat.
 
-Sariel,Sariel,default: “Mmm… Interesting.”
+ 
+Sariel: “Mmm… Interesting.”
+
 
 I move to the middle mushroom, pulse loud in my ears. 
 
@@ -793,7 +936,10 @@ It’s all too fresh. The world and its rules.
 
 My hands clench into fists.
 
-Eve,Eve,default: “If and only if cobwebs can stop bleeding... does ‘crrk’ mean ‘yes’?”
+ 
+Eve: “If and only if cobwebs can stop bleeding... does ‘crrk’ mean ‘yes’?”
+
+//creature overlay
 
 Its mouth opens in a smooth, deliberate motion.
 
@@ -801,25 +947,35 @@ Middle Mushroom: “Crrk.”
 
 I wince from the high pitch of the noise, expecting the same deep, throaty rumble as before.
 
+
 Sariel chuckles softly behind me.
 
-Sariel,Sariel,laugh: “I suppose I should have warned you.”
+ 
+Sariel: “I suppose I should have warned you.”
 
-Eve,Eve,default: “How do you-”
+ 
+Eve: “How do you-”
+
 
 I stop myself before finishing my question. It feels wrong. 
 
 She snaps me out of my thoughts, sensing my hesitation immediately.
 
-Sariel,Sariel,default: “Aww, Eve.”
+ 
+Sariel: “Aww, Eve.”
+
 
 Her voice dips into something velvety and condescending.
 
-Sariel,Sariel,disappointed: “Do you need my help? Or are you going to continue standing there like a fool?”
+ 
+Sariel: “Do you need my help? Or are you going to continue standing there like a fool?”
 
-Eve,Eve,sad: “O-Oh.”
+ 
+Eve: “O-Oh.”
+
 
 I stutter, embarrassed.
+
 
 Her fingers trail down to the thread around my throat, sliding beneath the string in a way that tightens it considerably.
 
@@ -829,7 +985,9 @@ I nod, desperate for her approval.
 
 She smiles, pleased.
 
-Sariel,Sariel,smile: “Ask one more question. To the middle mushroom again.”
+ 
+Sariel: “Ask one more question. To the middle mushroom again.”
+
 
 I feel lightheaded, her touch and voice too much to process at once.
 
@@ -841,22 +999,21 @@ I flip through every page of my mind, yet they’re all blank, devoid of any mea
 
 The fear of disappointing her strangles my throat. I need to remember what I wanted to ask.
 
-
 * [Is ‘fmmh’ ‘yes’ iff. the left one lies?]
      
-    Eve,Eve,default: “Does ‘fmmh' mean ‘yes’ if and only if the left mushroom lies?”
+    Eve: “Does ‘fmmh’ mean ‘yes’ if and only if the left mushroom lies?”
     
     Middle Mushroom: “Fmmh.”
     
 * [Is ‘crrk’ ‘yes’ iff. the left one is random?]
      
-    Eve,Eve,default: “Does ‘crrk’ mean ‘yes’ if and only if the left mushroom is unpredictable?”
+    Eve: “Does ‘crrk’ mean ‘yes’ if and only if the left mushroom is unpredictable?”
     
     Middle Mushroom: “Crrk.”
     
 * [is ‘fmmh’ ‘yes’ iff. you are the liar?]
      
-    Eve,Eve,default: “Does ‘fmmh’ mean ‘yes’ if and only if you are the liar?”
+    Eve: “Does ‘fmmh’ mean ‘yes’ if and only if you are the liar?”
     
     Middle Mushroom: “Crrk.”
 
@@ -867,7 +1024,7 @@ She lets her arms fall slightly, now circling my shoulders, to allow me to face 
 I bring my voice down to a hushed whisper, not wanting the mushrooms to hear my answers just yet.
 
  
-Eve,Eve,default: “The left mushroom, it’s…”
+Eve: “The left mushroom, it’s…”
 
 //because we don't have a text log rn, I have coded it like this to help the player, at the vary least, to remember what they already chose.
 //Actually I could have just labelled the choices and use those, but I forgot I could do that (this works, so I don't need ot change it...)
@@ -878,39 +1035,39 @@ Eve,Eve,default: “The left mushroom, it’s…”
 ~ temp selected_lying = 0
 * [The truthful one]
     
-    Eve,Eve,default: “The left mushroom is the truthful one.”
+    Eve: “The left mushroom is the truthful one.”
     ~ selected_truthful = 1
 * [The random one]
-    Eve,Eve,default: “The left mushroom is the random one.”
+    Eve: “The left mushroom is the random one.”
     ~ selected_random = 1 //notably the correct answer
 * [The lying one]
-    Eve,Eve,default: “The left mushroom is the lying one.”
+    Eve: “The left mushroom is the lying one.”
     ~ selected_lying = 1
     
-- (answer_1_given) Eve,Eve,default: “So the middle mushroom is…”
+- (answer_1_given) Eve: “So the middle mushroom is…”
 
 * {not selected_truthful} [The truthful one]
-    Eve,Eve,default: “The middle mushroom is the truthful one.”
+    Eve: “The middle mushroom is the truthful one.”
     ~ selected_truthful = 2 //notably the correct answer
 * {not selected_random} [The random one]
-    Eve,Eve,default: “The middle mushroom is the random one.”
+    Eve: “The middle mushroom is the random one.”
     ~ selected_random = 2
 * {not selected_lying} [The lying one]
-    Eve,Eve,default: “The middle mushroom is the lying one.”
+    Eve: “The middle mushroom is the lying one.”
     ~ selected_lying = 2
 
-- (answer_2_given) Eve,Eve,default: “Which means the right mushroom is…”
+- (answer_2_given) Eve: “Which means the right mushroom is…”
 * {not selected_truthful} [The truthful one]
-    Eve,Eve,default: “The right mushroom is the truthful one.”
+    Eve: “The right mushroom is the truthful one.”
     ~ selected_truthful = 3
 * {not selected_random} [The random one]
-    Eve,Eve,default: “The right mushroom is the random one.”
+    Eve: “The right mushroom is the random one.”
     ~ selected_random = 3
 * {not selected_lying} [The lying one]
-    Eve,Eve,default: “The right mushroom is the lying one.”
+    Eve: “The right mushroom is the lying one.”
     ~ selected_lying = 3
 
-- (answer_3_given) Eve,Eve,default: “Right?”
+- (answer_3_given) Eve: “Right?”
 
 
 A simple smile, heavy with an emotion I can’t read, paints her delicate face.
@@ -925,24 +1082,30 @@ Sariel looks almost… angelic, but there’s a merciless blade hidden in her ga
 
 She sighs sweetly, and her knuckles suddenly brush along my jaw again.
 
-Sariel,Sariel,smile: “Look at you… You really did it.”
+ 
+Sariel: “Look at you… You really did it.”
+
 
 She leans close, her hushed voice gently caressing my skin.
 
-Sariel,Sariel,disappointed: “But you didn’t do as well as I’d hoped.”
+ 
+Sariel: “But you didn’t do as well as I’d hoped.”
 
-Sariel,Sariel,default: “It looks like you need me even to solve a simple puzzle.”
+Sariel: “It looks like you need me even to solve a simple puzzle.”
+
 
 Her delivery is paradoxically somewhere between solemn news and a lighthearted remark.
 
 My chest constricts, cramped and painful.
 
-Eve,Eve,sad: “I’m sor-”
+ 
+Eve: “I’m sor-”
+
 
 She cuts me off, her smile and words too gentle for her previous tone.
 
-Sariel,Sariel,smile: “But it’s okay. I still love you. I’ll always love you, Eve.”
-
+ 
+Sariel: “But it’s okay. I still love you. I’ll always love you, Eve.”
 
 -> post_answer
 
@@ -950,47 +1113,61 @@ Sariel,Sariel,smile: “But it’s okay. I still love you. I’ll always love yo
 = wrong_answer
 
  
-Sariel,Sariel,smile: “Oh, Eve…”
+Sariel: “Oh, Eve…”
+
 
 Her smile suddenly drops.
 
-Sariel,Sariel,disappointed: “You poor thing.”
+ 
+Sariel: “You poor thing.”
+
 
 A hand slides back up, fingers running over the thread. Her thumb and index suddenly apply pressure on each side of my throat.
 
-Sariel,Sariel,disappointed: “You really thought that was right?”
+ 
+Sariel: “You really thought that was right?”
+
 
 A breathy laugh fills the air.
 
 She doesn’t sound surprised, and my shame grows hotter.
 
-Sariel,Sariel,laugh: “You really can’t do anything on your own, hm?”
+ 
+Sariel: “You really can’t do anything on your own, hm?”
+
 
 Her tone slides into a whisper, intimate and humiliating.
+
 
 Sariel’s hand suddenly grabs my chin. Her grip is too firm, bordering on painful.
 
 She tilts my head toward each mushroom, respectively, as she corrects me. Each movement is sudden and harsh.
 
-Sariel,Sariel,default: “The left mushroom is unpredictable, the middle mushroom is the truth-teller, and the right mushroom is the liar.”
+ 
+Sariel: “The left mushroom is unpredictable, the middle mushroom is the truth-teller, and the right mushroom is the liar.”
+
 
 She murmurs the answers in my ear, each word landing like a reprimand simply veiled with affection.
-
 
 -> post_answer
 
 = post_answer
 
  
-Sariel,Sariel,default: “Now, tell them the answer.”
+Sariel: “Now, tell them the answer.”
+
 
 Sariel gestures towards the mushrooms, her arms now dropping to her sides.
 
-Eve,Eve,sad: “Right. Sorry.”
+ 
+Eve: “Right. Sorry.”
+
 
 I swallow, my throat feeling rough and dry.
 
-Eve,Eve,default: “The left is random, the middle is truthful, and the right is the liar.”
+ 
+Eve: “The left is random, the middle is truthful, and the right is the liar.”
+//creature sprite...
 
 The three mushroom figures suddenly drop to the floor, digging into the ground. 
 
@@ -998,18 +1175,22 @@ Finally, one holds up a key, slotting it into the gate. It’s unexpectedly clea
 
 As the door swings open, Sariel tuts.
 
-Sariel,Sariel,default: “I suppose I should have expected you’d need me.”
+ 
+Sariel: “I suppose I should have expected you’d need me.”
+
 
 But then, she smiles. It’s soft, yet it feels venomous.
 
-Sariel,Sariel,smile: “It’s alright. You can’t help it.”
+ 
+Sariel: “It’s alright. I think I like you better this way.”
 
-Eve,Eve,sad: “I see.”
+ 
+Eve: “I see.”
+
 
 I mumble out a response. Her implication cuts deeply, and shame flows freely from the wound.
 
 The path ahead smells of damp earth. I step carefully over the soil, where roots curl into the ground like ribs.
-
 
 //[walking to end of path before flower area]
 {forced_move(_s,"FLOWER_AREA_SARIEL", 1)}

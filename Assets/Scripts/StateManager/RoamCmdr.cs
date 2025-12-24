@@ -63,12 +63,12 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private void InitLocationDict() //call at awake or earlier (can this be set in the field?)
     {
         //realistically, the y component is almost certainly going to get ignored
-        locDict.Add("ANIMAL_AREA",          new Vector3(3, 0, 0));
+        locDict.Add("ANIMAL_AREA",          landmarks.Lamb + new Vector3(-2, 0, -2));
         locDict.Add("CAVE_ENTRANCE",        new Vector3(18, 0, -20)); // This one is actual!
         locDict.Add("CAVE_INTERIOR",        landmarks.Cave); // USE TRIGGER CYL 1 OR LANDMARK!!!!
         locDict.Add("APPROACHING_KNAVES",   new Vector3(2, 0, 1));
         locDict.Add("FLOWER_AREA_ENTRANCE", new Vector3(2, 0, 2));
-        locDict.Add("FLOWER_AREA_SARIEL",   new Vector3(1, 0, 2)); // sariel's location in the flower area puzzle
+        locDict.Add("FLOWER_AREA_SARIEL",   landmarks.FlowerPot + new Vector3(-2, 0, -2));
         locDict.Add("DEMO_FLOWER",          landmarks.DemoFlower);
         locDict.Add("HIDDEN_FLOWER",        landmarks.HiddenFlower);
         locDict.Add("FLOWER_POT",           landmarks.FlowerPot);
