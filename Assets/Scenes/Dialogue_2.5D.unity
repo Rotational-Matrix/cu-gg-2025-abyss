@@ -1456,7 +1456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b0d60153189a243858226adb99785f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableLocationMarkers: 1
+  enableLocationMarkers: 0
   flatImage: {fileID: 4289799135812300475, guid: d27b281f4dff4bc4ab76139c784f0c8e,
     type: 3}
 --- !u!4 &239265131
@@ -18082,6 +18082,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7663816500735137643, guid: 4fe812235f10e5b46aeb8b149bebb936,
+        type: 3}
+      propertyPath: inkAsset
+      value: 
+      objectReference: {fileID: 4900000, guid: 9fd7bc9ccff45de40846b30425c3b85e, type: 3}
     - target: {fileID: 7992210347400471545, guid: 4fe812235f10e5b46aeb8b149bebb936,
         type: 3}
       propertyPath: m_AnchorMax.y
