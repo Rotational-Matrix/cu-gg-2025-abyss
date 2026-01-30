@@ -167,6 +167,9 @@ public class DialogueCanvasManager : MonoBehaviour
         colonLineCommands.Add("SARIEL_INSTANT_INTERACT", SetSarielCanInteractCmd);
         colonLineCommands.Add("TELEPORT", TeleportCmd);
         colonLineCommands.Add("SARIEL_DIST_TRIGGER", SetSarielDistTriggerCmd);
+        colonLineCommands.Add("FLOWERPOT_SET", FlowerPotSpriteSetCmd);
+        colonLineCommands.Add("BACKDROP_TIMER_TRANSITION", BackdropTimerTransitionCmd);
+        colonLineCommands.Add("ENDING", EndingCmd);
     }
     private void InitSprites()
     {
@@ -212,6 +215,14 @@ public class DialogueCanvasManager : MonoBehaviour
     {
         dialoguePanel.SetActive(setActive);
         StateManager.SetDialogueStatus(setActive);
+    }
+
+    public bool TryInitNextDialogue()
+    {
+        bool notInDialogue = !StateManager.GetDialogueStatus();
+        if (notInDialogue) //as long as dialogue is not occurring, this fires
+            InitiateDialogueState("next_scene_knot");
+        return notInDialogue;
     }
 
 
@@ -614,7 +625,7 @@ public class DialogueCanvasManager : MonoBehaviour
         /* Expected args:
          * SET_SARIEL_DIST_TRIGGER: <active-value> <rho>
          */
-        if (argv.Length == 3) //i.e. cmd:<active value>
+        if (argv.Length == 3) //i.e. cmd:<active-value> <rho>
         {
             bool activeValue = CapsToBool(argv[1]);
             float rho = float.Parse(argv[2]);
@@ -623,6 +634,43 @@ public class DialogueCanvasManager : MonoBehaviour
         }
         else
             return false;
+    }
+
+    private bool FlowerPotSpriteSetCmd(string[] argv)
+    {
+        /* Expected args:
+         * FLOWERPOT_SET: <flowerpot-sprite-state>
+         */
+        if (argv.Length == 2)
+        {
+            int fpotInt = int.Parse(argv[1]);
+            if (fpotInt < 0 || fpotInt > 2)
+                return false; // fail on invalid sprite state
+            FlowerPot.SpriteState fps = (FlowerPot.SpriteState)fpotInt;
+            StateManager.RCommander.SetPotSprite(fps);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private bool BackdropTimerTransitionCmd(string[] argv)
+    {
+        /* Expected args:
+         * BACKDROP_TIMER_TRANSITION: <seconds>
+         */
+        if (argv.Length == 2)
+        {
+            int seconds = int.Parse(argv[1]);
+            StateManager.RCommander.SetBackdropTimer(seconds, () => TryInitNextDialogue());
+            return true;
+        }
+        else
+            return false;
+    }
+    private bool EndingCmd(string[] argv)
+    {
+        throw new NotImplementedException("why");
     }
 
     /* Handle Inline Commands

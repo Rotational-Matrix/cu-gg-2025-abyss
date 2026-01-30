@@ -14,19 +14,13 @@ using UnityEngine;
 ///     
 /// 
 /// ACTUAL TODO:
-///     - Sariel's can_interact var needs to be incorporated into the update_next_scene function (should exist now)
-///         - in general the actual transitions need be implemented
 ///     - cobweb needs to exist for loading sake and for puzzle sake
 ///         - needs to be inaccessible/not interactable prior to puzzle
-///     - Flower Puzzle:
-///         - needs locations obv
-///         - need POT (and pot that fills w/ flowers)
-///     - Cave trigger must be made to exist in some trivial fashion
 ///     - Forced moves may need the following features
 ///         - perpendicular left/right movement given some target position
 ///         - sprite direction specification (particularly AFTER move is over)
 ///         - Less likely, but possible features:
-///             - multi-forcedMoves (this will be a pain though)
+///             - multi-forcedMoves (this will be a pain though) [Jan 29: Suprisingly, this got implemented] 
 ///             - forced moves towards continuously moving object (not as much of a pain)
 ///     - learn how to save unity files between runs (do this!!!!!)
 ///     - KNOWN ISSUE: teleporting (especially in save-loading) needs an extra-long-decay-timer for the backdrop
@@ -48,6 +42,16 @@ using UnityEngine;
 ///     - Flower pot existence and sprite update
 ///         - none,
 ///     - italics in doc
+///     - Spotlight reduction in brightness
+///     - OH GOD PLEASE MAKE THE POSITIONING WORK
+///     
+/// MOST RECENT TODO:
+///     - Flower pot added in scripts, need to add in unity scene
+///     - Cobweb needs to become multi (not just 1)
+///     - put last portion of doc into ink
+///     - black screen timer & transition SUPPOSEDLY DONE
+///     - >>> ENDING (+ tampering)
+///     - Positioning Marathon
 ///     
 ///     
 ///         

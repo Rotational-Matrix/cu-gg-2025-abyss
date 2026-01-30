@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEditor.PackageManager.UI;
+using System;
 using UnityEngine;
 
 public class RoamCmdr : MonoBehaviour, IStateManagerListener
@@ -23,7 +23,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     [Header("Puzzle Settings")]
     [SerializeField] private int totalFlowerNum = 10;
     [SerializeField] private Flower[] FlowerArray; //this includes all 10 (even if the 10th isn't shown)
-    [SerializeField] private GameObject FlowerPot; //the flower pot will be goofy FIXXX
+    [SerializeField] private FlowerPot flowerPot;
 
     [SerializeField] private CobwebTrigger cobweb;
 
@@ -40,6 +40,7 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     private float defaultMaxDist;// = 2f;     //
 
     private static List<ForcedMove> forcedMoves = new List<ForcedMove>();
+    private readonly static Dictionary<GameObject, Queue<Action>> forcedMoveQueues = new();
     private static bool updateForcedMove = false; // stolen to mean 'in non menustate'
     private static bool killForcedMovesAtUpdate = false; //
 
@@ -77,8 +78,15 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("KNAVE_MUSH3",          landmarks.Mush3); // (don't need to set, RCmdr will get transforms)
         locDict.Add("LAMB",                 landmarks.Lamb);
         locDict.Add("COBWEB",               landmarks.Cobweb);
+        locDict.Add("ROSE_AREA",            new Vector3(3,0,5));
 
 
+    }
+
+    private void InitFMoveQueues()
+    {
+        forcedMoveQueues.Add(StateManager.Eve.gameObject, new Queue<Action>());
+        forcedMoveQueues.Add(StateManager.Sariel.gameObject, new Queue<Action>());
     }
 
     public void SetLeashActive(bool value) //make leash slackener
@@ -130,24 +138,34 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
 
     public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, 
         float distPortion, float spdFactor)
-    {   
-        if (!InForcedMove(objToMove))
+    {
+        //if (!InForcedMove(objToMove))
+        Action startForcedMove = () =>
         {
             ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, isProp, distPortion,
                 this.moveSpeed * spdFactor, this.flatCloseEnoughRadius, true);
             forcedMoves.Add(forcedMove);
-        }
+        };
+        if (!InForcedMove(objToMove))
+            startForcedMove();
+        else
+            forcedMoveQueues[objToMove].Enqueue(startForcedMove);
+
     }
     // distFrom, offestX, offsetZ overload
     public void StartForcedMove(GameObject objToMove, Vector3 targetPosition, float flatDistAway,
         float offsetX, float offsetZ, float spdFactor)
     {
-        if (!InForcedMove(objToMove))
+        Action startForcedMove = () =>
         {
             ForcedMove forcedMove = new ForcedMove(objToMove, targetPosition, flatDistAway, offsetX,
                 offsetZ, this.moveSpeed * spdFactor, this.flatCloseEnoughRadius);
             forcedMoves.Add(forcedMove);
-        }
+        };
+        if (!InForcedMove(objToMove))
+            startForcedMove();
+        else
+            forcedMoveQueues[objToMove].Enqueue(startForcedMove);
     }
 
     public bool InForcedMove(GameObject gameObject)
@@ -168,9 +186,11 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
             }
             if (killForcedMovesAtUpdate) //ensures killing forced moves doesn't cause an error w/update
             {
+                foreach (Queue<Action> queue in forcedMoveQueues.Values)
+                    queue.Clear(); //annihilate all future forced moves in queues first.
                 while (forcedMoves.Count > 0)
                     EndForcedMove(forcedMoves[0]);
-                killForcedMovesAtUpdate = false; 
+                killForcedMovesAtUpdate = false;
             }
             if (backdropFading)
             {
@@ -219,6 +239,24 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 backdropFading = true;
         }
     }
+    public void SetBackdropTimer(float secondsBeforeDecay, Action action)
+    {
+        StartCoroutine(BackdropTimer(secondsBeforeDecay, action));
+    }
+    private IEnumerator BackdropTimer(float secondsBeforeDecay, Action action) 
+    {
+        //instantly turns the backdrop on
+        SetBackdropActive(true);
+
+        //yield on a new YieldInstruction that waits for 5 seconds.
+        //time progresses regardless of menu state, but backdrop being on or not is not that big of a deal
+        yield return new WaitForSeconds(secondsBeforeDecay);
+
+        //After enough seconds, starts backdrop fading
+        SetBackdropActive(false);
+        action(); // performs given action
+    }
+
     private void AlphaDecrement(float alphaDecrementUnit)
     {
         //float currAlpha = blackBackdrop.color.a;
@@ -260,6 +298,11 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         //WriteInkLeashCoef(); //will probably cause error bc RCommander is above DCM in hierarchy
     }
 
+    private void Start()
+    {
+        InitFMoveQueues(); //calls StateManager.Eve and StateManager.Sariel
+    }
+
     //for a given forced move,
 
 
@@ -280,7 +323,20 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
     {
         GameObject identifier = forcedMove.Identifier();
         forcedMoves.RemoveAt(IndexForcedMove(identifier));
-        forcedMove.EndForcedMove(); // must be AFTER it is removed from the list 
+        //does not trigger EndForcedMove if there is another queued up
+        //(bc it is realistically still part of the same one)
+        try
+        {
+            if (forcedMoveQueues[identifier].TryDequeue(out Action outFMove))
+                outFMove();
+            else
+                forcedMove.EndForcedMove();
+        }
+        catch (KeyNotFoundException)
+        {
+            forcedMove.EndForcedMove();
+        }
+        //forcedMove.EndForcedMove(); // must be AFTER it is removed from the list 
         // (ordering bc externally fMove only seems 'done' when not in list)
     }
     private void ClearForcedMoves()
@@ -500,6 +556,17 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         {
             FlowerArray[i].SetFlowerActive(!flowersPickedUp);
         }
+        // additionally reads PotSprite
+        ReadPotSprite();
+    }
+
+    private void ReadPotSprite()
+    {
+        SetPotSprite((FlowerPot.SpriteState)StateManager.DCManager.GetInkVar<int>("flowerPotState"));
+    }
+    public void SetPotSprite(FlowerPot.SpriteState state)
+    {
+        flowerPot.SetSprite(state);
     }
 
 

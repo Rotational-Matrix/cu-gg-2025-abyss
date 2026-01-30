@@ -52,6 +52,7 @@ VAR cobweb_puzzle_ended = false
 
 VAR flowerCounter = 0 //counter that eve has collected
 VAR cobweb_obtained = 0
+VAR flowerPotState = 0 // 0, 1, 2, as empty, almost full, full
 
 VAR sariel_can_interact = true //sariel will call this as a check to see if she can interact // TODO : make sure this gets into the update next scene fn!!!!
 
@@ -166,7 +167,10 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 === function backdrop_set(value) ===
 >>> BACKDROP_SET:{value:TRUE|FALSE}
 
-
+=== function flowerpot_set(value) ===
+~ flowerPotState = value
+>>> FLOWERPOT_SET:{value}
+// 0,1,2 by protocol expected to be empty, almost full, full
 
 === pseudo_done ===
 >>> STOP_DIALOGUE
@@ -445,7 +449,7 @@ Sariel,smile: “See?”
 Sariel’s smile is a wound wrapped in sweetness.
 
  
-Sariel,smile: “Isn’t that better? Don’t you feel safer?”
+Sariel,smile: “Isn’t that better? Don’t you feel <i>safer</i>?”
 
 
 Her last word echoes through my chest, hollow and obedient. 
@@ -723,6 +727,23 @@ She smiles delicately, taking a step back.
  
 Sariel: “You’re learning to be good.”
 
+It seems goodness is a script she is sewing into me, thread by thread.
+
+The string around my throat feels warm, and I can’t help but bashfully smile.
+
+I try not to touch it, my fingers restless. It feels too intimate.
+
+Sariel steps ahead, brushing her fingers gently over my shoulder. 
+
+Sariel,Sariel,smile: “Come. There’s one more thing I want you to see.”
+
+Her voice gleams, edged with an excitement too polished for it to be a simple whim.
+
+I follow, but the string urges me along regardless.
+
+//[walk to rose area]
+~ assign_next_scene(-> post_pII.rose_bush, true) //Sariel interactable after forced move
+~ forced_move(_s,"ROSE_AREA", 1) //SARIEL FORCED MOVE TO ROSE AREA
 >>> STOP_DIALOGUE
 ->pseudo_done
 
@@ -798,7 +819,7 @@ Eve: “I’m sorry.”
 I reply before I can even process my mouth moving. My chest constricts, placing my heart in a chokehold.
 
  
-Sariel: “It’s unpredictable. I suppose random is the demotic term.”
+Sariel: “It’s unpredictable. I suppose <i>random</i> is the demotic term.”
 
 
 Before I can respond, mouth already open, she cuts off my chance.
@@ -877,7 +898,7 @@ Eve: “Which is the random one?”
 She laughs breathily, smile blooming too quickly, delighted by the question.
 
  
-Sariel,laugh: “Ah-ah, that would be telling. But… if you want my guess…”
+Sariel,laugh: “Ah-ah, that would be telling. But… if you want my <i>guess</i>…”
 
 
 Her lips brush the shell of my ear, and I flinch, heart jumping to my throat.
@@ -995,7 +1016,7 @@ It’s hard to think.
 
 Where was I going with the last two questions?
 
-I flip through every page of my mind, yet they’re all blank, devoid of any meaning, and the book is titled Sariel. 
+I flip through every page of my mind, yet they’re all blank, devoid of any meaning, and the book is titled <color=\#ffffff>Sariel</color>. 
 
 The fear of disappointing her strangles my throat. I need to remember what I wanted to ask.
 
@@ -1105,7 +1126,7 @@ Eve: “I’m sor-”
 She cuts me off, her smile and words too gentle for her previous tone.
 
  
-Sariel: “But it’s okay. I still love you. I’ll always love you, Eve.”
+Sariel: “But it’s okay. I still love you. I’ll <i>always</i> love you, Eve.”
 
 -> post_answer
 
@@ -1133,7 +1154,7 @@ A breathy laugh fills the air.
 She doesn’t sound surprised, and my shame grows hotter.
 
  
-Sariel: “You really can’t do anything on your own, hm?”
+Sariel: “You <i>really</i> can’t do anything on your own, hm?”
 
 
 Her tone slides into a whisper, intimate and humiliating.
@@ -1199,13 +1220,345 @@ The path ahead smells of damp earth. I step carefully over the soil, where roots
 -> pseudo_done
 
 
+=== post_pII ===
+
+= rose_bush
+>>> START_DIALOGUE
+~ autosave(true, -> post_pII.rose_bush)
+
+We don’t walk for long before what seems to be Sariel’s item of interest pops up.
+
+The path pauses abruptly, and before it, there is a rosebush.
+
+Peculiarly, the bush has only a single rose, the rest leafy, thick, and green.
+
+The stem is lined top to bottom with large, sharp prickles that glint like wet teeth.
+
+Sariel,Sariel,default: “Pick it.”
+
+My breath catches.
+
+Her authoritative tone leaves no room for misunderstanding or questioning.
+
+No room for anything but obedience.
+
+Eve,Eve,default: “It… looks painful.”
+
+Sariel,Sariel,default: “Most beautiful things are.”
+
+She turns to me fully, hands clasped behind her back.
+
+Her smile is soft, but only in the way the touch of a blade is before it breaks skin.
+
+Sariel,Sariel,smile: “Go on, Eve. I want you to give me a rose.”
+
+I kneel without meaning to.
+
+The prickles are jagged and sizable.
+
+My fingers hover, trembling, refusing to close.
+
+Eve,Eve,sad: “Sariel, if I grab it like this, I’ll-”
+
+Sariel,Sariel,smile: “Bleed?”
+
+Her voice lilts upward with something akin to a childlike delight.
+
+It makes something in my chest curdle.
+
+Sariel,Sariel,default: “I’ve never asked you to do anything meaningless.”
+
+Eve,Eve,default: “But-”
+
+Sariel,Sariel,default: “You trust me, don’t you?”
+
+There it is.
+
+That word again, injected straight into the softest part of me.
+
+Before I know it, my ears are tinged red, hot with guilt and something I can’t place.
+
+I clench my teeth.
+
+Eve,Eve,sad: “I… I do.”
+
+Her gaze weighs heavily, like a silent call for me to prove myself.
+
+My world narrows to a single point.
+
+I reach.
+
+Thorns bite deep immediately, the punctures lighting up my nerves like sparks.
+
+I suck in a shaky breath but don’t make a sound.
+
+I don’t want her to hear me falter.
+
+My hand flinches away on its own, but I force it back like a bad dog.
+
+Pain branches through my hand, threading up my wrist like something trying to root itself in me.
+
+Sariel watches, unreadable.
+
+I grit my teeth. My palm flares with hot, wet agony, blood trickling down my arm.
+
+I can’t do it.
+
+My head pounds with the pressure of held-back tears, and they finally spill over.
+
+I swallow, dizzy.
+
+Sariel grabs my wrist, my blood coating her slender fingers.
+
+A coldness settles into her eyes, sharp and surgical, as she inspects my hand for a moment.
+
+Sariel,Sariel,disappointed: “Do you think you know better than me now?”
+
+Eve,Eve,cry: “No, I just- I thought-”
+
+Sariel,Sariel,disappointed: “You <i>thought</i>?”
+
+Sariel’s nails dig into my wrist, and my breath falters.
+
+Her tone is so different from that childlike glee from before.
+
+The string around my throat cinches.
+
+My vision swims, static crawling in at the corners.
+
+Eve,Eve,cry: “Sariel-!”
+
+Sariel,Sariel,disappointed: “Shh.”
+
+A twist of her wrist.
+
+Air slips away.
+
+My knees buckle, useless.
+
+Sariel catches me even as she strangles me, gently lowering me to the ground with the care of someone setting down a fragile instrument.
+
+A soft laugh, devoid of the cruelty of her actions, is the last thing I hear before everything folds inwards.
 
 
+//[screen fades entirely to black (including text box)] //FIGURE HOW TO IMPLEMENT THIS WITH A SUITABLE WAY OF LEAVING SAID BLACK SCREEN STATE FIXXXXX
+
+//[teleport to cave]
+~ assign_next_scene(-> post_pII.detention_at_cave, false) // Timer based transition
+~ teleport(_e, "CAVE_INTERIOR", 0, 0)
+//>>> TIME_TRANSITION FIXXX
 
 
+>>> STOP_DIALOGUE
+->pseudo_done
 
+= detention_at_cave
 
+>>> START_DIALOGUE
 
+~ autosave(true, -> post_pII.detention_at_cave)
+
+Silence, then a ringing. A thin, metallic screech inside my skull.
+
+This scene is oddly familiar.
+
+My eyes snap open to darkness.
+
+It isn’t the natural darkness of the world.
+
+It’s the suffocating dark of a place meant to swallow me.
+
+The cave.
+
+My breath immediately stutters.
+
+My body remembers before I do.
+
+That horned creature.
+
+The static.
+
+Running.
+
+I curl forward, pressing my forehead to my knees, trembling violently.
+
+It’s cold. The only heat comes from the throbbing pain of my hand, and I suddenly realize that the warm thread is gone.
+
+Eve,Eve,cry: “Sariel… Sariel, please…”
+
+Squeezing my eyes shut, I naively wait for her hand on my hair.
+
+Her voice. Her warmth.
+
+Her light.
+
+I receive no answer.
+
+The absence of the thread scrapes against the skin of my throat like a missing limb.
+
+I can’t breathe.
+
+ * [Beg.]
+   
+
+ - Eve,Eve,cry: “Sariel- Sariel, I need you- I need-”
+
+My cries collapse into fragmented gasps.
+
+I slightly crack open my eyes, wet sorrow flooding like I’ve opened a dam.
+
+The darkness is suffocating.
+
+Terrified, I move to my knees, assuming a crawling position.
+
+The pressure of my wounded palm against the cold floor causes my elbow to buckle, and I pathetically fall forward, face hitting the ground.
+
+The pain isn’t just blunt. There’s a line of sharpness that makes my eyes blow wide.
+
+I touch my cheek, and there’s a warm wetness thicker than my tears.
+
+Lifting myself back to my knees, I blink in rapid succession, willing my eyes to adjust slightly to the void.
+
+The rose.
+
+It’s no longer tethered to a bush, waiting perfectly before me on the ground.
+
+My heartbeat kicks hard against my ribs.
+
+Did Sariel leave it? Did she want me to-
+
+A thought threads through me quietly like poison.
+
+If I choose it myself, will she come back?
+
+The idea roots itself deep in my chest, a desperate seed.
+
+My hand shakes violently as I reach toward the rose, fingers hovering over it.
+
+My palm still burns from the earlier cuts.
+
+I freeze. Something inside me hesitates, whispering a question if this is the right thing to do.
+
+It’s not the voice of another, but rather a raw instinct.
+
+I clamp my hands over my face, choking on a sob.
+
+Eve,Eve,cry: “I’m scared… I’m scared, Sariel, come back, come back, please, come back-”
+
+Silence.
+
+Nothing but my own ragged breathing.
+
+I can’t tell how much time has passed, but the memory of the previous cave flickers before me, and I tremble.
+
+//[Player choice]
+ * [Be good.]
+
+ - The ache of fear grows unbearable, and loneliness chews through the last of my reasoning.
+
+I move.
+
+Fast, desperate, and unthinking, I wrap my hand around the rose.
+
+This time, I don’t hesitate.
+
+Pain erupts instantly. I squeeze until its teeth burrow as deep as possible into the soft flesh of my palm.
+
+Blood drips to the cave floor, and I muffle a scream by biting my sleeve.
+
+All I can hear are my own choked sobs and broken gasps.
+
+But then, a gentle sound breaks my desperate trance.
+
+A soft inhale.
+
+A delighted sigh.
+
+Sariel,Sariel,default: “Eve…”
+
+Sariel’s voice drapes over me like a warm cloth.
+
+I hear the clicks of her steps as she approaches me.
+
+I quickly move to hold up the rose for her, my hand shaking violently.
+
+She gently takes it by the petals and smiles.
+
+I cry out as the prickles are ripped out from my palm.
+
+Sariel kneels before me, cupping my face.
+
+Her thumb traces the shallow cut on my cheek, and I watch as she pulls her hand away, licking the droplet of blood from her fingertip. 
+
+Sariel,Sariel,smile: “Look at what you’ve done. Look how much you love me.”
+
+I sob, collapsing against her.
+
+She holds me tightly. Reverently, almost.
+
+Sariel,Sariel,smile: “Shh. It’s alright. I’m here now.”
+
+Her arms wind around me, gentle and possessive.
+
+Sariel,Sariel,smile: “You must have been so scared. My poor Eve.”
+
+Her breath ghosts over my ear.
+
+Sariel,Sariel,smile: “But I’m here for you now. I’ll help you.”
+
+I nod into her shoulder, tears soaking the fabric of her clothing.
+
+Eve,Eve,cry: “I… I’m sorry. I’m so sorry.”
+
+Sariel,Sariel,smile: “No, no, it’s okay… I’m here now. And you did exactly what you needed to do.”
+
+I swallow back my sobs, trying to steady my breathing.
+
+Eve,Eve,sad: “I want the…”
+
+She presses her forehead to mine, and my words die in my throat.
+
+Sariel,Sariel,smile: “The leash back?”
+
+My brain stutters for a moment at the term she uses, and shame and relief soar through me in equal measure.
+
+Eve,Eve,default: “Yes. Please.”
+
+Her smile softens into something devastating for my heart.
+
+Sariel,Sariel,smile: “Good girl.”
+
+Light curls around my throat, familiar and warm and safe.
+
+Safe.
+
+Sariel kisses my brow as the thread settles into place.
+
+Sariel,Sariel,default: “I’ve missed the sound of your breathing.”
+
+Heat rises to my face. My breathing is nothing short of broken and ragged, but her compliment burns just the same.
+
+Sariel,Sariel,default: “You did so well, didn’t you?”
+
+She waits expectantly, and I hesitantly nod.
+
+Sariel,Sariel,default: “Now, let me keep you safe. Let me have you.”
+
+Her thumb lightly brushes under my eye, catching the last remnant of a tear, and she stands once more.
+
+Sariel’s fingers ghost under my chin, guiding my gaze upward. Her face is adorned with a nearly cherubic smile.
+
+Sariel,Sariel,smile: “There we are. Back where you belong.”
+
+Her words are soft and syrupy, smoothing over the raw edges inside me. The hand I had just cradled in pain falls back to my side.
+
+Sariel,Sariel,default: “Come.”
+
+The thread tugs me to my feet, and I eagerly follow as she leads me out of the cave.
+
+//[walk to the very outside of the cave] FIXXXXX
+
+= true_ending
 
 
 
