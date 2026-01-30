@@ -1340,13 +1340,16 @@ Sariel catches me even as she strangles me, gently lowering me to the ground wit
 
 A soft laugh, devoid of the cruelty of her actions, is the last thing I hear before everything folds inwards.
 
+~ assign_next_scene(-> post_pII.detention_at_cave, false)
+~ set_leash_active(false) // note that leash is broken and should be broken before anyone gets teleported!!!
+>>> BACKDROP_TIMER_TRANSITION:5 //number seconds
+//[screen fades entirely to black (including text box)] 
 
-//[screen fades entirely to black (including text box)] //FIGURE HOW TO IMPLEMENT THIS WITH A SUITABLE WAY OF LEAVING SAID BLACK SCREEN STATE FIXXXXX
+//[teleport to cave] 
 
-//[teleport to cave]
-~ assign_next_scene(-> post_pII.detention_at_cave, false) // Timer based transition
-~ teleport(_e, "CAVE_INTERIOR", 0, 0)
-//>>> TIME_TRANSITION FIXXX
+//~ teleport(_e, "CAVE_INTERIOR", 0, 0) // 0,0 probably the actual cylinder spot FIXXX
+
+
 
 
 >>> STOP_DIALOGUE
@@ -1557,10 +1560,339 @@ Sariel,Sariel,default: “Come.”
 The thread tugs me to my feet, and I eagerly follow as she leads me out of the cave.
 
 //[walk to the very outside of the cave] FIXXXXX
+~ assign_next_scene(-> post_pII.true_ending, true) //Sariel interactable after forced move MAYBE????
+//~ forced_move(_s,BUT WHERE, 1) //SUFFER FIXXX
+>>> STOP_DIALOGUE
+->pseudo_done
 
 = true_ending
 
+>>> START_DIALOGUE
+~ autosave(true, -> post_pII.true_ending)
 
+We take a step outside, merely one, before my world as I know it begins to fall apart.
+
+Suddenly, an almost blinding light sputters and flickers like the remnant of a dying flame, illuminating our surroundings in their entirety.
+
+My skin shivers as I see the decrepit state of our surroundings, cracked paint and lacquer coating each object.
+
+Too quickly, the path is plunged back into its familiar darkness.
+
+Eve,Eve,default: “...Sariel?”
+
+Sariel’s hand tightens around mine, almost imperceptibly so.
+
+Sariel,Sariel,default: “You shouldn’t concern yourself with that.”
+
+But I already am.
+
+Eve,Eve,default: “Sariel… What was that?”
+
+She laughs softly, brushing her thumb across my knuckles.
+
+Sariel,Sariel,laugh: “You’re just still disoriented from the cave. Like I said, don’t concern yourself with it. Let’s walk.”
+
+But the world flickers again.
+
+This time, longer.
+
+This time, enough for me to really see the edges of the trees splintering into painted plywood.
+
+My heart drops through my stomach.
+
+Eve,Eve,sad: “No. No, I saw that. Something’s wrong-”
+
+Sariel,Sariel,disappointed: “Eve.”
+
+My name snaps out of her like the warning crack of a whip, and my nerves fracture into a thousand pieces.
+
+Sariel,Sariel,disappointed: “Don’t start imagining things.”
+
+The thread around my neck tightens with a light pressure.
+
+My breath stutters and lungs tremble, but I pull back slightly.
+
+Eve,Eve,sad: “Sariel… What is this place?”
+
+Sariel blinks once, the action deliberate. 
+
+Something inside of her visibly tightens, like a string pulled taut.
+
+Sariel,Sariel,default: “Eve, please. You’re overwhelmed.”
+
+Her voice dips into that kind of maddening softness that makes every protest feel childish.
+
+I almost feel myself getting swayed, but my throat dries.
+
+Eve,Eve,sad: “Sariel. Tell me the truth. Please. What is all this?”
+
+I absentmindedly scratch my palm to calm my nerves, wincing as my body remembers the presence of the wound.
+
+My shoulders tense as I wait for her scolding, but to my surprise, she simply sighs, the sound light and dreamy.
+
+Sariel,Sariel,smile: “You really want to ruin the magic?”
+
+I sputter.
+
+Eve,Eve,sad: “Wh- What do you mean, magic? This world is… None of this is real!”
+
+The moment the word leaves my mouth, her expression shifts.
+
+I find myself flinching in anticipation, but it isn’t anger.
+
+It’s disappointment. 
+
+Sariel,Sariel,disappointed: “Eve. Look at you, trembling over shadows.”
+
+She steps closer, her hand finding my waist, and every inch she closes feels like the tightening of a snare.
+
+Up close like this, it really dawns on me how beautifully seraphic Sariel looks. 
+
+Sariel,Sariel,disappointed: “If I showed you a painted backdrop, you’d swear the world is ending.”
+
+Eve,Eve,sad: “You’re not answering me.”
+
+Sariel,Sariel,default: “Because the answer will only frighten you more.”
+
+Sariel,Sariel,default: “And besides… Would <i>you</i> really understand?”
+
+I swallow the sting of the remark, trying not to lose myself in the frantic, muddy thoughts running through my mind.
+
+The fingers of her other hand slip up my arm, curling delicately around my wrist. Her touch is not forceful, yet it’s no less binding.
+
+Sariel,Sariel,default: “You break so easily. I would’ve told you if you were ready.”
+
+Eve,Eve,sad: “Ready for what?”
+
+Sariel smiles once more. It’s warm as candlelight and just as capable of burning.
+
+Sariel,Sariel,smile: “The truth, Eve.”
+
+I feel her breath on my ear as she leans in.
+
+Sariel,Sariel,smile: “Nothing you’ve seen was ever real.”
+
+My heart stops.
+
+Sariel,Sariel,smile: “Except for <i>me</i>.”
+
+She cups my face in both hands, her touch all too gentle for the cruel enlightenment she bestows upon me.
+
+Sariel,Sariel,smile: “Every tree. Every creature. Every path. All of it was crafted.”
+
+An innocent softness reaches her eyes, the corners crinkling.
+
+Sariel,Sariel,smile: “For you.”
+
+Sariel,Sariel,smile: “Isn’t that the most romantic thing?”
+
+Eve,Eve,cry: “Romantic? You- You put me in danger. You made me bleed-”
+
+Sariel,Sariel,default: “And you came back to me.”
+
+Sariel leans in, her lips almost brushing against mine, and my heart leaps.
+
+Sariel,Sariel,default: “You always come back to me.”
+
+The burning hotness of my face and her close proximity make it hard to think.
+
+I try to alleviate the symptoms and pull away, but the thread tugs me back into her orbit.
+
+Sariel,Sariel,default: “Eve… What frightened you more? The pain, or the thought of losing me?”
+
+The answer claws itself up my throat before I can think. I swallow it down, shaking my head.
+
+Eve,Eve,cry: “That’s not-”
+
+Sariel,Sariel,default: “Everything I’ve done has always been for you.”
+
+She brushes a tear from my cheek, smearing it tenderly with her thumb.
+
+Sariel,Sariel,default: “To teach you that you can rely on me. That you can trust me. That you want to trust me.”
+
+Her voice softens to a whisper.
+
+Sariel,Sariel,default: “And you do, don’t you?”
+
+There’s a tender fragility in her tone that makes my chest ache.
+
+Eve,Eve,cry: “I don’t- I don’t know what to think.”
+
+Sariel,Sariel,default: “Of course you don’t.”
+
+Sariel,Sariel,smile: “That’s why I think for you.”
+
+My eyes widen as the confidence and audacity in her statement take me aback.
+
+Sariel’s hand glides to the back of my neck, fingers threading into the hair at my nape. 
+
+But before I can fully react to her words, she pulls, and my world tilts.
+
+Her soft lips press against mine with a fervor that steals every last shred of breath I thought belonged to me.
+
+It feels as though she’s pouring light into me, like she’s claiming the air in my lungs, my ribs, and the trembling center inside of me.
+
+Her lips move with precision, shaping me like she’s molding clay with her mouth, and I can’t help but feel clumsy in comparison.
+
+I whimper into her.
+
+She deepens the kiss instantly, and I feel almost dizzy. 
+
+Sariel’s hand comes to rest on the side of my neck, her thumb stroking where my pulse thrums frantically beneath my skin.
+
+The touch is possessive, demanding my stillness even as she devours me.
+
+She takes quick, desperate gasps of air against my lips, as if she can’t stand a moment apart.
+
+But I can’t breathe at all with the feeling of her mouth against mine.
+
+I don’t quite know what to do with my hands, but they find themselves scrabbling at her clothing as my lungs begin to burn.
+
+She hums into my mouth, the sound some combination of pleased, amused, and victorious, as though she can feel the way I melt for her.
+
+The vibration travels straight through me, unraveling something tight in my chest.
+
+Finally, her lips part just enough for her breath to ghost over mine, sweet and warm and dizzying.
+
+I greedily suck in the air I’ve been afforded, and I find that it’s hard to think of anything but Sariel.
+
+Sariel,Sariel,default: “Shh.. Let me.”
+
+The words brush against my lips.
+
+Then, Sariel kisses me again, slower this time, but devastating.
+
+Her tongue traces the seam of my mouth with a patience that feels cruel, coaxing me open, not prying, but merely waiting until I give in on my own.
+
+And I do.
+
+The moment I part my lips, she exhales softly like she expected nothing less.
+
+Her tongue meets mine with a slow, languid press that sends heat spiraling downward.
+
+She tastes like something forbidden. Something I should fear but lean into anyway.
+
+Her fingers tighten in my hair, angling my head just so, guiding me exactly where she wants me. 
+
+Her kiss consumes, shapes, and rewrites.
+
+Finally, Sariel pulls back.
+
+Sariel,Sariel,default: “Good girl.”
+
+My breath stutters, my lips tingling, and it feels like she has my heart trembling in the grasp of her hands.
+
+She smears the moisture on my swollen lower lip with her thumb, admiring her work.
+
+And she smiles as though she’s kissed me into being.
+
+My knees weaken. It’s difficult for me to think.
+
+Eve,Eve,default: “You..”
+
+I swallow thickly, head still spinning as I feel the ghost of her lips against mine.
+
+Eve,Eve,sad: “You lied to me.”
+
+Sariel tilts her head, looking genuinely confused, and the cuteness of the action sends a pang straight through my chest.
+
+Sariel,Sariel,default: “How did I lie? I kept you safe. I kept you close.”
+
+Eve,Eve,sad: “Safe? You left me in the cave-”
+
+Sariel,Sariel,default: “To show how much you needed me.”
+
+She lifts my chin with a single finger.
+
+Sariel,Sariel,smile: “And it worked.”
+
+Despite the smugness of her tone, there’s an undeniable blanket of vulnerability draped over her angelic features.
+
+My breath catches.
+
+She leans in, brushing her nose against mine.
+
+Sariel,Sariel,default: “You have nowhere else to go.”
+
+Her whisper threads into my heart like a string drawn through a needle.
+
+Sariel,Sariel,default: “If we’re just performers on a stage, then all I can do is show how much I love you. How much I need you.”
+
+Sariel stares into me, her gaze molten and all-consuming.
+
+Her thumb caresses the thread at my throat. 
+
+Sariel,Sariel,default: “Stay with me. Where it’s warm. Where you’re wanted.”
+
+Sariel,Sariel,default: “Where you’re mine.”
+
+Eve,Eve,default: “...Sariel…”
+
+Sariel,Sariel,default: “Ask yourself, Eve. Without me…”
+
+Her lips graze my ear.
+
+Sariel,Sariel,default: “Who are you?”
+
+The question punches something fragile inside me.
+
+An emotion wells up in my chest, and I can faintly recognize it as yearning.
+
+But yearning is only grief disguised as hope.
+
+I meet Sariel’s gaze again, and she has the same forlorn look in her eyes.
+
+I want to be something real, and she wants to be beside me.
+
+The lights flicker one final time before flipping on, fully collapsing the illusion around us, but she wraps her arms around me before I can fully see the ruins.
+
+Sariel,Sariel,default: “Don’t look at it. Look at me.”
+
+I do.
+
+I can’t help it.
+
+Sariel,Sariel,default: “There’s nothing left for you out there.”
+
+Her words ring too true, and I recognize it’s the same for her.
+
+Sariel presses her forehead to mine, voice soft enough to shatter me completely.
+
+Sariel,Sariel,default: “Let me be your world.”
+
+She waits.
+
+She always waits for my surrender.
+
+And I-
+
+I kneel.
+
+Not because she pulls.
+
+Because something inside me breaks forward.
+
+If we have the same grief, the same hope, the same longing inside…
+
+What’s so wrong with bandaging it together?
+
+Eve,Eve,sad: “...I’m scared.”
+
+Sariel exhales, slow and pleased, brushing her fingers through my hair.
+
+Sariel,Sariel,smile: “Then let me love you the only way that makes you alive.”
+
+Strings bind me, a cage made of light, and I find myself enveloped in her embrace.
+
+The stage lights burn out, and darkness swallows the set.
+
+Only her glow remains.
+
+
+//>>> ENDING:1
+>>> STOP_DIALOGUE
+//DON'T FORGOR ABT THE ENDING CALL
+->pseudo_done
 
 
 
