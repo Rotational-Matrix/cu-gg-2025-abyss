@@ -79,8 +79,36 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         locDict.Add("LAMB",                 landmarks.Lamb);
         locDict.Add("COBWEB",               landmarks.Cobweb);
         locDict.Add("ROSE_AREA",            new Vector3(3,0,5));
+        AddQDLoc(0, 2.37f, -17.71f);
+        AddQDLoc(1, 5.65f, -16.17f);
+        AddQDLoc(2, 3.5f, -22.9f);
+        AddQDLoc(3, 3.2f, -36.3f);
+        AddQDLoc(4, 6.2f, -36.1f);
+        AddQDLoc(5, 7.75f, -35.4f); // to l mushroom
+        AddQDLoc(6, 8.4f, -36.2f); // to m mushroom
+        AddQDLoc(7, 6.3f, -45.2f);
+        AddQDLoc(8, 15.6f, -47.0f); //sariel in front of pot
+        AddQDLoc(9, 22.5f, -50.1f); //sariel flower position
+        AddQDLoc(10, 20.9f, -51.3f); //eve init flower pos
+        AddQDLoc(11, 23.1f, -50.7f); //approx flower[2] pos
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
+        //AddQDLoc(10, f, f);
 
 
+    }
+
+    private void AddQDLoc(string id, float x, float z)
+    {
+        locDict.Add("QD_" + id, new Vector3(x, 0, z));
+    }
+    private void AddQDLoc(int int_id, float x, float z)
+    {
+        AddQDLoc(int_id.ToString(), x, z);
     }
 
     private void InitFMoveQueues()

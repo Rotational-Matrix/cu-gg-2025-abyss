@@ -490,12 +490,26 @@ public class DialogueCanvasManager : MonoBehaviour
     private bool ForcedMoveCmd(string[] argv)
     {
         /* Expected args:
+         * FORCED_MOVE: <character> <location> <speedFactor>
+         * OR:
          * FORCED_MOVE: <character> <location> <isProportional> <distance> <speedFactor>
          * OR:
          * FORCED_MOVE: <character> <location> <flatDistAway> <offsetX> <offsetZ> <speedFactor> 
          */
         //StartForcedMove(GameObject objToMove, Vector3 targetPosition, bool isProp, float distPortion)
-        if (argv.Length == 6)
+        if (argv.Length == 4)
+        {
+            GameObject character = CapsToCharacter(argv[1]);
+            Vector3 location = CapsToLocation(argv[2]);
+            if (object.Equals(character, null) || object.Equals(location, null)) return false;
+
+            float spdFactor = float.Parse(argv[3]);
+
+            StateManager.RCommander.StartForcedMove(character, location, true, 1, spdFactor);
+            DebugLogCmd(argv); //NOTE: instance of debug log called here
+            return true;
+        }
+        else if (argv.Length == 6)
         {
             GameObject character = CapsToCharacter(argv[1]);
             Vector3 location = CapsToLocation(argv[2]);

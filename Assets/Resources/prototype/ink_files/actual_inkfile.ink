@@ -40,7 +40,7 @@ VAR leashDamping = 0.0  // all communicate with RoamCmdr
 VAR leashStrength = 0.0 //
 VAR leashMaxDist = 0.0  // probably the only used coef
 
-
+VAR leashSlackFactor = 1.5
 
 
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
@@ -128,6 +128,9 @@ sprite: {character == "NONE":NONE|Overlays/{character}_new}
 //is_prop means is proportional (if not, the dist is flat)
 === function forced_move_dir(character, location, is_prop, dist, spdFactor) ===
 >>> FORCED_MOVE:{character},{location},{is_prop:TRUE,{dist}|FALSE,{_step * dist}},{spdFactor}
+
+=== function qdfm(character, location_ID, spdFactor)
+>>> FORCED_MOVE:{character},QD_{location_ID},{spdFactor}
 
 === function forced_move_away_off(character, location, flatDistAway, offX, offZ, spdFactor) ===
 >>> FORCED_MOVE:{character},{location},{flatDistAway},{offX},{offZ},{spdFactor}
@@ -277,7 +280,10 @@ Each of her words is draped in fondness.
 I nod. It’s easier than asking why.
 
 ~ assign_next_scene(-> part_II.lamb_encounter, true)
-~ forced_move(_s,"ANIMAL_AREA", 1) //SARIEL FORCED MOVE TO ANIMAL AREA
+//~ forced_move(_s,"ANIMAL_AREA", 1) //SARIEL FORCED MOVE TO ANIMAL AREA
+~ qdfm(_s,"0",1)
+~ qdfm(_s,"1",1)//accomplicshes animal area
+
 >>> STOP_DIALOGUE
 //[walking to animal area]
 -> pseudo_done
@@ -495,7 +501,11 @@ Her gaze has a quality that makes me feel pried open, exposed, and collected.
 Not giving more thought to it, I scurry after her, my teeth lightly pinching the tip of my tongue.
 
 //[walk to knave puzzle area]
-~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE TO KNAVE PUZZLE AREA
+//~ forced_move(_s, "APPROACHING_KNAVES", 1) // SARIEL FORCED MOVE TO KNAVE PUZZLE AREA
+~ qdfm(_s,"2",1)
+~ qdfm(_s, "3",0.75) //knave puzzle area (actual)
+~ qdfm(_s, "4",0.75)
+
 ~ assign_next_scene(-> part_II.knave_puzzle, true) //sariel is responsible for initiating the next scene (after forcedMove)
 >>> STOP_DIALOGUE
 -> pseudo_done
@@ -511,7 +521,7 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.flower_puzzle)
 // FORCED_MOVE: <character> <location> <flatDistAway> <offsetX> <offsetZ> <speedFactor>
-~ forced_move_away_off(_s,"FLOWER_AREA_SARIEL", 0, 0, 0, 1)
+//~ forced_move_away_off(_s,"FLOWER_AREA_SARIEL", 0, 0, 0, 1)
 
 
 The trees thin, giving way to an almost impossibly symmetrical glade with flowers sparsely scattered.
@@ -519,8 +529,7 @@ The trees thin, giving way to an almost impossibly symmetrical glade with flower
 
 I look up from the pale grass bending beneath my feet and spot a large, stone archway.
 
-//sprite: pot
-
+//sprite: pot FIXXXX
 At its feet sits an empty, unassuming clay pot. Its mouth gapes, waiting to be filled.
 
  
@@ -535,7 +544,8 @@ As Sariel answers, her feet still for only just a moment.
  
 Sariel: “Everything is.”
 
-
+~ qdfm(_s, "9", 1)
+~ qdfm(_e, "10", 1)
 She walks among the flowers with effortless grace, the same way light bends through glass and refracts into a breathtaking spectrum. 
 
 Sariel crouches, lifting a blossom by its stem, and brings it to my face.
@@ -543,16 +553,20 @@ Sariel crouches, lifting a blossom by its stem, and brings it to my face.
  
 Sariel: “Smell.”
 
-#sprite: Overlays/NONE
+//#sprite: Overlays/NONE normal flower sprite FIXXX
 The fragrance is strange. It’s sweet at first, then metallic, then faintly sharp.
 
  
 Sariel: “This one.”
 
-Sariel: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
+
 
 ~ flower_puzzle_start = true //flowers now interactible
 
+ //will pick up first flower
+
+
+Sariel: “The other kinds won’t do. Fill the pot with these, 10 to be exact, and we will be able to pass through.”
 
 I glance across the meadow. 
 
@@ -574,11 +588,14 @@ I do. Before thinking, I nod, though a restless feeling flickers behind my ribs.
 
 Filled with the fervor to please Sariel, I stride towards the edge of the grassy opening. 
 
+~ qdfm(_e,"11",1) //eve picks up first flower
 //[walking to flower area]
-//many of the [walking] may become forced movement commands, but this one is 100% a forced movement command
-// >>> FORCED_MOVE:flower_area TODO FIXXX
 
 Kneeling, I begin to gather flowers, inhaling the scents and making mental comparisons to the one Sariel had shown me. The petals cling to my fingers, wet with dew.
+
+//slacken leash
+~ set_leash_coef(0,0,0,leashMaxDist * leashSlackFactor, true)
+
 
 //[puzzle time - collect 8 more flowers]
 ~ assign_next_scene(-> part_II.last_flower, false) //will get set true by the final flower
@@ -918,6 +935,8 @@ Sariel: “Go on. Perform for me, Eve. Let me see how well you can do.”
 
 I take a deep breath.
 
+~ qdfm(_e,"5",1)
+
 Pressing my tongue against the side of my cheek, I step forward.
 
  
@@ -937,6 +956,8 @@ The creature’s cap tilts.
 
 A low, rough syllable escapes its throat.
 
+
+// add l mushroom sprite FIXXXXX
 Left Mushroom: “Fmmh.”
 
 
@@ -948,7 +969,7 @@ Sariel’s hands gently lace over my throat.
  
 Sariel: “Mmm… Interesting.”
 
-
+~ qdfm(_e, "6",1)
 I move to the middle mushroom, pulse loud in my ears. 
 
 For a good while, I think about what to say. 
@@ -964,6 +985,7 @@ Eve: “If and only if cobwebs can stop bleeding... does ‘crrk’ mean ‘yes�
 
 Its mouth opens in a smooth, deliberate motion.
 
+//m mushroom sprite FIXXXX
 Middle Mushroom: “Crrk.”
 
 I wince from the high pitch of the noise, expecting the same deep, throaty rumble as before.
@@ -1023,22 +1045,22 @@ The fear of disappointing her strangles my throat. I need to remember what I wan
 * [Is ‘fmmh’ ‘yes’ iff. the left one lies?]
      
     Eve: “Does ‘fmmh’ mean ‘yes’ if and only if the left mushroom lies?”
-    
+    //m mushroom sprite FIXXXX
     Middle Mushroom: “Fmmh.”
     
 * [Is ‘crrk’ ‘yes’ iff. the left one is random?]
      
     Eve: “Does ‘crrk’ mean ‘yes’ if and only if the left mushroom is unpredictable?”
-    
+    // m mushroom sprite FIXXX
     Middle Mushroom: “Crrk.”
     
 * [is ‘fmmh’ ‘yes’ iff. you are the liar?]
      
     Eve: “Does ‘fmmh’ mean ‘yes’ if and only if you are the liar?”
-    
+    // m mushroom sprite FIXXX
     Middle Mushroom: “Crrk.”
 
-- (asked_3rd_question) I chew the inside of my cheek as it answers, looking back helplessly at Sariel for guidance.
+- (asked_3rd_question) {forced_move_dir(_e,_s,true,0.5,1)} I chew the inside of my cheek as it answers, looking back helplessly at Sariel for guidance.
 
 She lets her arms fall slightly, now circling my shoulders, to allow me to face her.
 
@@ -1214,8 +1236,11 @@ I mumble out a response. Her implication cuts deeply, and shame flows freely fro
 The path ahead smells of damp earth. I step carefully over the soil, where roots curl into the ground like ribs.
 
 //[walking to end of path before flower area]
-{forced_move(_s,"FLOWER_AREA_SARIEL", 1)}
+//{forced_move(_s,"FLOWER_AREA_SARIEL", 1)}
 ~ assign_next_scene(-> part_II.flower_puzzle, true) //sariel responsible for next transition after forced move
+~ qdfm(_s,"7",1)
+~ qdfm(_s,"8",1)
+
 >>> STOP_DIALOGUE
 -> pseudo_done
 
