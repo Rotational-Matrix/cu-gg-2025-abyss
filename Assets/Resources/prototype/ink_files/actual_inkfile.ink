@@ -786,7 +786,13 @@ I follow, but the string urges me along regardless.
 
 //[walk to rose area]
 ~ assign_next_scene(-> post_pII.rose_bush, true) //Sariel interactable after forced move
-~ forced_move(_s,"ROSE_AREA", 1) //SARIEL FORCED MOVE TO ROSE AREA
+//~ forced_move(_s,"ROSE_AREA", 1) //SARIEL FORCED MOVE TO ROSE AREA
+~ set_leash_coef(0,0,0,leashMaxDist/leashSlackFactor,true)
+~ qdfm(_e,"12",1)
+~ qdfm(_e,"13",1)
+~ qdfm(_e,"14",1)
+~ qdfm(_e,"15",1)
+~ qdfm(_e,"16",1)
 >>> STOP_DIALOGUE
 ->pseudo_done
 
@@ -1266,6 +1272,7 @@ The path ahead smells of damp earth. I step carefully over the soil, where roots
 //[walking to end of path before flower area]
 //{forced_move(_s,"FLOWER_AREA_SARIEL", 1)}
 ~ assign_next_scene(-> part_II.flower_puzzle, true) //sariel responsible for next transition after forced move
+
 ~ qdfm(_s,"7",1)
 ~ qdfm(_s,"8",1)
 
@@ -1398,7 +1405,9 @@ A soft laugh, devoid of the cruelty of her actions, is the last thing I hear bef
 >>> BACKDROP_TIMER_TRANSITION:5 //number seconds
 //[screen fades entirely to black (including text box)] 
 
-//[teleport to cave] 
+//[teleport to cave]
+//~ qdfm(_e,"17",1)
+~ teleport(_e, "QD_17", 0, 0)
 
 //~ teleport(_e, "CAVE_INTERIOR", 0, 0) // 0,0 probably the actual cylinder spot FIXXX
 
@@ -1530,10 +1539,13 @@ A soft inhale.
 
 A delighted sigh.
 
+
+~ teleport(_s, "QD_18",0,0)
 Sariel,Sariel,default: “Eve…”
 
 Sariel’s voice drapes over me like a warm cloth.
 
+~ qdfm(_s,"19",1)
 I hear the clicks of her steps as she approaches me.
 
 I quickly move to hold up the rose for her, my hand shaking violently.
@@ -1584,6 +1596,7 @@ Her smile softens into something devastating for my heart.
 
 Sariel,Sariel,smile: “Good girl.”
 
+~ set_leash_active(true)
 Light curls around my throat, familiar and warm and safe.
 
 Safe.
@@ -1615,6 +1628,7 @@ The thread tugs me to my feet, and I eagerly follow as she leads me out of the c
 //[walk to the very outside of the cave] FIXXXXX
 ~ assign_next_scene(-> post_pII.true_ending, true) //Sariel interactable after forced move MAYBE????
 //~ forced_move(_s,BUT WHERE, 1) //SUFFER FIXXX
+~ qdfm(_s,"20",1)
 >>> STOP_DIALOGUE
 ->pseudo_done
 
@@ -1941,8 +1955,9 @@ The stage lights burn out, and darkness swallows the set.
 
 Only her glow remains.
 
-
-//>>> ENDING:1
+~ reachedEnding = 1
+~ autosave(true, ->pseudo_done)
+>>> ENDING:1
 >>> STOP_DIALOGUE
 //DON'T FORGOR ABT THE ENDING CALL
 ->pseudo_done

@@ -690,6 +690,9 @@ public class DialogueCanvasManager : MonoBehaviour
     }
     private bool EndingCmd(string[] argv)
     {
+        SaveState.SetPastEndingOn(int.Parse(argv[1]));
+        StateManager.PMManager.InitStartMenu();
+        
         throw new NotImplementedException("why");
     }
     private bool BackdoorCmd(string[] argv)

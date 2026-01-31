@@ -91,13 +91,16 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         AddQDLoc(9, 22.5f, -50.1f); //sariel flower position
         AddQDLoc(10, 20.9f, -51.3f); //eve init flower pos
         AddQDLoc(11, 23.1f, -50.7f); //approx flower[2] pos
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
-        //AddQDLoc(10, f, f);
+        AddQDLoc(12, 35f, -47.3f); // post flower
+        AddQDLoc(13, 40.9f, -54.9f);
+        AddQDLoc(14, 43.6f, -48.8f);
+        AddQDLoc(15, 43.7f, -42.6f);
+        AddQDLoc(16, 48.2f, -34.4f);
+        AddQDLoc(17, 41.8f, 4.5f);
+        AddQDLoc(18, 29.5f, -7.6f); //offscreren
+        AddQDLoc(19, 40.2f, 5.0f);
+        AddQDLoc(20, 29.5f, -7.6f);
+        //AddQDLoc(21, 31f, -7.6f);
 
 
     }
