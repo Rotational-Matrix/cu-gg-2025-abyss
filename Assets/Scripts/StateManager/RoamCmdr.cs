@@ -229,7 +229,8 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
                 Vector3 ev3 = StateManager.Eve.transform.position;
                 Vector3 sv3 = StateManager.Sariel.transform.position;
                 ev3.y = sv3.y = 0; // to explicitly ignore y differences
-                if (Vector3.Distance(ev3, sv3) > sarielDistTriggerRho - 0.05f)
+                if (Vector3.Distance(ev3, sv3) > sarielDistTriggerRho - 0.05f && 
+                    StateManager.DCManager.GetInkVar<int>("flowerCounter") >= totalFlowerNum - 1)
                 {
                     sarielDistTriggerActive = false; //sets the trigger off
                     StateManager.DCManager.InitiateDialogueState("next_scene_knot");
@@ -530,10 +531,21 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         int newFlowerCount = StateManager.DCManager.GetInkVar<int>("flowerCounter") + 1;
         StateManager.DCManager.SetInkVar<int>("flowerCounter", newFlowerCount); //incremFlowerCount
 
-        if (newFlowerCount == totalFlowerNum - 1) //i.e. on last flower
+        Debug.Log("flowerCouter displays: " + newFlowerCount);
+        if (newFlowerCount < totalFlowerNum - 1)
         {
+            flowerPot.SetSprite(FlowerPot.SpriteState.Empty);
+        }
+        else if (newFlowerCount == totalFlowerNum - 1) //i.e. on last flower
+        {
+            flowerPot.SetSprite(FlowerPot.SpriteState.AlmostFull);
             StateManager.Sariel.SetSarielCanInteract(true); // allows for 'psych' transition
         }
+        else if (newFlowerCount == totalFlowerNum)
+        {
+            flowerPot.SetSprite(FlowerPot.SpriteState.Full);
+        }
+
     }
 
     // [Cu] made a mistake! 

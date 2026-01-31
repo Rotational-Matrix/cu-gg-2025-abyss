@@ -658,8 +658,13 @@ public class DialogueCanvasManager : MonoBehaviour
         if (argv.Length == 2)
         {
             int fpotInt = int.Parse(argv[1]);
-            if (fpotInt < 0 || fpotInt > 2)
+            if (fpotInt > 2)
                 return false; // fail on invalid sprite state
+            if(fpotInt == -1) //backdoor
+            {
+                StateManager.RCommander.IncremFlowerCount();
+                return true;
+            }
             FlowerPot.SpriteState fps = (FlowerPot.SpriteState)fpotInt;
             StateManager.RCommander.SetPotSprite(fps);
             return true;

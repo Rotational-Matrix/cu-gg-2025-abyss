@@ -40,7 +40,7 @@ VAR leashDamping = 0.0  // all communicate with RoamCmdr
 VAR leashStrength = 0.0 //
 VAR leashMaxDist = 0.0  // probably the only used coef
 
-VAR leashSlackFactor = 1.5
+VAR leashSlackFactor = 3.0
 
 
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
@@ -381,6 +381,8 @@ Sariel: “Come back to me.”
 
 My legs obey before I do. The world jerks, and my vision fractures into streaks of white noise and almost painful adrenaline.
 
+~ forced_move_dir(_s,_e,true, 0.25, 1) //to make sarial face eve (and not look up)
+
 When I stumble into the light again, Sariel catches me. Her embrace is too tight, almost reverent. 
 
  
@@ -544,9 +546,12 @@ As Sariel answers, her feet still for only just a moment.
  
 Sariel: “Everything is.”
 
-~ qdfm(_s, "9", 1)
-~ qdfm(_e, "10", 1)
+~ qdfm(_s, "9", 1) //sar flower pos
+~ qdfm(_e, "10", 1) //eve flower pos
+
 She walks among the flowers with effortless grace, the same way light bends through glass and refracts into a breathtaking spectrum. 
+
+~ forced_move_dir(_s, _e, true, 0.1, 1) //face eve
 
 Sariel crouches, lifting a blossom by its stem, and brings it to my face.
 
@@ -560,7 +565,7 @@ The fragrance is strange. It’s sweet at first, then metallic, then faintly sha
 Sariel: “This one.”
 
 
-
+~ flowerCounter = 0 //to ensure a fair start.
 ~ flower_puzzle_start = true //flowers now interactible
 
  //will pick up first flower
@@ -604,6 +609,7 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 
 = last_flower
 >>> START_DIALOGUE
+>>> FLOWERPOT_SET:1 //in addition to the level provided by the c sharp code
 ~ autosave(true, -> part_II.last_flower)
 
 
@@ -679,6 +685,7 @@ Sariel: “You worked so hard.”
 
 From behind, she produces the final flower, perfect and fragrant. 
 
+//bloody flower sprite FIXXX
 I stare at the offering in her hand. 
 
  
@@ -722,7 +729,8 @@ Sariel places the stem into my trembling hand.
  
 Sariel: “Now, finish it.”
 
-
+>>> FLOWERPOT_SET:-1
+>>> FLOWERPOT_SET:2
 As the pot receives its final bloom, a heavy creak sounds from the arch.
 
  
@@ -1060,7 +1068,9 @@ The fear of disappointing her strangles my throat. I need to remember what I wan
     // m mushroom sprite FIXXX
     Middle Mushroom: “Crrk.”
 
-- (asked_3rd_question) {forced_move_dir(_e,_s,true,0.5,1)} I chew the inside of my cheek as it answers, looking back helplessly at Sariel for guidance.
+- (asked_3rd_question) {forced_move_dir(_e,_s,true,0.5,1)} 
+
+I chew the inside of my cheek as it answers, looking back helplessly at Sariel for guidance.
 
 She lets her arms fall slightly, now circling my shoulders, to allow me to face her.
 
