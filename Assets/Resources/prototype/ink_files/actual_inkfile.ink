@@ -788,11 +788,11 @@ I follow, but the string urges me along regardless.
 ~ assign_next_scene(-> post_pII.rose_bush, true) //Sariel interactable after forced move
 //~ forced_move(_s,"ROSE_AREA", 1) //SARIEL FORCED MOVE TO ROSE AREA
 ~ set_leash_coef(0,0,0,leashMaxDist/leashSlackFactor,true)
-~ qdfm(_e,"12",1)
-~ qdfm(_e,"13",1)
-~ qdfm(_e,"14",1)
-~ qdfm(_e,"15",1)
-~ qdfm(_e,"16",1)
+~ qdfm(_s,"12",1)
+~ qdfm(_s,"13",1)
+~ qdfm(_s,"14",1)
+~ qdfm(_s,"15",1)
+~ qdfm(_s,"16",1)
 >>> STOP_DIALOGUE
 ->pseudo_done
 
