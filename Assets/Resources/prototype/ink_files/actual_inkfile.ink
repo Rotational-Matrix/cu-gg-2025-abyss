@@ -41,7 +41,9 @@ VAR leashStrength = 0.0 //
 VAR leashMaxDist = 0.0  // probably the only used coef
 
 VAR leashSlackFactor = 3.0
-
+VAR backdoorVal = ""
+VAR theEndsJustify = 0
+VAR theMeans = 0
 
 //reminder that knave_puzzle_knot.correct_answer will tell if the player has gotten the answer correct or not
 
@@ -85,7 +87,20 @@ What commands to forcefully attempt (will break game)
         ->commands
     + + [Back To Cmds]
         ->commands
-
++ [backdoor]
+   oh boy what kind???
+   + + [0]
+   >>> BACKDOOR:0
+   backdoorVal: {backdoorVal}
+   ->pseudo_done
+   + + [1]
+   >>> BACKDOOR:1
+   backdoorVal: {backdoorVal}
+   ->pseudo_done
+   + + [2]
+   >>> BACKDOOR:0
+   backdoorVal: {backdoorVal}
+   ->pseudo_done
 + [Leave]
     >>> STOP_DIALOGUE
     ->pseudo_done
@@ -513,7 +528,7 @@ Not giving more thought to it, I scurry after her, my teeth lightly pinching the
 -> pseudo_done
 //CONT AT WALK TO KNAVE AREA
 
-= knave_puzzle
+ = knave_puzzle
 >>> START_DIALOGUE
 ~ autosave(true, -> part_II.knave_puzzle)
 //merely directs to the actual puzzle because the puzzle is much longer
@@ -566,6 +581,7 @@ Sariel: “This one.”
 
 
 ~ flowerCounter = 0 //to ensure a fair start.
+>>> BACKDOOR:2 //force sariel to not interact
 ~ flower_puzzle_start = true //flowers now interactible
 
  //will pick up first flower
@@ -604,10 +620,12 @@ Kneeling, I begin to gather flowers, inhaling the scents and making mental compa
 
 //[puzzle time - collect 8 more flowers]
 ~ assign_next_scene(-> part_II.last_flower, false) //will get set true by the final flower
+>>> BACKDOOR:2
 >>> STOP_DIALOGUE
 -> pseudo_done
 
 = last_flower
+{theEndsJustify < 1: -> pseudo_done}
 >>> START_DIALOGUE
 >>> FLOWERPOT_SET:1 //in addition to the level provided by the c sharp code
 ~ autosave(true, -> part_II.last_flower)
@@ -635,7 +653,7 @@ I force myself to retrace my steps, familiar blades of grass brushing my calves.
 //[walking to entrance of flower area - Sariel does NOT move]
 // GOTO FIXXX prolly triggers on either perimeter or on reenter trigger
 ~ assign_next_scene(-> part_II.last_flower_psych, false)//due to leash stretches
->>> SARIEL_DIST_TRIGGER:TRUE,{3 * leashMaxDist} // NOTE: leashMaxDist does not actually translate well! When MaxDist = 1, I can typically have a natural slack dist of 2 map units, and can reach up to perchance 4 map units away
+>>> SARIEL_DIST_TRIGGER:TRUE,{2 + leashMaxDist} // NOTE: leashMaxDist does not actually translate well! When MaxDist = 1, I can typically have a natural slack dist of 2 map units, and can reach up to perchance 4 map units away
 >>> STOP_DIALOGUE
 -> pseudo_done
 

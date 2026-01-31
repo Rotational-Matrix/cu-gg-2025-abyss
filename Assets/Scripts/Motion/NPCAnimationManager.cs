@@ -53,7 +53,7 @@ public class NPCAnimationManager : MonoBehaviour
         //this uses sprite flips but can be made to use different sprites with no effort
         if (x * x > flipEpsilon)
         {
-            Debug.Log("x: " + x + " z: " + z);
+            //Debug.Log("x: " + x + " z: " + z);
             sr.flipX = frontFacing ? x < 0 : x > 0;
         }
     }

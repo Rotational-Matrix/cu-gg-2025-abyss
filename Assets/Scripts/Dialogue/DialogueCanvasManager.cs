@@ -170,6 +170,7 @@ public class DialogueCanvasManager : MonoBehaviour
         colonLineCommands.Add("FLOWERPOT_SET", FlowerPotSpriteSetCmd);
         colonLineCommands.Add("BACKDROP_TIMER_TRANSITION", BackdropTimerTransitionCmd);
         colonLineCommands.Add("ENDING", EndingCmd);
+        colonLineCommands.Add("BACKDOOR", BackdoorCmd);
     }
     private void InitSprites()
     {
@@ -211,7 +212,7 @@ public class DialogueCanvasManager : MonoBehaviour
         return false;  //mimics failing, although divert blocking is acceptable
     }
 
-    private void SetDialogueState(bool setActive)
+    public void SetDialogueState(bool setActive)
     {
         dialoguePanel.SetActive(setActive);
         StateManager.SetDialogueStatus(setActive);
@@ -690,6 +691,26 @@ public class DialogueCanvasManager : MonoBehaviour
     private bool EndingCmd(string[] argv)
     {
         throw new NotImplementedException("why");
+    }
+    private bool BackdoorCmd(string[] argv)
+    {
+        int type = int.Parse(argv[1]);
+        if(type==0)
+        {
+            Vector3 ev3 = StateManager.Eve.transform.position;
+            Vector3 sv3 = StateManager.Sariel.transform.position;
+            ev3.y = sv3.y = 0; // to explicitly ignore y differences
+            SetInkVar<string>("backdoorVal", "dist btwn sar and eve: " + Vector3.Distance(ev3, sv3));
+        }
+        if(type==1)
+        {
+            SetInkVar<string>("backdoorVal", GetInkVar<int>("flowerCounter").ToString());
+        }
+        if (type==2)
+        {
+            StateManager.Sariel.SetSarielCanInteract(false);
+        }
+        return true;
     }
 
     /* Handle Inline Commands

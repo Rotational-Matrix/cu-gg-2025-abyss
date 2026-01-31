@@ -538,6 +538,8 @@ public class RoamCmdr : MonoBehaviour, IStateManagerListener
         }
         else if (newFlowerCount == totalFlowerNum - 1) //i.e. on last flower
         {
+            Debug.Log("HOW DID I TRIGGER??? " + newFlowerCount);
+            StateManager.DCManager.SetInkVar<int>("theEndsJustify", 1); //forgive me
             flowerPot.SetSprite(FlowerPot.SpriteState.AlmostFull);
             StateManager.Sariel.SetSarielCanInteract(true); // allows for 'psych' transition
         }
